@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fcf="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/leftbtn"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/left" />
+
+        <coverflow.FancyCoverFlow
+            android:id="@+id/fancyCoverFlow"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="11"
+            android:gravity="center"
+            fcf:maxRotation="0"
+            fcf:scaleDownGravity="0.5"
+            fcf:unselectedAlpha="-0.1"
+            fcf:unselectedSaturation="0.5"
+            fcf:unselectedScale="0" />
+
+        <ImageButton
+            android:id="@+id/rightbtn"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/arrowright" />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/slidebtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:src="@drawable/slideshow" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextSwitcher
+                android:id="@+id/textswitcher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:text="Hello I'm text"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+
+        <ImageButton
+            android:id="@+id/editbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/infobtn"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/infobtn"
+            android:layout_toStartOf="@+id/infobtn"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:src="@drawable/edit" />
+
+
+        <ImageButton
+            android:id="@+id/infobtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:src="@drawable/info" />
+
+
+    </RelativeLayout>
+
+</LinearLayout>
