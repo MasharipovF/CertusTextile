@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -17,24 +18,43 @@ public class EditActivity extends AppCompatActivity {
     private Spinner type_spinner;
     private RecyclerView clothes_list;
     private RecyclerAdapter adapter;
-    private List<RecyclerData> data;
+    private List<RecyclerData> forDB[] = new List[4], data;
+    private RadioGroup radioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
+        radioGroup = (RadioGroup) findViewById(R.id.yoqaGroup);
         clothes_list = (RecyclerView) findViewById(R.id.recycler_add);
-        data = new ArrayList<>();
-        final RecyclerData mItem = new RecyclerData();
-        data.add(mItem);
-        adapter = new RecyclerAdapter(this, data);
-        clothes_list.setAdapter(adapter);
         clothes_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
-        clothes_list.setOnClickListener(new View.OnClickListener() {
+        final RecyclerData rdata = new RecyclerData(null, null, null, null);
+        data = new ArrayList<>();
+        data.add(rdata);
+        adapter = new RecyclerAdapter(getApplicationContext(), data);
+        clothes_list.setAdapter(adapter);
+        radioGroup.check(R.id.yoqa1);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.yoqa1:
+                        data.clear();
+                        data.add(rdata);
+                        adapter.notifyDataSetChanged();
+                        break;
+                    case R.id.yoqa2:
+                        data.clear();
+                        data.add(rdata);
+                        adapter.notifyDataSetChanged();
+                        break;
+                    case R.id.yoqa3:
+                        data.clear();
+                        data.add(rdata);
+                        adapter.notifyDataSetChanged();
+                        break;
+                }
 
             }
         });

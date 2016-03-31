@@ -19,7 +19,8 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".EditActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

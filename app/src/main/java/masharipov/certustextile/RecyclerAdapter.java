@@ -23,6 +23,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private LayoutInflater inflater;
     private List<RecyclerData> database;
+    private RecyclerData recyclerData;
     private ArrayAdapter<String> spinAdapter;
     private Context context;
     private Intent pickerIntent;
@@ -48,18 +49,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         ViewHolder holder = new ViewHolder(view, new onItemClick() {
             @Override
             public void onImageAdd(ImageButton img, int position, String imgID) {
+                Toast.makeText(context, Integer.toString(database.size()), Toast.LENGTH_SHORT).show();
                 pickerIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 imageAddPosition = position;
                 imageID = imgID;
-                Toast.makeText(context, imgID + " and position " + Integer.toString(position), Toast.LENGTH_SHORT).show();
-                ((Activity) context).setResult(Activity.RESULT_OK, pickerIntent);
                 ((Activity) context).startActivityForResult(pickerIntent, SELECT_PICTURE);
             }
 
             @Override
             public void onAddorRemove() {
-                insertItem(new RecyclerData(), database.size()-1);
+                recyclerData = new RecyclerData(null, null, null, null);
+                Toast.makeText(context, Integer.toString(database.size()), Toast.LENGTH_SHORT).show();
+                database.add(recyclerData);
+                notifyItemChanged(0);
+                Toast.makeText(context, Integer.toString(database.size()), Toast.LENGTH_SHORT).show();
+                //insertItem(recyclerData, database.size() - 1);
+
             }
         });
         return holder;
@@ -69,13 +75,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final RecyclerData current = database.get(position);
         if (current.styleUri != null)
-            Picasso.with(context).load(current.styleUri).into(holder.style);
+            Picasso.with(context).load(current.styleUri).centerInside().resize(512, 512).into(holder.style);
         if (current.frontUri != null)
-            Picasso.with(context).load(current.frontUri).into(holder.front);
+            Picasso.with(context).load(current.frontUri).centerInside().resize(512, 512).into(holder.front);
         if (current.backUri != null)
-            Picasso.with(context).load(current.backUri).into(holder.back);
+            Picasso.with(context).load(current.backUri).centerInside().resize(512, 512).into(holder.back);
         if (current.sideUri != null)
-            Picasso.with(context).load(current.sideUri).into(holder.side);
+            Picasso.with(context).load(current.sideUri).centerInside().resize(512, 512).into(holder.side);
         holder.size_spin.setAdapter(spinAdapter);
     }
 
@@ -90,8 +96,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     public void insertItem(RecyclerData mItem, int position) {
-        database.add(position, mItem);
-        notifyItemInserted(position);
+        database.add(mItem);
+        //  notifyItemChanged(position);
+    }
+
+    public List<RecyclerData> getDatabase() {
+        return database;
+    }
+
+    public void notifyChange() {
+        notifyDataSetChanged();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -100,7 +114,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
             if (requestCode == SELECT_PICTURE) {
                 selectedImageURI = intent.getData();
                 database.get(imageAddPosition).setImageUri(imageID, selectedImageURI);
-                Toast.makeText(context, imageID + " " + Integer.toString(imageAddPosition), Toast.LENGTH_SHORT).show();
                 notifyItemChanged(imageAddPosition);
                 selectedImageURI = null;
                 imageAddPosition = -1;
