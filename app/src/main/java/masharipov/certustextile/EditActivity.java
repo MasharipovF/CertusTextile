@@ -3,6 +3,9 @@ package masharipov.certustextile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -32,14 +36,13 @@ public class EditActivity extends AppCompatActivity {
     private RadioGroup genderGroup, collarGroup;
     private EditText tagEdit;
     private List<List<RecyclerData>> forDatabase;
-    private String collar, tag, type, gender;
-    private int typePos;
+    private String collar, gender;
     private Context contextforDialog = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit);
+        setContentView(R.layout.modern_edit);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         collarGroup = (RadioGroup) findViewById(R.id.collarGroup);
@@ -64,12 +67,9 @@ public class EditActivity extends AppCompatActivity {
         // znacheniya po umolchaniyu
         collar = "collar1";
         collarGroup.check(R.id.collar1);
-       /* type = typeSpinner.getSelectedItem().toString();
-        typePos = typeSpinner.getSelectedItemPosition();
-        tag = tagEdit.getText().toString();*/
         gender = "male";
         genderGroup.check(R.id.male);
-        adapter = new RecyclerAdapter(this, newData(collar, type, typePos, tag, gender));
+        adapter = new RecyclerAdapter(this, newData(collar, gender));
         adapter.collarTag = 0;
         forDatabase.set(adapter.getCollarTag(), adapter.getDatabase());
         clothes_list.setAdapter(adapter);
@@ -89,10 +89,30 @@ public class EditActivity extends AppCompatActivity {
                         setData(adapter.getCollarTag(), 2);
                         tagEdit.setText(forDatabase.get(2).get(0).tag);
                         break;
+                  /*  case R.id.collar4:
+                        setData(adapter.getCollarTag(), 3);
+                        tagEdit.setText(forDatabase.get(3).get(0).tag);
+                        break;*/
                 }
-
             }
         });
+
+        /*
+        final RadioButton collarRadio = (RadioButton) findViewById(R.id.collar4).setVisibility(View.GONE);
+
+        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (typeSpinner.getSelectedItem().toString() == "") collarRadio.setVisibility(View.GONE);
+                else collarRadio.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });*/
+
 
         genderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -106,8 +126,11 @@ public class EditActivity extends AppCompatActivity {
                     case R.id.female:
                         recyclerData.setGender("female");
                         break;
-                    case R.id.kid:
-                        recyclerData.setGender("kid");
+                    case R.id.boy:
+                        recyclerData.setGender("boy");
+                        break;
+                    case R.id.girl:
+                        recyclerData.setGender("girl");
                         break;
                 }
             }
@@ -162,7 +185,7 @@ public class EditActivity extends AppCompatActivity {
                 collar = "collar" + Integer.toString(sentPos + 1);
                 genderGroup.check(R.id.male);
                 gender = "male";
-                adapter.setDatabase(newData(collar, type, typePos, tag, gender));
+                adapter.setDatabase(newData(collar, gender));
                 adapter.collarTag = sentPos;
                 forDatabase.set(adapter.getCollarTag(), adapter.getDatabase());
 
@@ -175,12 +198,10 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    private List<RecyclerData> newData(String collar, String type, int typePos, String tag, String gender) {
+    private List<RecyclerData> newData(String collar, String gender) {
         List<RecyclerData> mdata = new ArrayList<>();
         RecyclerData rdata = new RecyclerData();
         rdata.setCollar(collar);
-        rdata.setType(type, typePos);
-        rdata.setTag(tag);
         rdata.setGender(gender);
         rdata.setSize("XS", 0);
         mdata.add(rdata);
@@ -188,38 +209,77 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void saveDialog(Context context) {
-        AlertDialog.Builder adb = new AlertDialog.Builder(context);
-        adb.setTitle("Сохранить изменения?");
-        adb.setMessage("Сохранить внесенные изменения в базу данных?");
-        adb.setIcon(android.R.drawable.ic_dialog_info);
-        adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                forDatabase.clear();
-                Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        if (isDatabaseEmpty()) {
+            Toast.makeText(context, "База пуста, сначала добавьте товары", Toast.LENGTH_SHORT).show();
+        } else {
+            AlertDialog.Builder adb = new AlertDialog.Builder(context);
+            adb.setTitle("Сохранить изменения?");
+            adb.setMessage("Сохранить внесенные изменения в базу данных?");
+            adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    forDatabase.clear();
+                    Intent intent = new Intent(EditActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
 
-        });
+            });
 
-        adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                CertusDatabase certusDatabase = new CertusDatabase(forDatabase, type, getApplicationContext());
-                certusDatabase.saveToDB();
-                Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+            adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    CertusDatabase certusDatabase = new CertusDatabase(forDatabase, typeSpinner.getSelectedItem().toString(), getApplicationContext());
+                    certusDatabase.saveToDB();
+                    Intent intent = new Intent(EditActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            adb.setIcon(android.R.drawable.ic_dialog_info);
+            adb.create();
+            adb.show();
+        }
+
+    }
+
+    private boolean isDatabaseEmpty() {
+        try {
+            List<List<RecyclerData>> tmpData = forDatabase;
+            List<RecyclerData> recyclerDataList;
+            int emptyCounter = 0;
+            for (int i = 0; i < tmpData.size(); i++) {
+                recyclerDataList = tmpData.get(i);
+                if (recyclerDataList == null || recyclerDataList.size() == 1) {
+                    emptyCounter++;
+                }
             }
-        });
-        adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        adb.create();
-        adb.show();
+            return emptyCounter == tmpData.size();
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return true;
+        }
+    }
+
+    public String getPath(Uri uri) {
+        if (uri == null) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        if (cursor != null) {
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        return uri.getPath();
     }
 
     @Override
