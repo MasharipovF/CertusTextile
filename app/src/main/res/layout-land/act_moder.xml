@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/vid"    >
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/fon"
+        android:scaleType="centerCrop"/>
+    <coverflow.CoverFlowView
+        xmlns:imageCoverFlow="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/coverflow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="60dp"
+        android:paddingBottom="60dp"
+        imageCoverFlow:coverflowGravity="center_vertical"
+        imageCoverFlow:coverflowLayoutMode="match_parent"
+
+        imageCoverFlow:visibleImage="3"
+
+        android:layout_toLeftOf="@+id/rightbtn"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_above="@+id/imageView9" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:id="@+id/rightbtn"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arrowright"
+        android:padding="5dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arrowleft"
+        android:id="@+id/leftbtn"
+        android:padding="5dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        />
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="130dp"
+        android:id="@+id/editbtn"
+        android:src="@drawable/ic_mode_edit_grey_400_48dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="84dp"
+        android:id="@+id/infobtn"
+        android:src="@drawable/ic_info_outline_grey_400_48dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/slidebtn"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="95dp"
+        android:layout_marginBottom="13dp"
+        android:src="@drawable/ic_slideshow_grey_400_48dp"/>
+    <ImageView
+        android:layout_width="600dp"
+        android:layout_height="140dp"
+
+        android:src="@drawable/pasgi"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/imageView9" />
+        <TextSwitcher
+            android:id="@+id/textswitcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+            android:layout_marginBottom="55dp"
+            android:textSize="35sp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="делай сам себе дизайн ты ведь уникален"
+            android:layout_marginBottom="20dp"
+            android:textSize="20sp"
+            android:textColor="#ffb74d"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_margin="20dp"
+        android:src="@drawable/knop"/>
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/knop"
+        android:layout_margin="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/knop"
+        android:layout_margin="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/imageView7" />
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/knop"
+        android:layout_margin="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Certus Textile"
+        android:textSize="20dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginLeft="70dp"
+        android:id="@+id/textView" />
+</RelativeLayout>
