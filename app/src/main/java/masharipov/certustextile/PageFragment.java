@@ -33,7 +33,7 @@ public class PageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.slideshow_item, null);
         ImageView img = (ImageView) view.findViewById(R.id.slideimg);
-        img.setImageResource(R.drawable.user1);
+
         return view;
     }
 }

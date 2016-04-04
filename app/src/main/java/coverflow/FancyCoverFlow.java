@@ -21,16 +21,14 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.*;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Transformation;
 import android.widget.Gallery;
 import android.widget.SpinnerAdapter;
-import android.widget.Toast;
 
 import masharipov.certustextile.R;
+
 
 public class FancyCoverFlow extends Gallery {
 
@@ -366,39 +364,6 @@ public class FancyCoverFlow extends Gallery {
         return true;
     }
 
-    private boolean isScrollingLeft(MotionEvent e1, MotionEvent e2) {
-        return e2.getX() > e1.getX();
-    }
-
-    private boolean scrolled = false;
-
-    public boolean isScrolled() {
-        if (scrolled) {
-            scrolled = false;
-            return true;
-        } else return false;
-    }
-
-    public void moveForward() {
-        onKeyDown(KeyEvent.KEYCODE_DPAD_RIGHT, null);
-    }
-
-    public void moveBackward() {
-        onKeyDown(KeyEvent.KEYCODE_DPAD_LEFT, null);
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        int kEvent;
-        if (isScrollingLeft(e1, e2)) { //Check if scrolling left
-            scrolled = true;
-            kEvent = KeyEvent.KEYCODE_DPAD_LEFT;
-        } else { //Otherwise scrolling right
-            kEvent = KeyEvent.KEYCODE_DPAD_RIGHT;
-        }
-        onKeyDown(kEvent, null);
-        return true;
-    }
     // =============================================================================
     // Public classes
     // =============================================================================

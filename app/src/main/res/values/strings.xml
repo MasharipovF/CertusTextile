@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Certus Textile</string>
+    <string name="nastroyki">Настройки</string>
+    <string name="nakleyki">Наклейки</string>
+    <string name="sveta">Цвета</string>
+    <string name="tovari">Товары</string>
+    <string name="povorot">Поворот</string>
+    <string name="razmer">Размер</string>
 </resources>

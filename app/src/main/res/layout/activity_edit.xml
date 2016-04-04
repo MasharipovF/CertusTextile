@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/darker_gray"
     tools:context="masharipov.certustextile.EditActivity">
 
@@ -51,7 +50,6 @@
                 android:layout_alignParentTop="true" />
 
             <EditText
-                android:id="@+id/itemTag"
                 android:layout_width="300dp"
                 android:layout_height="100dp"
                 android:layout_alignParentBottom="true"
@@ -74,7 +72,6 @@
             android:paddingStart="20dp">
 
             <RadioGroup
-                android:id="@+id/genderGroup"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:orientation="horizontal">
@@ -83,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="100dp"
                     android:gravity="center"
-                    android:text="Gender"
+                    android:text="Sex"
                     android:textSize="40sp" />
 
                 <RadioButton
@@ -109,31 +106,30 @@
             </RadioGroup>
 
             <RadioGroup
-                android:id="@+id/collarGroup"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_alignParentBottom="true"
                 android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/collar1"
+                    android:id="@+id/yoqa1"
                     android:layout_width="wrap_content"
                     android:layout_height="100dp"
-                    android:text="C1"
+                    android:text="D"
                     android:textSize="40sp" />
 
                 <RadioButton
-                    android:id="@+id/collar2"
+                    android:id="@+id/yoqa2"
                     android:layout_width="wrap_content"
                     android:layout_height="100dp"
-                    android:text="C2"
+                    android:text="D"
                     android:textSize="40sp" />
 
                 <RadioButton
-                    android:id="@+id/collar3"
+                    android:id="@+id/yoqa3"
                     android:layout_width="wrap_content"
                     android:layout_height="100dp"
-                    android:text="C3"
+                    android:text="D"
                     android:textSize="40sp" />
 
             </RadioGroup>
@@ -147,16 +143,5 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/linearLayout"
         tools:listitem="@layout/addclothes_row" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:src="@drawable/ic_add"
-        app:layout_anchorGravity="bottom|right|end"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

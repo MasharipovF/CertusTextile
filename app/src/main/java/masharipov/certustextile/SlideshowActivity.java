@@ -7,61 +7,33 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageListener;
+
 public class SlideshowActivity extends AppCompatActivity {
+    CarouselView carouselView;
 
-    static final int PAGE_COUNT = 10;
+    int[] sampleImages = {R.drawable.maykaaaa, R.drawable.futblkaaa, R.drawable.kurkaaa};
+//https://github.com/sayyam/carouselview
 
-    ViewPager pager;
-    PagerAdapter pagerAdapter;
-
+    ImageListener imageListener = new ImageListener() {
+        @Override
+        public void setImageForPosition(int position, ImageView imageView) {
+            imageView.setImageResource(sampleImages[position]);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slideshow);
 
-        try {
-            pager = (ViewPager) findViewById(R.id.pager);
-            pagerAdapter = new Adapter(getSupportFragmentManager());
-            pager.setAdapter(pagerAdapter);
-
-            pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-
-                }
-            });
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private class Adapter extends FragmentPagerAdapter {
-
-        public Adapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return PageFragment.newInstance(position);
-        }
-
-        @Override
-        public int getCount() {
-            return PAGE_COUNT;
-        }
+        carouselView = (CarouselView) findViewById(R.id.fancyCoverFlowa);
+        carouselView.setPageCount(sampleImages.length);
+        carouselView.setImageListener(imageListener);
 
     }
+
 }
