@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -30,7 +33,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     private ArrayAdapter<String> spinAdapter;
     private Context context;
     private Intent imagePickerIntent;
-    private int SELECT_PICTURE = 1, imageAddPosition = -1;
+    private int SELECT_PICTURE = 1, GALLERY_INTENT_CALLED = 0, GALLERY_KITKAT_INTENT_CALLED = 2, imageAddPosition = -1;
     private String imageID = null;
     public int collarTag = -1;
 
@@ -51,11 +54,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         ViewHolder holder = new ViewHolder(view, new ViewHolder.onItemClick() {
             @Override
             public void onImageAdd(ImageButton img, int position, String imgID) {
+
                 imagePickerIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 imageAddPosition = position;
                 imageID = imgID;
                 ((Activity) context).startActivityForResult(imagePickerIntent, SELECT_PICTURE);
+               /* if (Build.VERSION.SDK_INT < 19) {
+                    imagePickerIntent = new Intent();
+                    imagePickerIntent.setType("image/jpeg");
+                    imagePickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    ((Activity) context).startActivityForResult(Intent.createChooser(imagePickerIntent, "Выберите действие"), GALLERY_INTENT_CALLED);
+                } else {
+                    imagePickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    imagePickerIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                    imagePickerIntent.setType("image/jpeg");
+                    ((Activity) context).startActivityForResult(imagePickerIntent, GALLERY_KITKAT_INTENT_CALLED);
+                }*/
             }
 
             @Override
@@ -92,19 +107,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         RecyclerData current = database.get(position);
         if (current.styleUri != null)
-            Picasso.with(context).load(current.styleUri).centerInside().resize(512, 512).into(holder.style);
+            Picasso.with(context).load(Uri.parse(current.styleUri)).centerInside().resize(512, 512).into(holder.style);
         else
             Picasso.with(context).load(R.drawable.addphoto).into(holder.style);
         if (current.frontUri != null)
-            Picasso.with(context).load(current.frontUri).centerInside().resize(512, 512).into(holder.front);
+            Picasso.with(context).load(Uri.parse(current.frontUri)).centerInside().resize(512, 512).into(holder.front);
         else
             Picasso.with(context).load(R.drawable.addphoto).into(holder.front);
         if (current.backUri != null)
-            Picasso.with(context).load(current.backUri).centerInside().resize(512, 512).into(holder.back);
+            Picasso.with(context).load(Uri.parse(current.backUri)).centerInside().resize(512, 512).into(holder.back);
         else
             Picasso.with(context).load(R.drawable.addphoto).into(holder.back);
         if (current.sideUri != null)
-            Picasso.with(context).load(current.sideUri).centerInside().resize(512, 512).into(holder.side);
+            Picasso.with(context).load(Uri.parse(current.sideUri)).centerInside().resize(512, 512).into(holder.side);
         else
             Picasso.with(context).load(R.drawable.addphoto).into(holder.side);
         Picasso.with(context).load(current.addID).into(holder.add);
@@ -120,8 +135,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     public boolean isChildItemFull(int position) {
         int counter = 0;
         recyclerData = database.get(position);
-        Uri[] images = {recyclerData.styleUri, recyclerData.frontUri, recyclerData.backUri, recyclerData.sideUri};
-        for (Uri item : images) {
+        String[] images = {recyclerData.styleUri, recyclerData.frontUri, recyclerData.backUri, recyclerData.sideUri};
+        for (String item : images) {
             if (item != null) counter++;
         }
         return counter == 4;
@@ -134,10 +149,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public void insertItem(RecyclerData rdata, int position) {
         rdata.setCollar("collar" + Integer.toString(collarTag + 1));
-        rdata.setType(database.get(position-1).type,database.get(position-1).typePos );
-        rdata.setTag(database.get(position-1).tag);
+        rdata.setType(database.get(position - 1).type, database.get(position - 1).typePos);
+        rdata.setTag(database.get(position - 1).tag);
         rdata.setGender(database.get(position - 1).gender);
-        rdata.setSize("XS",0);
+        rdata.setSize("XS", 0);
         database.add(position, rdata);
         notifyItemInserted(position);
     }
@@ -150,7 +165,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         database = data;
         notifyDataSetChanged();
     }
-    public void clearDatabase(){ database.clear();}
+
+    public void clearDatabase() {
+        database.clear();
+    }
 
     public int getCollarTag() {
         return collarTag;
@@ -161,12 +179,42 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageURI = intent.getData();
-                database.get(imageAddPosition).setImageUri(imageID, selectedImageURI);
+                String path;
+
+                if (Build.VERSION.SDK_INT > 21) path = getPath(selectedImageURI);
+                else path = selectedImageURI.toString();
+
+              /*  if (requestCode == GALLERY_INTENT_CALLED) {
+                    selectedImageURI = intent.getData();
+                } else if (requestCode == GALLERY_KITKAT_INTENT_CALLED) {
+                    selectedImageURI = intent.getData();
+                    int takeFlags = intent.getFlags();
+                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    // Check for the freshest data.
+                    context.getContentResolver().takePersistableUriPermission(selectedImageURI, takeFlags);
+                }
+                path = getPath(selectedImageURI);*/
+                database.get(imageAddPosition).setImageUri(imageID, path);
                 notifyItemChanged(imageAddPosition);
             }
         }
     }
 
+    public String getPath(Uri uri) {
+        if (uri == null) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        return uri.getPath();
+    }
 
     public void createDeleteDialog(final int position) {
         AlertDialog.Builder adb = new AlertDialog.Builder(context);

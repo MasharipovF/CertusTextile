@@ -89,65 +89,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         findViewById(R.id.infobtn).setOnClickListener(this);
         findViewById(R.id.editbtn).setOnClickListener(this);
         initSwitcher();
-        /*
 
-
-        coverFlow = (FancyCoverFlow) findViewById(R.id.coverflow);
-
-        coverFlow.setMaxRotation(45);
-        coverFlow.setUnselectedAlpha(0.3f);
-        coverFlow.setUnselectedSaturation(0.0f);
-        coverFlow.setUnselectedScale(0.9f);
-
-        mData = new ArrayList<>();
-        mData.add(R.drawable.maykakac);
-        mData.add(R.drawable.futbolakakach);
-        mData.add(R.drawable.kurkakac);
-        mTexts = new ArrayList<>();
-        mTexts.add("Майки");
-        mTexts.add("Футболки");
-        mTexts.add("Куртки");
-
-
-        adapter = new CoverFlowAdapter(this, mData);
-        coverFlow.setAdapter(adapter);
-        coverFlow.setSelection(mData.size() / 2);
-        onTopIndex = coverFlow.getSelectedItemPosition();
-
-
-        coverFlow.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switcher.setText(mTexts.get(position));
-                onTopIndex = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        coverFlow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (isOnTop(position)) {
-                    Toast.makeText(getApplicationContext(), Integer.toString(position) + " is on Top", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-                    intent.putExtra("POS", position);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(getApplicationContext(), Integer.toString(position) + " is going on Top", Toast.LENGTH_SHORT).show();
-                    onTopIndex = position;
-                }
-            }
-        });
-
-        findViewById(R.id.leftbtn).setOnClickListener(this);
-        findViewById(R.id.rightbtn).setOnClickListener(this);
-        findViewById(R.id.slidebtn).setOnClickListener(this);
-        findViewById(R.id.infobtn).setOnClickListener(this);
-        findViewById(R.id.editbtn).setOnClickListener(this);*/
     }
 
 

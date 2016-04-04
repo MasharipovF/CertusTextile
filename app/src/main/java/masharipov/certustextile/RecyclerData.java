@@ -3,7 +3,7 @@ package masharipov.certustextile;
 import android.net.Uri;
 
 public class RecyclerData {
-    Uri styleUri, frontUri, sideUri, backUri;
+    String styleUri, frontUri, sideUri, backUri;
     String gender, tag, collar, size, type;
     int addID, sizePos, typePos, uniqueID;
     boolean isAddButton;
@@ -34,19 +34,19 @@ public class RecyclerData {
         size = string;
     }
 
-    public void setImageUri(String type, Uri uri) {
+    public void setImageUri(String type, String path) {
         switch (type) {
             case "style":
-                styleUri = uri;
+                styleUri = path;
                 break;
             case "front":
-                frontUri = uri;
+                frontUri = path;
                 break;
             case "back":
-                backUri = uri;
+                backUri = path;
                 break;
             case "side":
-                sideUri = uri;
+                sideUri = path;
                 break;
             default:
                 break;
@@ -73,27 +73,28 @@ public class RecyclerData {
     }
 
 
+
     //GETTERS
-    public Uri getImageUri(String type) {
-        Uri returnUri;
+    public String getImageUri(String type) {
+        String returnPath;
         switch (type) {
             case "style":
-                returnUri = styleUri;
+                returnPath = styleUri;
                 break;
             case "front":
-                returnUri = frontUri;
+                returnPath = frontUri;
                 break;
             case "back":
-                returnUri = backUri;
+                returnPath = backUri;
                 break;
             case "side":
-                returnUri = sideUri;
+                returnPath = sideUri;
                 break;
             default:
-                returnUri = null;
+                returnPath = null;
                 break;
         }
-        return returnUri;
+        return returnPath;
     }
 
 

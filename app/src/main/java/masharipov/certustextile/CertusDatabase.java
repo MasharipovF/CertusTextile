@@ -2,7 +2,6 @@ package masharipov.certustextile;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
@@ -48,6 +47,7 @@ public class CertusDatabase {
         sdb = externalDbOpenHelper.getWritableDatabase();
         try {
             if (data != null) {
+                Toast.makeText(context, "Data size " + Integer.toString(data.size()), Toast.LENGTH_SHORT).show();
                 for (int i = 0; i < data.size(); i++) {
                     uniqueID = Long.toString(System.currentTimeMillis());
                     if (data.get(i) != null) {
@@ -58,18 +58,20 @@ public class CertusDatabase {
                             content.put(TAG, recyclerData.tag);
                             content.put(COLLAR, recyclerData.collar);
                             if (recyclerData.styleUri != null)
-                                content.put(STYLEURI, recyclerData.styleUri.toString());
+                                content.put(STYLEURI, recyclerData.styleUri);
                             if (recyclerData.frontUri != null)
-                                content.put(FRONTURI, recyclerData.frontUri.toString());
+                                content.put(FRONTURI, recyclerData.frontUri);
                             if (recyclerData.backUri != null)
-                                content.put(BACKURI, recyclerData.backUri.toString());
+                                content.put(BACKURI, recyclerData.backUri);
                             if (recyclerData.sideUri != null)
-                                content.put(SIDEURI, recyclerData.sideUri.toString());
+                                content.put(SIDEURI, recyclerData.sideUri);
                             content.put(GENDER, recyclerData.gender);
                             content.put(SIZE, recyclerData.size);
                             sdb.insert(tableName, null, content);
-                            Toast.makeText(context, "values inserted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, tableName + " " + content.get(TAG) + " " + content.get(COLLAR) + " " + content.get(SIZE) + " " + content.get(GENDER), Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(context, "Database is empty", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
