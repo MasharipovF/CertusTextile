@@ -2,17 +2,19 @@ package masharipov.certustextile;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public ImageButton style, front, back, side, add;
     public Spinner size_spin;
-    public RecyclerAdapter.onItemClick listener;
+    public onItemClick listener;
 
-    public ViewHolder(View itemView, RecyclerAdapter.onItemClick listen) {
+    public ViewHolder(View itemView, final onItemClick listen) {
         super(itemView);
         listener = listen;
         style = (ImageButton) itemView.findViewById(R.id.addstyle);
@@ -27,6 +29,18 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         back.setOnClickListener(this);
         side.setOnClickListener(this);
         add.setOnClickListener(this);
+
+        size_spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                listener.onSizeSpinnerSelect(size_spin.getSelectedItem().toString(), size_spin.getSelectedItemPosition(), getAdapterPosition());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -45,10 +59,18 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
                 listener.onImageAdd(side, getAdapterPosition(), "side");
                 break;
             case R.id.add:
-                listener.onAddorRemove();
+                listener.onAddorRemove(getAdapterPosition());
                 break;
             default:
                 break;
         }
+    }
+
+    public interface onItemClick {
+        void onImageAdd(ImageButton img, int position, String imgID);
+
+        void onSizeSpinnerSelect(String item, int itemPos,  int position);
+
+        void onAddorRemove(int position);
     }
 }
