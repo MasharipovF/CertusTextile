@@ -11,7 +11,6 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,13 +19,11 @@ import android.widget.ViewSwitcher;
 import java.util.ArrayList;
 
 import coverflow.CoverFlowView;
-import coverflow.FancyCoverFlow;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     private ArrayList<Integer> mData;
     private ArrayList<String> mTexts;
-    private FancyCoverFlow coverFlow;
     private TextSwitcher switcher;
     private int onTopIndex = -1;
     private Intent intent;
