@@ -227,12 +227,14 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                android:padding="5dp"
+
                 android:src="@drawable/ic_action_edit_ik"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center "
+                android:gravity="center"
                 android:text="Изменить\nУдалить"/>
 
         </LinearLayout>
@@ -241,6 +243,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:id="@+id/fab"
                 android:orientation="vertical">
                 <ImageView
                     android:layout_width="80dp"
@@ -261,6 +264,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/lineier"
         android:layout_marginRight="5dp"
+        android:padding="16dp"
         android:layout_marginLeft="5dp"
         android:background="@drawable/backred"
         tools:listitem="@layout/addclothes_row" />

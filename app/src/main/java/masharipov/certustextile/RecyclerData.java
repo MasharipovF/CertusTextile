@@ -14,7 +14,7 @@ public class RecyclerData {
         backUri = null;
         sideUri = null;
         isAddButton = true;
-        addID = R.drawable.addphoto;
+        addID = R.drawable.ic_add_green_800_24dp;
         size = null;
         sizePos = 0;
         gender = null;

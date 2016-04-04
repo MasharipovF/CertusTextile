@@ -8,5 +8,6 @@
     <com.synnapps.carouselview.CarouselView
         android:id="@+id/fancyCoverFlowa"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        />
 </RelativeLayout>

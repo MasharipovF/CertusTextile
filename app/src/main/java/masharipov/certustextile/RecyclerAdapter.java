@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -53,7 +54,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         View view = inflater.inflate(R.layout.addclothes_row, parent, false);
         ViewHolder holder = new ViewHolder(view, new ViewHolder.onItemClick() {
             @Override
-            public void onImageAdd(ImageButton img, int position, String imgID) {
+            public void onImageAdd(ImageView img, int position, String imgID) {
 
                 imagePickerIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -83,7 +84,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
                 recyclerData = database.get(position);
                 if (recyclerData.isAddButton) {
                     //  if (isChildItemFull(position)) {
-                    recyclerData.setAddID(R.drawable.deletephoto);
+                    recyclerData.setAddID(R.drawable.ic_close_orange_100_24dp);
                     notifyItemChanged(position);
                     recyclerData.isAddButton = false;
                     insertItem(new RecyclerData(), database.size());
@@ -109,19 +110,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         if (current.styleUri != null)
             Picasso.with(context).load(Uri.parse(current.styleUri)).centerInside().resize(512, 512).into(holder.style);
         else
-            Picasso.with(context).load(R.drawable.addphoto).into(holder.style);
+            Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.style);
         if (current.frontUri != null)
             Picasso.with(context).load(Uri.parse(current.frontUri)).centerInside().resize(512, 512).into(holder.front);
         else
-            Picasso.with(context).load(R.drawable.addphoto).into(holder.front);
+            Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.front);
         if (current.backUri != null)
             Picasso.with(context).load(Uri.parse(current.backUri)).centerInside().resize(512, 512).into(holder.back);
         else
-            Picasso.with(context).load(R.drawable.addphoto).into(holder.back);
+            Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.back);
         if (current.sideUri != null)
             Picasso.with(context).load(Uri.parse(current.sideUri)).centerInside().resize(512, 512).into(holder.side);
         else
-            Picasso.with(context).load(R.drawable.addphoto).into(holder.side);
+            Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.side);
         Picasso.with(context).load(current.addID).into(holder.add);
         holder.size_spin.setAdapter(spinAdapter);
         holder.size_spin.setSelection(current.sizePos);

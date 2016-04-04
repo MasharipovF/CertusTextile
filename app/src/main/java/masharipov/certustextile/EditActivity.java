@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -42,9 +43,11 @@ public class EditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.modern_edit);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         collarGroup = (RadioGroup) findViewById(R.id.collarGroup);
         genderGroup = (RadioGroup) findViewById(R.id.genderGroup);
         tagEdit = (EditText) findViewById(R.id.itemTag);
@@ -89,10 +92,10 @@ public class EditActivity extends AppCompatActivity {
                         setData(adapter.getCollarTag(), 2);
                         tagEdit.setText(forDatabase.get(2).get(0).tag);
                         break;
-                  /*  case R.id.collar4:
+                    case R.id.collar4:
                         setData(adapter.getCollarTag(), 3);
                         tagEdit.setText(forDatabase.get(3).get(0).tag);
-                        break;*/
+                        break;
                 }
             }
         });
@@ -165,7 +168,7 @@ public class EditActivity extends AppCompatActivity {
         });*/
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveDialog(contextforDialog);

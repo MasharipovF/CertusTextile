@@ -4,24 +4,25 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 
 public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    public ImageButton style, front, back, side, add;
+    public ImageView style, front, back, side, add;
     public Spinner size_spin;
     public onItemClick listener;
 
     public ViewHolder(View itemView, final onItemClick listen) {
         super(itemView);
         listener = listen;
-        style = (ImageButton) itemView.findViewById(R.id.addstyle);
-        front = (ImageButton) itemView.findViewById(R.id.addfront);
-        back = (ImageButton) itemView.findViewById(R.id.addback);
-        side = (ImageButton) itemView.findViewById(R.id.addside);
-        add = (ImageButton) itemView.findViewById(R.id.add);
+        style = (ImageView) itemView.findViewById(R.id.addstyle);
+        front = (ImageView) itemView.findViewById(R.id.addfront);
+        back = (ImageView) itemView.findViewById(R.id.addback);
+        side = (ImageView) itemView.findViewById(R.id.addside);
+        add = (ImageView) itemView.findViewById(R.id.add);
         size_spin = (Spinner) itemView.findViewById(R.id.size_spin);
 
         style.setOnClickListener(this);
@@ -67,7 +68,7 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
     }
 
     public interface onItemClick {
-        void onImageAdd(ImageButton img, int position, String imgID);
+        void onImageAdd(ImageView img, int position, String imgID);
 
         void onSizeSpinnerSelect(String item, int itemPos,  int position);
 
