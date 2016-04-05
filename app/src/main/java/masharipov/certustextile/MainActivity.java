@@ -1,16 +1,21 @@
 package masharipov.certustextile;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -113,14 +118,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.leftbtn:
-                // coverFlow.moveBackward();
-                // onTopIndex--;
-
-               /* if(mCoverFlowView.getTopImageIndex()>0)
-                mCoverFlowView.setSelection(mCoverFlowView.getTopImageIndex()-1);
-                else mCoverFlowView.setSelection(mData.size()-1);*/
                 mCoverFlowView.toMoveBack();
-
                 break;
             case R.id.rightbtn:
                 mCoverFlowView.toMoveNext();
@@ -143,8 +141,34 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 adb.show();
                 break;
             case R.id.editbtn:
-                intent = new Intent(MainActivity.this, EditActivity.class);
-                startActivity(intent);
+                final Dialog dialog = new Dialog(this);
+                dialog.setContentView(R.layout.password_prompt);
+                dialog.setTitle("Введите пароль:");
+                dialog.setCancelable(true);
+                Button posBtn = (Button) dialog.findViewById(R.id.dialogPos);
+                Button negBtn = (Button) dialog.findViewById(R.id.dialogNeg);
+                final EditText userInput = (EditText) dialog.findViewById(R.id.editTextDialogUserInput);
+                userInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                posBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (userInput.getText().toString().equals("123456") && !TextUtils.isEmpty(userInput.getText())) {
+                            intent = new Intent(MainActivity.this, EditActivity.class);
+                            startActivity(intent);
+                            dialog.dismiss();
+                        } else {
+                            userInput.setError("Неправильный пароль (123456)");
+                        }
+                    }
+                });
+                negBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+
             default:
                 break;
         }

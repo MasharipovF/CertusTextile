@@ -166,6 +166,13 @@ public class EditActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });*/
+
+        findViewById(R.id.savebutton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveDialog(contextforDialog, SAVE_BUTTON);
+            }
+        });
     }
 
     private void setData(int receivedPos, int sentPos) {
@@ -207,15 +214,13 @@ public class EditActivity extends AppCompatActivity {
         if (isDatabaseEmpty()) {
             Toast.makeText(context, "База пуста, сначала добавьте товары", Toast.LENGTH_SHORT).show();
         } else {
-            AlertDialog.Builder adb = new AlertDialog.Builder(context);
+            final AlertDialog.Builder adb = new AlertDialog.Builder(context);
             adb.setTitle("Сохранить изменения?");
             adb.setMessage("Сохранить внесенные изменения в базу данных?");
             adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     forDatabase.clear();
-                    Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                    startActivity(intent);
                     finish();
                 }
 
@@ -226,8 +231,6 @@ public class EditActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     CertusDatabase certusDatabase = new CertusDatabase(forDatabase, typeSpinner.getSelectedItem().toString(), getApplicationContext());
                     certusDatabase.saveToDB();
-                    Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                    startActivity(intent);
                     finish();
                 }
             });
