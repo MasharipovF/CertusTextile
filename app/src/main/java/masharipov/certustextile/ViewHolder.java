@@ -6,6 +6,7 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -13,6 +14,7 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     public ImageView style, front, back, side, add;
     public Spinner size_spin;
+    public TextView addTxt;
     public onItemClick listener;
 
     public ViewHolder(View itemView, final onItemClick listen) {
@@ -23,6 +25,7 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         back = (ImageView) itemView.findViewById(R.id.addback);
         side = (ImageView) itemView.findViewById(R.id.addside);
         add = (ImageView) itemView.findViewById(R.id.add);
+        addTxt = (TextView) itemView.findViewById(R.id.addordel);
         size_spin = (Spinner) itemView.findViewById(R.id.size_spin);
 
         style.setOnClickListener(this);

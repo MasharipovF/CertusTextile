@@ -53,6 +53,7 @@ public class MyAdap extends coverflow.CoverFlowAdapter {
                 mData.get(2)));
 
 
+
     }
 
     // =============================================================================
@@ -65,6 +66,7 @@ public class MyAdap extends coverflow.CoverFlowAdapter {
 
     @Override
     public Bitmap getImage(int position) {
+        position%=A1.size();
         return A1.get(position);
     }
 

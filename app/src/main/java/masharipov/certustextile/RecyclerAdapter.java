@@ -85,6 +85,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
                 if (recyclerData.isAddButton) {
                     //  if (isChildItemFull(position)) {
                     recyclerData.setAddID(R.drawable.ic_close_orange_100_24dp);
+                    recyclerData.setAddText("Удалить");
                     notifyItemChanged(position);
                     recyclerData.isAddButton = false;
                     insertItem(new RecyclerData(), database.size());
@@ -124,6 +125,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         else
             Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.side);
         Picasso.with(context).load(current.addID).into(holder.add);
+        holder.addTxt.setText(current.addText);
         holder.size_spin.setAdapter(spinAdapter);
         holder.size_spin.setSelection(current.sizePos);
     }

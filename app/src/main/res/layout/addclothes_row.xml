@@ -124,7 +124,7 @@
                 android:scaleType="centerInside"
                 />
             <TextView
-                android:id="@+id/txt5"
+                android:id="@+id/addordel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"

@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private ArrayList<String> mTexts;
     private TextSwitcher switcher;
    private Intent intent;
+    int tempPos=-1;
     MyAdap adapter;
     CoverFlowView<MyAdap> mCoverFlowView;
     @Override
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
        setContentView(R.layout.act_moder);
-        switcher = (TextSwitcher) findViewById(R.id.textswitcher);
+        switcher = (TextSwitcher) findViewById(R.id.textswitcherr);
 
 
 
@@ -45,13 +46,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         mData.add(R.drawable.maykakac);
         mData.add(R.drawable.futbolakakach);
         mData.add(R.drawable.kurkakac);
-
         mTexts = new ArrayList<>();
         mTexts.add("Майки");
         mTexts.add("Футболки");
         mTexts.add("Куртки");
-
-
 
 
 
@@ -63,7 +61,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         mCoverFlowView.setCoverFlowListener(new CoverFlowView.CoverFlowListener<MyAdap>() {
             @Override
             public void imageOnTop(CoverFlowView<MyAdap> coverFlowView, int position, float left, float top, float right, float bottom) {
-                Toast.makeText(getApplicationContext(), Integer.toString(position) + " is "+mTexts.get(position), Toast.LENGTH_SHORT).show();
+               if (position!=tempPos) {
+                   switcher.setText(mTexts.get(position));
+                   tempPos=position;
+               }
 
             }
 
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             case R.id.leftbtn:
                    // coverFlow.moveBackward();
                    // onTopIndex--;
-                   // switcher.setText(mTexts.get(onTopIndex));
+
                /* if(mCoverFlowView.getTopImageIndex()>0)
                 mCoverFlowView.setSelection(mCoverFlowView.getTopImageIndex()-1);
                 else mCoverFlowView.setSelection(mData.size()-1);*/

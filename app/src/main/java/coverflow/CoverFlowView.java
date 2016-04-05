@@ -62,7 +62,7 @@ public class CoverFlowView<T extends CoverFlowAdapter> extends View {
 
     private static final int DURATION = 200;
 
-    protected final int INVALID_POSITION = -1;
+    protected final int INVALID_POSITION = 1;
 
     protected static final int DEFAULT_VISIBLE_IMAGES = 3;
 

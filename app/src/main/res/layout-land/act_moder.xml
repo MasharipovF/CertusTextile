@@ -87,13 +87,12 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/imageView9" />
         <TextSwitcher
-            android:id="@+id/textswitcher"
-            android:layout_width="wrap_content"
+            android:id="@+id/textswitcherr"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
 
-            android:layout_gravity="center"
             android:layout_marginBottom="55dp"
-            android:textSize="35sp"
+            android:textSize="100sp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"/>
 
@@ -102,6 +101,7 @@
             android:layout_height="wrap_content"
             android:text="делай сам себе дизайн ты ведь уникален"
             android:layout_marginBottom="20dp"
+            android:id="@+id/dds"
             android:textSize="20sp"
             android:textColor="#ffb74d"
             android:layout_alignParentBottom="true"
