@@ -173,6 +173,13 @@ public class EditActivity extends AppCompatActivity {
                 saveDialog(contextforDialog, SAVE_BUTTON);
             }
         });
+        findViewById(R.id.stickerBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EditActivity.this, NakleykaActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setData(int receivedPos, int sentPos) {

@@ -1,272 +1,315 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#ebebeb"
     tools:context="masharipov.certustextile.EditActivity">
+
     <LinearLayout
+        android:id="@+id/lineier"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@drawable/backtepa"
-        android:id="@+id/lineier"
-        android:padding="5dp"
         android:layout_margin="5dp"
-        android:orientation="horizontal">
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Тип товара:"
-            android:textSize="20sp"
-            android:layout_marginTop="10dp"
-            android:textColor="#212121"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="16dp"/>
-        <Spinner
-            android:id="@+id/type_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Воротник:"
-            android:textSize="20sp"
-            android:textColor="#212121"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="16dp"/>
-        <RadioGroup
-            android:id="@+id/collarGroup"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="5dp"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
+        android:background="@drawable/backtepa"
+        android:orientation="horizontal"
+        android:padding="5dp">
 
-            <RadioButton
-                android:id="@+id/collar1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=""
-
-                android:textSize="20sp" />
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/kruglivorot"
-                android:padding="7dp"
-                android:layout_weight="1"
-                android:scaleType="fitStart"/>
-            <RadioButton
-                android:id="@+id/collar2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=""
-
-                android:textSize="20sp"/>
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/vvorot"
-                android:padding="7dp"
-                android:layout_weight="1"
-                android:scaleType="fitStart"/>
-            <RadioButton
-                android:id="@+id/collar3"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=""
-
-                android:textSize="20sp" />
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/vorotpugi"
-                android:padding="7dp"
-                android:layout_weight="1"
-                android:scaleType="fitStart"/>
-            <RadioButton
-                android:id="@+id/collar4"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=""
-
-                android:textSize="20sp" />
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/shirokiyvorot"
-                android:padding="3dp"
-                android:layout_weight="1"
-                android:scaleType="fitStart"/>
-        </RadioGroup>
-
-    </LinearLayout>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/line"
-            android:scaleType="fitXY"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="ID товара:"
-                android:textSize="20sp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="10dp"
-                android:textColor="#212121"
+                android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="16dp"/>
+                android:text="Тип товара:"
+                android:textColor="#212121"
+                android:textSize="20sp" />
+
+            <Spinner
+                android:id="@+id/type_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="16dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Воротник:"
+                android:textColor="#212121"
+                android:textSize="20sp" />
+
+            <RadioGroup
+                android:id="@+id/collarGroup"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/collar1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text=""
+
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="7dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/kruglivorot" />
+
+                <RadioButton
+                    android:id="@+id/collar2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text=""
+
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="7dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/vvorot" />
+
+                <RadioButton
+                    android:id="@+id/collar3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text=""
+
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="7dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/vorotpugi" />
+
+                <RadioButton
+                    android:id="@+id/collar4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text=""
+
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="3dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/shirokiyvorot" />
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/line" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="ID товара:"
+                android:textColor="#212121"
+                android:textSize="20sp" />
+
             <EditText
                 android:id="@+id/itemTag"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
+
                 android:gravity="start|bottom"
                 android:hint="(уникальный код товара)"
-
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
                 android:textSize="20sp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="Пол:"
-                android:textSize="20sp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="10dp"
-                android:textColor="#212121"
+                android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="16dp"/>
+                android:text="Пол:"
+                android:textColor="#212121"
+                android:textSize="20sp" />
 
             <RadioGroup
                 android:id="@+id/genderGroup"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
+                android:layout_weight="1"
                 android:orientation="horizontal">
 
 
+                <RadioButton
+                    android:id="@+id/male"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1"
+                    android:text="Муж"
+                    android:textSize="14sp" />
 
-            <RadioButton
-                android:id="@+id/male"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:text="Муж"
-                android:layout_marginBottom="10dp"
-                android:textSize="14sp" />
+                <RadioButton
+                    android:id="@+id/female"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Жен"
+                    android:textSize="14sp" />
 
-            <RadioButton
-                android:id="@+id/female"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:text="Жен"
-                android:textSize="14sp" />
+                <RadioButton
+                    android:id="@+id/boy"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Дет/муж"
+                    android:textSize="14sp" />
 
-            <RadioButton
-                android:id="@+id/boy"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:text="Дет/муж"
-                android:textSize="14sp" />
                 <RadioButton
                     android:id="@+id/girl"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:text="Дет/жен"
                     android:textSize="14sp" />
             </RadioGroup>
 
         </LinearLayout>
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/line"
-            android:scaleType="fitXY"/>
+            android:scaleType="fitXY"
+            android:src="@drawable/line" />
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:padding="5dp"
 
-                android:src="@drawable/ic_action_edit_ik"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Изменить\nУдалить"/>
-
-        </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:id="@+id/fab"
                 android:orientation="vertical">
+
                 <ImageView
-                    android:id="@+id/savebutton"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:src="@drawable/ic_action_save"
-                    />
+                    android:padding="5dp"
+                    android:src="@drawable/ic_action_edit_ik" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Сохранить\nтовар"/>
+                    android:text="Изменить\nУдалить" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/stickerBtn"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_grade_grey_600_24dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Добавить\nнаклейки" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/savebutton"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_action_save" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Сохранить\nтовар" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_add"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/lineier"
-        android:layout_marginRight="5dp"
-        android:padding="16dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:background="@drawable/backred"
+        android:padding="16dp"
         tools:listitem="@layout/addclothes_row" />
 </RelativeLayout>
