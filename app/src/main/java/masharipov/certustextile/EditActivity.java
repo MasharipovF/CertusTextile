@@ -39,6 +39,7 @@ public class EditActivity extends AppCompatActivity {
     private List<List<RecyclerData>> forDatabase;
     private String collar, gender;
     private Context contextforDialog = this;
+    private int SAVE_BUTTON = 1, BACK_BUTTON = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,6 @@ public class EditActivity extends AppCompatActivity {
         forDatabase = new ArrayList<>(collarGroup.getChildCount());
         for (int i = 0; i < collarGroup.getChildCount(); i++)
             forDatabase.add(null);
-
         typeSpinner = (Spinner) findViewById(R.id.type_spinner);
         List<String> spinItems = new ArrayList<>();
         spinItems.add("Futbolka");
@@ -166,14 +166,6 @@ public class EditActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });*/
-
-
-        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveDialog(contextforDialog);
-            }
-        });
     }
 
     private void setData(int receivedPos, int sentPos) {
@@ -211,7 +203,7 @@ public class EditActivity extends AppCompatActivity {
         return mdata;
     }
 
-    private void saveDialog(Context context) {
+    private void saveDialog(Context context, int flag) {
         if (isDatabaseEmpty()) {
             Toast.makeText(context, "База пуста, сначала добавьте товары", Toast.LENGTH_SHORT).show();
         } else {
@@ -269,25 +261,46 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    public String getPath(Uri uri) {
-        if (uri == null) {
-            // TODO perform some logging or show user feedback
-            return null;
-        }
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        if (cursor != null) {
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        }
-        return uri.getPath();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         adapter.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // code here to show dialog
+        if (isDatabaseEmpty()) {
+            super.onBackPressed();
+        } else {
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            adb.setTitle("Сохранить изменения?");
+            adb.setMessage("Сохранить внесенные изменения в базу данных?");
+            adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    forDatabase.clear();
+                    finish();
+                }
+
+            });
+
+            adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    CertusDatabase certusDatabase = new CertusDatabase(forDatabase, typeSpinner.getSelectedItem().toString(), getApplicationContext());
+                    certusDatabase.saveToDB();
+                    finish();
+                }
+            });
+            adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            adb.setIcon(android.R.drawable.ic_dialog_info);
+            adb.create();
+            adb.show();
+        }
     }
 
 }

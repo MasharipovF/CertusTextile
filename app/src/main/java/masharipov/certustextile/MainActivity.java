@@ -25,10 +25,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private ArrayList<Integer> mData;
     private ArrayList<String> mTexts;
     private TextSwitcher switcher;
-   private Intent intent;
-    int tempPos=-1;
+    private Intent intent;
+    int tempPos = -1;
     MyAdap adapter;
     CoverFlowView<MyAdap> mCoverFlowView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,10 +37,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-       setContentView(R.layout.act_moder);
+        setContentView(R.layout.act_moder);
         switcher = (TextSwitcher) findViewById(R.id.textswitcherr);
-
-
 
 
         mData = new ArrayList<>();
@@ -52,19 +51,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         mTexts.add("Куртки");
 
 
-
         mCoverFlowView = (CoverFlowView<MyAdap>) findViewById(R.id.coverflow);
-       adapter = new MyAdap(this,mData);
+        adapter = new MyAdap(this, mData);
         mCoverFlowView.setAdapter(adapter);
         mCoverFlowView.setDrawingCacheEnabled(true);
         mCoverFlowView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
         mCoverFlowView.setCoverFlowListener(new CoverFlowView.CoverFlowListener<MyAdap>() {
             @Override
             public void imageOnTop(CoverFlowView<MyAdap> coverFlowView, int position, float left, float top, float right, float bottom) {
-               if (position!=tempPos) {
-                   switcher.setText(mTexts.get(position));
-                   tempPos=position;
-               }
+                if (position != tempPos) {
+                    switcher.setText(mTexts.get(position));
+                    tempPos = position;
+                }
 
             }
 
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                 intent.putExtra("POS", position);
                 startActivity(intent);
-                Toast.makeText(getApplicationContext(),Integer.toString(position),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
 
             }
 
@@ -115,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.leftbtn:
-                   // coverFlow.moveBackward();
-                   // onTopIndex--;
+                // coverFlow.moveBackward();
+                // onTopIndex--;
 
                /* if(mCoverFlowView.getTopImageIndex()>0)
                 mCoverFlowView.setSelection(mCoverFlowView.getTopImageIndex()-1);
