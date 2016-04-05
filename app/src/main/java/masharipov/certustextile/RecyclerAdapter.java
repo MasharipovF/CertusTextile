@@ -85,7 +85,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
                 if (recyclerData.isAddButton) {
                     //  if (isChildItemFull(position)) {
                     recyclerData.setAddID(R.drawable.ic_close_orange_100_24dp);
-                    recyclerData.setAddText("Удалить");
                     notifyItemChanged(position);
                     recyclerData.isAddButton = false;
                     insertItem(new RecyclerData(), database.size());
@@ -125,7 +124,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         else
             Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.side);
         Picasso.with(context).load(current.addID).into(holder.add);
-        holder.addTxt.setText(current.addText);
         holder.size_spin.setAdapter(spinAdapter);
         holder.size_spin.setSelection(current.sizePos);
     }
@@ -187,16 +185,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
                 if (Build.VERSION.SDK_INT > 21) path = getPath(selectedImageURI);
                 else path = selectedImageURI.toString();
 
-              /*  if (requestCode == GALLERY_INTENT_CALLED) {
-                    selectedImageURI = intent.getData();
-                } else if (requestCode == GALLERY_KITKAT_INTENT_CALLED) {
-                    selectedImageURI = intent.getData();
-                    int takeFlags = intent.getFlags();
-                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    // Check for the freshest data.
-                    context.getContentResolver().takePersistableUriPermission(selectedImageURI, takeFlags);
-                }
-                path = getPath(selectedImageURI);*/
                 database.get(imageAddPosition).setImageUri(imageID, path);
                 notifyItemChanged(imageAddPosition);
             }
