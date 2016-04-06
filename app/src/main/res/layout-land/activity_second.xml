@@ -117,7 +117,7 @@
                         android:layout_marginRight="8dp"
                         android:layout_marginLeft="8dp"
                         android:gravity="center"
-                        android:text="10"/>
+                        android:text="15"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
