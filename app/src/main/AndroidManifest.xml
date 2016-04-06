@@ -3,7 +3,8 @@
     package="masharipov.certustextile">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -31,7 +32,7 @@
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustResize"></activity>
         <activity
-            android:name=".NakleykaActivity"
+            android:name=".StickerAdd.NakleykaActivity"
             android:screenOrientation="landscape">
 
         </activity>

@@ -3,31 +3,23 @@ package masharipov.certustextile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import masharipov.certustextile.StickerAdd.NakleykaActivity;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -237,7 +229,7 @@ public class EditActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     CertusDatabase certusDatabase = new CertusDatabase(forDatabase, typeSpinner.getSelectedItem().toString(), getApplicationContext());
-                    certusDatabase.saveToDB();
+                    certusDatabase.saveGoodsToDB();
                     finish();
                 }
             });
@@ -298,7 +290,7 @@ public class EditActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     CertusDatabase certusDatabase = new CertusDatabase(forDatabase, typeSpinner.getSelectedItem().toString(), getApplicationContext());
-                    certusDatabase.saveToDB();
+                    certusDatabase.saveGoodsToDB();
                     finish();
                 }
             });

@@ -1,7 +1,5 @@
 package masharipov.certustextile;
 
-import android.net.Uri;
-
 public class RecyclerData {
     String styleUri, frontUri, sideUri, backUri;
     String gender, tag, collar, size, type, addText;
