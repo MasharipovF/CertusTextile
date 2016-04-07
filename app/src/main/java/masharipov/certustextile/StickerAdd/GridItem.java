@@ -1,20 +1,18 @@
-package masharipov.certustextile.StickerAdd;
+package masharipov.certustextile.stickeradd;
 
 /**
  * Created by Farrukh on 06.04.2016.
  */
 public class GridItem {
-    String TAG, URI;
-    int ID;
-    boolean delButtonVisible;
+    String TAG, URI, ID;
 
     public GridItem() {
         URI = null;
         TAG = null;
-        delButtonVisible = false;
+        ID = null;
     }
 
-    public void setID(int id) {
+    public void setID(String id) {
         ID = id;
     }
 
@@ -34,7 +32,7 @@ public class GridItem {
         return TAG;
     }
 
-    public int getID() {
+    public String getID() {
         return ID;
     }
 }

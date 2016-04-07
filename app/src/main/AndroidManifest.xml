@@ -12,8 +12,35 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        //first activity
         <activity
-            android:name=".MainActivity"
+            android:name=".main.MainActivity"
+            android:screenOrientation="landscape">
+
+        </activity>
+
+        //slideshow
+        <activity
+            android:name=".main.SlideshowActivity"
+            android:screenOrientation="landscape" />
+
+        //second
+        <activity
+            android:name=".SecondActivity"
+            android:screenOrientation="landscape" />
+
+        //edit
+        <activity
+            android:name=".edit.EditActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+
+        </activity>
+
+        //stickeradd
+        <activity
+            android:name=".stickeradd.NakleykaActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,21 +48,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SlideshowActivity"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".SecondActivity"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".EditActivity"
-            android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
-        <activity
-            android:name=".StickerAdd.NakleykaActivity"
-            android:screenOrientation="landscape">
 
-        </activity>
+
     </application>
 
 </manifest>

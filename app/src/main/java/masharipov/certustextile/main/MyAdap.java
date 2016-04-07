@@ -15,7 +15,7 @@
  *    limitations under the License.
  */
 
-package masharipov.certustextile;
+package masharipov.certustextile.main;
 
 import android.content.Context;
 import android.content.res.Resources;

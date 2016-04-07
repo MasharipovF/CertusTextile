@@ -1,4 +1,4 @@
-package masharipov.certustextile.StickerAdd;
+package masharipov.certustextile.stickeradd;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,10 +10,10 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -24,9 +24,10 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import masharipov.certustextile.StickerAdd.DraggableGridAdapter.GridHolder;
+import masharipov.certustextile.stickeradd.DraggableGridAdapter.GridHolder;
 import masharipov.certustextile.R;
 
 public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
@@ -35,7 +36,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     private Context context;
     private List<GridItem> stickerList;
     private Intent imagePickerIntent;
-    private int imageAddPosition = -1, SELECT_PICTURE = 1;
+    private int SELECT_PICTURE = 1;
 
 
     public static class GridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
@@ -59,9 +60,6 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
                 case R.id.gridBtn:
                     listener.btnClick(getAdapterPosition());
                     break;
-                case R.id.gridImg:
-                    listener.imgClick(getAdapterPosition(), imgBtn);
-                    break;
             }
 
 
@@ -71,7 +69,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     public interface onItemClick {
         void btnClick(int position);
 
-        void imgClick(int position, ImageButton img);
+        // void imgClick(int position, ImageButton img);
     }
 
 
@@ -107,14 +105,6 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
                 adb.create();
                 adb.show();
             }
-
-            @Override
-            public void imgClick(int position, ImageButton img) {
-                imagePickerIntent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                imageAddPosition = position;
-                ((Activity) context).startActivityForResult(imagePickerIntent, SELECT_PICTURE);
-            }
         });
     }
 
@@ -122,10 +112,6 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     public void onBindViewHolder(GridHolder holder, int position) {
         GridItem current = stickerList.get(position);
         // set text
-        if (!current.delButtonVisible)
-            holder.btn.setVisibility(View.GONE);
-        else
-            holder.btn.setVisibility(View.VISIBLE);
 
         if (current.getURI() != null)
             Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imgBtn);
@@ -152,11 +138,24 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         }
     }
 
-    public void insertItem(int position) {
+    public List<GridItem> getStickerList() {
+        return stickerList;
+    }
+
+    public void insertItem(String path) {
+        String uniqueID = Long.toString(System.currentTimeMillis());
         GridItem item = new GridItem();
-        item.setID(stickerList.get(position-1).getID()+1);
-        stickerList.add(position, item);
-        notifyItemInserted(position);
+        if (stickerList.size() == 0) {
+            item.setID(uniqueID);
+            item.setURI(path);
+            stickerList.add(item);
+            notifyItemInserted(0);
+        } else {
+            item.setID(uniqueID);
+            item.setURI(path);
+            stickerList.add(item);
+            notifyItemInserted(stickerList.size() - 1);
+        }
     }
 
 
@@ -166,19 +165,15 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageURI = intent.getData();
                 String path;
 
-                if (Build.VERSION.SDK_INT > 21) path = getPath(selectedImageURI);
-                else path = selectedImageURI.toString();
-                stickerList.get(stickerList.size() - 1).setURI(path);
-                stickerList.get(stickerList.size() - 1).delButtonVisible = true;
-                notifyItemChanged(imageAddPosition);
-                if (path != null)
-                    insertItem(stickerList.size());
+              path = selectedImageURI.toString();
+                if (path != null) {
+                    insertItem(path);
+                }
             }
         }
     }
@@ -198,10 +193,15 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         return uri.getPath();
     }
 
+    public void pickImage() {
+        imagePickerIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        ((Activity) context).startActivityForResult(imagePickerIntent, SELECT_PICTURE);
+    }
 
     @Override
     public long getItemId(int position) {
-        return stickerList.get(position).getID();
+        return Long.parseLong(stickerList.get(position).getID());
     }
 
     @Override

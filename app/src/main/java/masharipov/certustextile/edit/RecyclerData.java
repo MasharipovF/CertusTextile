@@ -1,4 +1,6 @@
-package masharipov.certustextile;
+package masharipov.certustextile.edit;
+
+import masharipov.certustextile.R;
 
 public class RecyclerData {
     String styleUri, frontUri, sideUri, backUri;
@@ -70,7 +72,6 @@ public class RecyclerData {
         collar = string;
     }
 
-
     public void setTag(String string) {
         tag = string;
     }
@@ -99,6 +100,21 @@ public class RecyclerData {
         return returnPath;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public String getCollar() {
+        return collar;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public String getGender() {
+        return gender;
+    }
 
     public int getAddID() {
         return addID;

@@ -1,4 +1,4 @@
-package masharipov.certustextile;
+package masharipov.certustextile.edit;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import masharipov.certustextile.R;
 
 
 public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

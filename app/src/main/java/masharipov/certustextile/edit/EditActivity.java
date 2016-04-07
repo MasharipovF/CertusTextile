@@ -1,4 +1,4 @@
-package masharipov.certustextile;
+package masharipov.certustextile.edit;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,7 +19,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import masharipov.certustextile.StickerAdd.NakleykaActivity;
+import masharipov.certustextile.CertusDatabase;
+import masharipov.certustextile.R;
+import masharipov.certustextile.stickeradd.NakleykaActivity;
 
 public class EditActivity extends AppCompatActivity {
 

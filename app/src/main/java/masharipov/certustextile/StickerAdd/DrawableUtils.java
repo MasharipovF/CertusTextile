@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package masharipov.certustextile.StickerAdd;
+package masharipov.certustextile.stickeradd;
 
 import android.graphics.drawable.Drawable;
 

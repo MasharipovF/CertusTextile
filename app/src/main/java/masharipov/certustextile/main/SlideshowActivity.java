@@ -1,4 +1,4 @@
-package masharipov.certustextile;
+package masharipov.certustextile.main;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
+
+import masharipov.certustextile.R;
 
 public class SlideshowActivity extends AppCompatActivity {
     CarouselView carouselView;

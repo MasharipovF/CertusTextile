@@ -1,4 +1,4 @@
-package masharipov.certustextile;
+package masharipov.certustextile.main;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -24,6 +24,9 @@ import android.widget.ViewSwitcher;
 import java.util.ArrayList;
 
 import coverflow.CoverFlowView;
+import masharipov.certustextile.R;
+import masharipov.certustextile.SecondActivity;
+import masharipov.certustextile.edit.EditActivity;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
 

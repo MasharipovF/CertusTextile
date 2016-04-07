@@ -1,34 +1,29 @@
-package masharipov.certustextile;
+package masharipov.certustextile.edit;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import masharipov.certustextile.R;
 
 
 public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
@@ -192,17 +187,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
 
                 if (Build.VERSION.SDK_INT > 21) path = getPath(selectedImageURI);
                 else path = selectedImageURI.toString();
-
-              /*  if (requestCode == GALLERY_INTENT_CALLED) {
-                    selectedImageURI = intent.getData();
-                } else if (requestCode == GALLERY_KITKAT_INTENT_CALLED) {
-                    selectedImageURI = intent.getData();
-                    int takeFlags = intent.getFlags();
-                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    // Check for the freshest data.
-                    context.getContentResolver().takePersistableUriPermission(selectedImageURI, takeFlags);
-                }
-                path = getPath(selectedImageURI);*/
                 database.get(imageAddPosition).setImageUri(imageID, path);
                 notifyItemChanged(imageAddPosition);
             }
@@ -211,7 +195,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public String getPath(Uri uri) {
         if (uri == null) {
-            // TODO perform some logging or show user feedback
             return null;
         }
         String[] projection = {MediaStore.Images.Media.DATA};
