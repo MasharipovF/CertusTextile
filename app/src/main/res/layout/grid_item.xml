@@ -4,19 +4,28 @@
     android:layout_width="200dp"
     android:layout_height="200dp">
 
-    <ImageButton
+    <ImageView
         android:id="@+id/gridImg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_add_green_800_24dp" />
+        android:background="@android:color/transparent" />
 
     <ImageButton
-        android:id="@+id/gridBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:id="@+id/gridDelBtn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="top|right"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_close_red_800_24dp"
-        android:text="Удалить" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close_red_800_24dp" />
+
+    <ImageButton
+        android:id="@+id/gridEditBtn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="top|left"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_edit_amber_800_24dp" />
+
 </FrameLayout>

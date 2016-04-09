@@ -247,9 +247,11 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/goodsBtn"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:padding="5dp"
+                    android:clickable="true"
                     android:src="@drawable/ic_action_edit_ik" />
 
                 <TextView
@@ -277,7 +279,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Добавить\nнаклейки" />
+                    android:text="Наклейки" />
             </LinearLayout>
 
             <LinearLayout
@@ -297,7 +299,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Сохранить\nтовар" />
+                    android:text="Сохранить" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

@@ -133,6 +133,7 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
+        // keeping it for some reasons
       /*  tagEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -171,9 +172,19 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(EditActivity.this, NakleykaActivity.class);
+                intent.putExtra("TYPE", "STICKER");
                 startActivity(intent);
             }
         });
+        findViewById(R.id.goodsBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EditActivity.this, NakleykaActivity.class);
+                intent.putExtra("TYPE", "GOODS");
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void setData(int receivedPos, int sentPos) {

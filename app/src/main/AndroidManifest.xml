@@ -17,11 +17,7 @@
         <activity
             android:name=".main.MainActivity"
             android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         //slideshow
@@ -39,15 +35,17 @@
             android:name=".edit.EditActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         //stickeradd
         <activity
             android:name=".stickeradd.NakleykaActivity"
-            android:screenOrientation="landscape">
-
-        </activity>
+            android:screenOrientation="landscape"></activity>
 
 
     </application>

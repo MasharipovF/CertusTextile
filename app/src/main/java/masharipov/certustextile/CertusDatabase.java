@@ -24,6 +24,8 @@ public class CertusDatabase {
     private String tag, tableName;
     private Context context;
     private String DB_NAME = "certusDB.db";
+    private String tableNames[] = {"Futbolka", "Sviter", "Jemper", "Pidjak"};
+    private boolean isFromEdit = true;
 
     public CertusDatabase(Context ctx) {
         context = ctx;
@@ -104,24 +106,18 @@ public class CertusDatabase {
         String tableName = "Sticker";
         ExternalDbOpenHelper externalDbOpenHelper = new ExternalDbOpenHelper(context, DB_NAME);
         sdb = externalDbOpenHelper.getWritableDatabase();
+        sdb.delete(tableName, null, null);
 
-        try {
-            if (stickers != null) {
-                Toast.makeText(context, "Sticker size " + Integer.toString(stickers.size()), Toast.LENGTH_SHORT).show();
-                for (int i = 0; i < stickers.size(); i++) {
-                    ContentValues cv = new ContentValues();
-                    cv.put(ID, stickers.get(i).getID());
-                    cv.put(TAG, stickers.get(i).getTAG());
-                    cv.put(URI, stickers.get(i).getURI());
-                    long rowid = sdb.insert(tableName, null, cv);
-                    Toast.makeText(context, "Item " + Integer.toString(i) + "\n ID " + cv.getAsString(ID) + "\nTAG " + cv.getAsString(TAG) + "\nURI " + cv.getAsString(URI) + "\n ROW NUMBER" + Long.toString(rowid), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(context, "Sticker Database is empty", Toast.LENGTH_SHORT).show();
+        if (stickers != null) {
+            for (int i = 0; i < stickers.size(); i++) {
+                ContentValues cv = new ContentValues();
+                cv.put(ID, stickers.get(i).getID());
+                cv.put(TAG, stickers.get(i).getTAG());
+                cv.put(URI, stickers.get(i).getURI());
+                sdb.insert(tableName, null, cv);
             }
-
-        } catch (Exception e) {
-            Toast.makeText(context, "Sticker" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Sticker Database is empty", Toast.LENGTH_SHORT).show();
         }
     }
 

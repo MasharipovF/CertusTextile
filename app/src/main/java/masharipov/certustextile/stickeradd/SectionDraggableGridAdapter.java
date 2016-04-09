@@ -25,11 +25,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import masharipov.certustextile.stickeradd.DraggableGridAdapter.GridHolder;
 import masharipov.certustextile.R;
+import masharipov.certustextile.stickeradd.SectionDraggableGridAdapter.GridHolder;
 
 
-public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
+public class SectionDraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         implements DraggableItemAdapter<GridHolder> {
 
     private Context context;
@@ -81,7 +81,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     }
 
 
-    public DraggableGridAdapter(List<GridItem> list, Context ctx, int editVisibility) {
+    public SectionDraggableGridAdapter(List<GridItem> list, Context ctx, int editVisibility) {
         context = ctx;
         stickerList = list;
         oldStickerList = list;
@@ -217,7 +217,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
     public void pickImage() {
         imagePickerIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         ((Activity) context).startActivityForResult(imagePickerIntent, SELECT_PICTURE);
     }
 
