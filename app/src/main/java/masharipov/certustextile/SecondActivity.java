@@ -31,16 +31,18 @@ public class SecondActivity extends AppCompatActivity {
     TextView razmer, povorot;
     ItemFragment oldi, yon, orqa;
     float razmer_baland = 0, razmer_eni = 0;
+    float rotate_baland = 0, rotate_eni = 0;
     int razmerC[] = {0, 0};
+    int rotatC[] = {0, 0};
     float povorotX = 0, povorotY = 0;
     int razmerPol[] = {15, 15, 15};
+    int povorotMas[] = {0, 0, 0};
     Vibrator vibr;
     RecyclerView tovarRecycler;
 
     // recycler uchun
     int tovarBoyi, tovarEni;
 
-    private static final float KATTALASHTIRISH_BIRLIK = 0.05f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,21 @@ public class SecondActivity extends AppCompatActivity {
         razmer = (TextView) findViewById(R.id.razmerpolzunok);
         povorot = (TextView) findViewById(R.id.povorot);
         timerHand = new Handler();
-        oldi = new ItemFragment(R.drawable.futblka);
+        oldi = new ItemFragment(R.drawable.futblka, new ItemFragment.eventZOOM() {
+            @Override
+            public void EVZ(int t) {
+                vibr.vibrate(30);
+                razmer.setText(Integer.toString(t));
+                razmerPol[current_status]=t;
+            }
+
+            @Override
+            public void EVR(int t) {
+                vibr.vibrate(30);
+                povorot.setText(Integer.toString(t));
+                povorotMas[current_status]=t;
+            }
+        });
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.frame, oldi, "OLDI")
@@ -117,16 +133,21 @@ public class SecondActivity extends AppCompatActivity {
 
                     current_status = 1;
                     razmer.setText(Integer.toString(razmerPol[current_status]));
+                    povorot.setText(Integer.toString(povorotMas[current_status]));
                 } else if (current_status == 1) {
                     getSupportFragmentManager()
                             .beginTransaction().replace(R.id.frame, orqa).commit();
                     current_status = 2;
                     razmer.setText(Integer.toString(razmerPol[current_status]));
+                    povorot.setText(Integer.toString(povorotMas[current_status]));
+
                 } else if (current_status == 2) {
                     getSupportFragmentManager()
                             .beginTransaction().replace(R.id.frame, oldi).commit();
                     current_status = 0;
                     razmer.setText(Integer.toString(razmerPol[current_status]));
+                    povorot.setText(Integer.toString(povorotMas[current_status]));
+
 
                 }
             }
@@ -140,14 +161,45 @@ public class SecondActivity extends AppCompatActivity {
         //bu prosto initsalizovat qivoladi
         // tovar o`zgarganda fragmentdigi changeTovar(URI) funksiyasi chaqiriladi
 
-        yon = new ItemFragment(R.drawable.futblkaikki);
-        orqa = new ItemFragment(R.drawable.futblkaorqa);
+        yon = new ItemFragment(R.drawable.futblkaikki, new ItemFragment.eventZOOM() {
+            @Override
+            public void EVZ(int t) {
+                vibr.vibrate(30);
+                razmer.setText(Integer.toString(t));
+                razmerPol[current_status]=t;
+
+            }
+
+            @Override
+            public void EVR(int t) {
+                vibr.vibrate(30);
+                povorot.setText(Integer.toString(t));
+                povorotMas[current_status]=t;
+            }
+        });
+        orqa = new ItemFragment(R.drawable.futblkaorqa, new ItemFragment.eventZOOM() {
+            @Override
+            public void EVZ(int t) {
+                vibr.vibrate(30);
+                razmer.setText(Integer.toString(t));
+                razmerPol[current_status]=t;
+            }
+
+            @Override
+            public void EVR(int t) {
+                vibr.vibrate(30);
+                povorot.setText(Integer.toString(t));
+                povorotMas[current_status]=t;
+            }
+        });
     }
 
     float startAction_DownX = 0;
     float startAction_DownY = 0;
     float scoree = 0;
-
+    float scoree1 = 0;
+    boolean focRaz=false;
+    boolean focRot=false;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float evX = event.getX();
@@ -157,34 +209,78 @@ public class SecondActivity extends AppCompatActivity {
             case MotionEvent.ACTION_DOWN:
                 startAction_DownX = evX;
                 startAction_DownY = evY;
+                if (startAction_DownY + 20 > rotatC[1] && startAction_DownY < rotatC[1] + rotate_baland && startAction_DownX > rotatC[0] && startAction_DownX < rotatC[0] + rotate_eni) {
+                focRot=true;
+                    Log.d("HELlo","aaas");
+                }
+                else if (startAction_DownY + 20 > razmerC[1] && startAction_DownY < razmerC[1] + razmer_baland && startAction_DownX > razmerC[0] && startAction_DownX < razmerC[0] + razmer_eni) {
+                focRaz=true;
+                    Log.d("HELlo","sass");
+                }
+
                 scoree = startAction_DownX;
                 break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+
+
+                break;
             case MotionEvent.ACTION_MOVE:
-                if (startAction_DownY + 20 > razmerC[1] && startAction_DownY < razmerC[1] + razmer_baland && startAction_DownX > razmerC[0] && startAction_DownX < razmerC[0] + razmer_eni) {
+               if(focRot){
                     ItemFragment temp03 = (ItemFragment) getSupportFragmentManager().
                             findFragmentById(R.id.frame);
 
-                    if (scoree + 70 < evX && razmerPol[current_status] < 30) {
+                    if (scoree + 50 < evX ) {
                         scoree = evX;
-                        scoree += 70;
-                        razmerPol[current_status]++;
+                        scoree += 50;
+                        //  razmerPol[current_status]++;
                         // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
-                        razmer.setText(Integer.toString(razmerPol[current_status]));
+                        //razmer.setText(Integer.toString(razmerPol[current_status]));
 
-                        temp03.plusSize(KATTALASHTIRISH_BIRLIK);
+                        temp03.rotationPlus();
 
-                        vibr.vibrate(30);
+
+                        Log.d("touchl", Integer.toString(rotatC[current_status]));
+                    }
+                    else if (scoree - 50 > evX ) {
+                        scoree =evX ;
+                        scoree -= 50;
+                        //   razmerPol[current_status]--;
+                        temp03.rotationMinus();
+
+                        // razmer.setText(Integer.toString(razmerPol[current_status]));
+
+                        Log.d("touchl", Integer.toString(rotatC[current_status]));
+
+                    }
+                    // Log.d("touchl",Float.toString(event.getX())+"x"+Float.toString(event.getY()));
+
+                }
+
+                if(focRaz){
+                     ItemFragment temp03 = (ItemFragment) getSupportFragmentManager().
+                            findFragmentById(R.id.frame);
+
+                    if (scoree + 50 < evX && razmerPol[current_status] < 50) {
+                        scoree = evX;
+                       scoree += 50;
+                      //  razmerPol[current_status]++;
+                        // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
+                        //razmer.setText(Integer.toString(razmerPol[current_status]));
+
+                        temp03.plusSize();
+
+
                         Log.d("touchl", Integer.toString(razmerPol[current_status]));
                     }
-                    if (scoree - 70 > evX && razmerPol[current_status] > 0) {
-                        scoree = evX;
-                        scoree -= 70;
-                        razmerPol[current_status]--;
-                        temp03.minusSize(KATTALASHTIRISH_BIRLIK);
+                    else if (scoree - 50 > evX && razmerPol[current_status] > 0) {
+                        scoree =evX ;
+                        scoree -= 50;
+                     //   razmerPol[current_status]--;
+                        temp03.minusSize();
 
-                        razmer.setText(Integer.toString(razmerPol[current_status]));
+                       // razmer.setText(Integer.toString(razmerPol[current_status]));
 
-                        vibr.vibrate(30);
+
                         Log.d("touchl", Integer.toString(razmerPol[current_status]));
 
                     }
@@ -193,7 +289,9 @@ public class SecondActivity extends AppCompatActivity {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                scoree = 0;
+                focRaz=false;
+                focRot=false;
+                scoree=0;
                 break;
         }
         return true;
@@ -208,10 +306,13 @@ public class SecondActivity extends AppCompatActivity {
         razmer_baland = razmer.getHeight();
         razmer_eni = razmer.getWidth();
 
+        povorot.getLocationOnScreen(rotatC);
 
-        Log.d("touchl", Integer.toString(razmerC[0]) + "xXy" + Integer.toString(razmerC[1]));
-        Log.d("touchl", Float.toString(razmer_eni) + "wXh" + Float.toString(razmer_baland));
+        rotate_baland = povorot.getHeight();
+        rotate_eni = povorot.getWidth();
 
+        Log.d("touchhl", Integer.toString(razmerC[0]) + "xxx" + Integer.toString(razmerC[1]));
+        Log.d("touchhl", Float.toString(razmer_eni) + "xxx" + Float.toString(razmer_baland));
 
         tovarRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
@@ -51,7 +52,7 @@ public class ItemFragment extends Fragment{
     //Rabota s nakleykoy
     int stat_baland=200;
     int stat_eni=200;
-
+    MyView A1;
     public float xi=0,yi=0;
 
     public int frameBalandligi;
@@ -80,20 +81,20 @@ public class ItemFragment extends Fragment{
         Log.d("lifee","onCreate");
         if(voqtinchali_sticker!=0) {
             bitSticker = BitmapFactory.decodeResource(getResources(), voqtinchali_sticker);
-            bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,false);
+      //      bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,false);
 
         }
             bitTovar = BitmapFactory.decodeResource(getResources(), voqtinchali_resurs);
 
     }
-
+    eventZOOM peredacha;
     public ItemFragment(){
 
     }
-    public  ItemFragment(int res){
+    public  ItemFragment(int res,eventZOOM eve){
         voqtinchali_resurs=res;
         This=getActivity();
-
+        peredacha=eve;
 
     }
     public  ItemFragment(Uri pathFile){
@@ -115,7 +116,8 @@ public class ItemFragment extends Fragment{
                 if(bitSticker!=null){
                 frameEni=frameSt.getWidth();
                 frameBalandligi=frameSt.getHeight();
-                 frameSt.addView(new MyView(This));
+                 A1=new MyView(This);
+                 frameSt.addView(A1);
                 Log.d("lifee", "Frame size  "+frameEni+"x"+frameBalandligi);}
                 else Log.d("lifee","Null bitmap sticker");
             }
@@ -157,84 +159,149 @@ public class ItemFragment extends Fragment{
         frameEni=frameSt.getWidth();
         frameBalandligi=frameSt.getHeight();
         bitSticker=BitmapFactory.decodeResource(getResources(), voqtinchali_sticker);
-        bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,true);
+     //   bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,true);
         frameSt.removeAllViews();
-        frameSt.addView(new MyView(This));
+        A1=new MyView(This);
+        frameSt.addView(A1);
 
         // return true esli sobitiya proizowlo false esli vozniklo owibka
         return true;
     }
-    public void plusSize(float A){
-        if(voqtinchali_sticker!=0){
-        stat_baland*=(1+A);
-        stat_eni*=(1+A);
-        bitSticker.recycle();
-        bitSticker=BitmapFactory.decodeResource(getResources(), voqtinchali_sticker);
-        bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,true);
-        frameSt.removeAllViews();
-             frameSt.addView(new MyView(This));
-        }
+    public interface eventZOOM{
+        void EVZ(int t);
+        void EVR(int t);
+    }
+    public void rotationPlus(){
+        A1.rotationPlus();
+    }
+    public void rotationMinus(){
+        A1.rotationMinus();
+    }
+    public void plusSize(){
+         A1.scalePlus();
+
 
     }
 
-    public void minusSize(float A){
-        if(voqtinchali_sticker!=0){
-            stat_baland*=(1-A);
-            stat_eni*=(1-A);
-            bitSticker.recycle();
-            bitSticker=BitmapFactory.decodeResource(getResources(), voqtinchali_sticker);
-            bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,true);
-            frameSt.removeAllViews();
-            frameSt.addView(new MyView(This));
-        }
+    public void minusSize(){
+       A1.scaleMinus();
+
 
     }
-    class MyView extends View {
+    float scaleHeight=1,scaleWidht=1;
+    float rotatt=0;
+    class MyView extends View  {
 
         Paint p;
+        Matrix mmatrix ;
         // координаты для рисования квадрата
 
-        int side_en = stat_eni;
-        int side_ba = stat_baland;
+        float side_en = stat_eni;
+        float side_ba = stat_baland;
+
 
 
         // переменные для перетаскивания
         boolean drag = false;
         float dragX = 0;
         float dragY = 0;
+        long rotation=0;
+        public float scalePlus(){
+            if(side_en*scaleWidht<540&&side_ba*scaleHeight<540){
+                scaleHeight+=0.05f;
+                scaleWidht+=0.05f;
 
+           /* side_en*=scaleWidht;
+            side_ba*=scaleHeight;
+            stat_eni=side_en;
+            stat_baland=side_ba;*/
+                invalidate();
+                peredacha.EVZ((int) (scaleHeight/0.05f)-4);
+                return scaleHeight;}
+            else return 0f;        }
+        public float scaleMinus(){
+            if(side_en*scaleWidht>50&&side_ba*scaleHeight>50){
+            scaleHeight-=0.05f;
+            scaleWidht-=0.05f;
+           /* side_en*=scaleWidht;
+            side_ba*=scaleHeight;
+            stat_eni=side_en;
+            stat_baland=side_ba;*/
+            invalidate();
+                peredacha.EVZ((int) (scaleHeight/0.05f)-4);
 
+                return scaleHeight;}
+            else return 0f;
+        }
+        public void rotationPlus(){
+            rotatt += 10;
+            rotatt%=360;
+            invalidate();
+            peredacha.EVR((int)rotatt);
+
+        }
+        public void rotationMinus(){
+            rotatt -= 10;
+            rotatt%=360;
+            invalidate();
+            peredacha.EVR((int)rotatt);
+
+        }
         public MyView(Context context) {
             super(context);
             if(xi==0) {
-                xi = frameEni / 2 - stat_eni / 2;
-                yi = frameBalandligi / 2 - stat_baland / 2 - 100;
+                xi = frameEni / 2  ;
+
+                yi = frameBalandligi / 2 - side_ba;
             }
             p = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mmatrix= new Matrix();
             // matrix.postScale(2, 3);
             // matrix.postTranslate(200, 50);
 
         }
 
-        int pp;
+
+
         @TargetApi(Build.VERSION_CODES.KITKAT)
         protected void onDraw(Canvas canvas) {
+            if (bitSticker == null) return;
+            Matrix matrix =mmatrix;
+            mmatrix.reset();
+            matrix.postTranslate(-side_en/2f, -side_ba/2f);
+            matrix.postRotate(rotatt);
+            matrix.postTranslate(+side_en/2f, +side_ba/2f);
+            matrix.postScale((0.0f + scaleWidht),(0.0f + scaleWidht));
+
+            Log.d("Kordinate", Float.toString(scaleHeight)+"  "+Float.toString(scaleWidht));
+            Log.d("Kordinate", ">>>"+Float.toString(-side_ba*scaleHeight)+"  "+Float.toString(-side_ba*scaleWidht));
+            matrix.postTranslate(xi-side_en*scaleWidht/2f, yi-side_ba*scaleHeight/2f);
+
+            canvas.drawBitmap(bitSticker, matrix, null);
+            //canvas.drawCircle(xi,yi,5,p);
             // рисуем квадрат
             //  canvas.drawRect(x, y, x + side, y + side, p);
+            /*matrix.reset();
+            float vw = this.getWidth ();
+            float vh = this.getHeight ();
 
-            canvas.drawBitmap(bitSticker,xi,yi,p);
+            canvas.drawBitmap(bitSticker,xi,yi,p);*/
         }
-
+        boolean secondNotPress=true;
+        double rostayaniya=0;
+        double perviyRostayaniya=0;
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             // координаты Touch-события
             float evX = event.getX();
             float evY = event.getY();
-            switch (event.getAction()) {
+
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 // касание началось
                 case MotionEvent.ACTION_DOWN:
+
                     // если касание было начато в пределах квадрата
-                    if (evX >= xi && evX <= xi + side_en && evY >= yi && evY <= yi+ side_ba) {
+                    if (evX >= xi - side_en*scaleWidht/2-100&& evX <= xi + side_en*scaleWidht/2 +100&& evY >= yi-  side_ba*scaleHeight/2-100 && evY <= yi+side_ba*scaleHeight/2+100) {
                         // включаем режим перетаскивания
                         drag = true;
                         // разница между левым верхним углом квадрата и точкой касания
@@ -244,18 +311,59 @@ public class ItemFragment extends Fragment{
                     break;
                 // тащим
                 case MotionEvent.ACTION_MOVE:
+                   if (event.getPointerCount()>1){
+
+                       rostayaniya=Math.sqrt(Math.pow(event.getX(0)-event.getX(1),2)+Math.pow(event.getY(0)-event.getY(1),2));
+                       Log.d("SecondTouch",Double.toString(perviyRostayaniya)+" "+Double.toString(rostayaniya));
+                       if(perviyRostayaniya==0){
+                           perviyRostayaniya=rostayaniya;
+                           Log.d("SecondTouch","PERVIY");
+                       }
+                       else{
+                           if(perviyRostayaniya+100<rostayaniya){
+                               perviyRostayaniya=rostayaniya;
+                                plusSize();
+                           }
+                           else if(perviyRostayaniya-100>rostayaniya){
+                               perviyRostayaniya=rostayaniya;
+                               minusSize();
+                           }
+                       }
+
+
+                   }
+                    else
+                   {
+                       if (drag&&evX - dragX<frameEni-stat_eni*scaleWidht/2f&&evX - dragX>0&&evY - dragY>0&&evY-dragY<frameBalandligi-stat_baland*scaleHeight/2f) {
+                           // определеяем новые координаты для рисования
+                           xi = evX - dragX;
+                           yi = evY - dragY;
+                           // перерисовываем экран
+                           invalidate();
+
+                       }
                     // если режим перетаскивания включен
-                    if (drag&&evX - dragX<frameEni-stat_eni&&evX - dragX>0&&evY - dragY>0&&evY-dragY<frameBalandligi-stat_baland) {
-                        // определеяем новые координаты для рисования
-                        xi = evX - dragX;
-                        yi = evY - dragY;
-                        // перерисовываем экран
-                        invalidate();
                     }
+
+
                     break;
+                case MotionEvent.ACTION_POINTER_UP: // прерывания касаний
+                    drag=false;
+                    perviyRostayaniya=0;
+                        break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    Log.d("SecondTouch",Integer.toString(event.getActionIndex()));
+                    //    Log.d("SecondTouch","DRAG OFFF");
+
+
+                   // Log.d("SecondTouch",Float.toString(event.getX())+" "+Float.toString(event.getY()));
+                   // Log.d("SecondTouch",Integer.toString(pointerIndex));
+                    break;
+
                 // касание завершено
                 case MotionEvent.ACTION_UP:
                     // выключаем режим перетаскивания
+                    secondNotPress=true;
                     drag = false;
                     break;
             }
