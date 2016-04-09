@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -64,9 +65,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         mCoverFlowView.setAdapter(adapter);
         mCoverFlowView.setDrawingCacheEnabled(true);
         mCoverFlowView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
+
         mCoverFlowView.setCoverFlowListener(new CoverFlowView.CoverFlowListener<MyAdap>() {
             @Override
             public void imageOnTop(CoverFlowView<MyAdap> coverFlowView, int position, float left, float top, float right, float bottom) {
+                Log.d("POSITION",Integer.toString(tempPos)+" "+Integer.toString(position));
                 if (position != tempPos) {
                     switcher.setText(mTexts.get(position));
                     tempPos = position;
@@ -122,9 +125,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         switch (v.getId()) {
             case R.id.leftbtn:
                 mCoverFlowView.toMoveBack();
+
+
                 break;
             case R.id.rightbtn:
                 mCoverFlowView.toMoveNext();
+
+
+
                 break;
             case R.id.slidebtn:
                 intent = new Intent(MainActivity.this, SlideshowActivity.class);

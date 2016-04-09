@@ -956,6 +956,7 @@ public class CoverFlowView<T extends CoverFlowAdapter> extends View {
                         * 1);
 
         invalidate();
+
     }
     public void toMoveNext(){
         final int from = (int) ((mOffset==0)?mAdapter.getCount():mOffset * 100);
@@ -969,6 +970,7 @@ public class CoverFlowView<T extends CoverFlowAdapter> extends View {
                         * 1);
 
         invalidate();
+
     }
     public void setSelection(int position) {
         final int max = mAdapter.getCount();

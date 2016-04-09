@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -66,9 +67,9 @@ public class CertusDatabase {
         sdb = externalDbOpenHelper.getWritableDatabase();
         try {
             if (goods != null) {
+                uniqueID = Long.toString(System.currentTimeMillis());
                 Toast.makeText(context, "Data size " + Integer.toString(goods.size()), Toast.LENGTH_SHORT).show();
                 for (int i = 0; i < goods.size(); i++) {
-                    uniqueID = Long.toString(System.currentTimeMillis());
                     if (goods.get(i) != null) {
                         for (int j = 0; j < goods.get(i).size(); j++) {
                             RecyclerData recyclerData = goods.get(i).get(j);
@@ -87,7 +88,8 @@ public class CertusDatabase {
                             content.put(GENDER, recyclerData.getGender());
                             content.put(SIZE, recyclerData.getSize());
                             sdb.insert(tableName, null, content);
-                            Toast.makeText(context, tableName + " " + content.get(TAG) + " " + content.get(COLLAR) + " " + content.get(SIZE) + " " + content.get(GENDER), Toast.LENGTH_SHORT).show();
+                            Log.v("DATAA", "From table " + tableName + " ID " + content.get(ID) + " TAG " + content.get(TAG) + " COLLAr " + content.get(COLLAR) + " SIZe " + content.get(SIZE) + " " + content.get(GENDER));
+                         //   Toast.makeText(context, tableName + "\n" + content.get(TAG) + "\n" + content.get(COLLAR) + "\n" + content.get(SIZE) + "\n" + content.get(GENDER), Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(context, "Database is empty", Toast.LENGTH_SHORT).show();

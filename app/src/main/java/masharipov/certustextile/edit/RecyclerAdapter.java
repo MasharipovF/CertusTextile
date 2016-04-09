@@ -109,7 +109,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         RecyclerData current = database.get(position);
         if (current.styleUri != null)
-         Picasso.with(context).load(Uri.parse(current.styleUri)).centerInside().resize(512, 512).into(holder.style);
+            Picasso.with(context).load(Uri.parse(current.styleUri)).centerInside().resize(512, 512).into(holder.style);
 
         else
             Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.style);
@@ -184,9 +184,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageURI = intent.getData();
                 String path;
-
-                if (Build.VERSION.SDK_INT > 21) path = getPath(selectedImageURI);
-                else path = selectedImageURI.toString();
+                path = selectedImageURI.toString();
                 database.get(imageAddPosition).setImageUri(imageID, path);
                 notifyItemChanged(imageAddPosition);
             }
