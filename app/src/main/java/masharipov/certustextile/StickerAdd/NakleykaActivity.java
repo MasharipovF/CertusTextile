@@ -1,13 +1,9 @@
 package masharipov.certustextile.stickeradd;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.drawable.NinePatchDrawable;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
@@ -34,13 +29,16 @@ import masharipov.certustextile.edit.RecyclerData;
 public class NakleykaActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private GridLayoutManager mLayoutManager;
     private DraggableGridAdapter myItemAdapter;
+    private SectionDraggableGridAdapter tovarAdapter;
     private RecyclerView.Adapter mWrappedAdapter, mAdapter;
     private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
-    private List<GridItem> stickerList;
+    private List<StickerData> stickerList;
+    private List<TovarData> tovarList;
     private List<List<RecyclerData>> goodsList;
     private int numOfItemsInRow = 3;
+    private String extras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +46,12 @@ public class NakleykaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nakleyka);
 
         Intent intent = getIntent();
-        String extras = intent.getStringExtra("TYPE");
+        extras = intent.getStringExtra("TYPE");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
         //init recyclerview
         mRecyclerView = (RecyclerView) findViewById(R.id.gridLayout);
-        mLayoutManager = new GridLayoutManager(this, numOfItemsInRow, GridLayoutManager.VERTICAL, false);
+        mLayoutManager = new GridLayoutManager(this, numOfItemsInRow);
 
         // drag & drop
         mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
@@ -63,19 +61,43 @@ public class NakleykaActivity extends AppCompatActivity {
         mRecyclerViewDragDropManager.setInitiateOnMove(false);
         mRecyclerViewDragDropManager.setLongPressTimeout(750);
 
-        //adapter
-        CertusDatabase cDB = new CertusDatabase(this);
+        // agar sticker tanlansa
         if (extras.equals("STICKER")) {
+            CertusDatabase cDB = new CertusDatabase(this);
             stickerList = cDB.getStickersFromDB();
             myItemAdapter = new DraggableGridAdapter(stickerList, this, View.GONE);
             mAdapter = myItemAdapter;
             mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
             fab.setVisibility(View.VISIBLE);
-        } else if (extras.equals("GOODS")) {
-            // some code to display
-            stickerList = cDB.getStickersFromDB();
-            myItemAdapter = new DraggableGridAdapter(stickerList, this, View.VISIBLE);
-            mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
+        } else if (extras.equals("GOODS")) {  // agar tovar tanlansa
+            // temp data
+            int j = 0;
+            tovarList = new ArrayList<>();
+            for (int i = 0; i < 16; i++) {
+                TovarData tovarData = new TovarData();
+                if (i % 4 == 0) {
+                    tovarData.setType(1);
+                    tovarData.idiwka = i;
+                    tovarData.setSectionText("Section" + Integer.toString(++j));
+                } else {
+                    tovarData.idiwka = i;
+                    tovarData.setType(0);
+                }
+                tovarList.add(tovarData);
+            }
+
+
+            mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if (tovarList.get(position).getType() == 1)
+                        return numOfItemsInRow;
+                    else
+                        return 1;
+                }
+            });
+            tovarAdapter = new SectionDraggableGridAdapter(tovarList, this, View.VISIBLE);
+            mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(tovarAdapter);
             fab.setVisibility(View.GONE);
         }
 
@@ -104,7 +126,7 @@ public class NakleykaActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         if (mRecyclerViewDragDropManager != null) {
             mRecyclerViewDragDropManager.release();
             mRecyclerViewDragDropManager = null;
@@ -140,43 +162,45 @@ public class NakleykaActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
-        if (!myItemAdapter.isDatabaseChanged()) {
-            super.onBackPressed();
-            CertusDatabase certusDatabase = new CertusDatabase(myItemAdapter.getStickerList(), getApplicationContext());
-            certusDatabase.saveStickersToDB();
-            return;
-        }
-        if (myItemAdapter.getStickerList() == null || myItemAdapter.getStickerList().size() == 0) {
-            super.onBackPressed();
-            return;
-        }
-        AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle("Сохранить изменения?");
-        adb.setMessage("Сохранить внесенные изменения в базу данных?");
-        adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        if (extras.equals("GOODS")) super.onBackPressed();
+        else {
+            if (!myItemAdapter.isDatabaseChanged()) {
+                super.onBackPressed();
                 CertusDatabase certusDatabase = new CertusDatabase(myItemAdapter.getStickerList(), getApplicationContext());
                 certusDatabase.saveStickersToDB();
-                finish();
+                return;
             }
-        });
-        adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+            if (myItemAdapter.getStickerList() == null || myItemAdapter.getStickerList().size() == 0) {
+                super.onBackPressed();
+                return;
             }
-        });
-        adb.setIcon(android.R.drawable.ic_dialog_info);
-        adb.create();
-        adb.show();
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            adb.setTitle("Сохранить изменения?");
+            adb.setMessage("Сохранить внесенные изменения в базу данных?");
+            adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+
+            adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    CertusDatabase certusDatabase = new CertusDatabase(myItemAdapter.getStickerList(), getApplicationContext());
+                    certusDatabase.saveStickersToDB();
+                    finish();
+                }
+            });
+            adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            adb.setIcon(android.R.drawable.ic_dialog_info);
+            adb.create();
+            adb.show();
+        }
 
     }
 

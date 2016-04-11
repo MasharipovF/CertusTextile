@@ -7,14 +7,17 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
@@ -26,37 +29,44 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import masharipov.certustextile.R;
-import masharipov.certustextile.stickeradd.SectionDraggableGridAdapter.GridHolder;
 
 
-public class SectionDraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
-        implements DraggableItemAdapter<GridHolder> {
+public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDraggableGridAdapter.SectionGridHolder>
+        implements DraggableItemAdapter<SectionDraggableGridAdapter.SectionGridHolder> {
 
     private Context context;
-    private List<GridItem> stickerList, oldStickerList;
+    private List<TovarData> tovarList, oldTovarList;
     private Intent imagePickerIntent;
-    private int SELECT_PICTURE = 1, editButtonVisibility, SECTION = 0, ITEM =1;
+    private int SELECT_PICTURE = 1, editButtonVisibility;
+    final int SECTION = 1, ITEM = 0;
     private boolean databaseChangedFlag = false;
 
 
-    public static class GridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
+    public static class SectionGridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
         public FrameLayout mContainer;
         public ImageView imgBtn, stickerBtn, editBtn;
         private onItemClick listener;
+        private TextView sectionText;
 
         // VIEWHOLDER
-        public GridHolder(View v, int visibility, onItemClick click ) {
+        public SectionGridHolder(View v, int viewType, onItemClick click) {
             super(v);
-            listener = click;
-            mContainer = (FrameLayout) v.findViewById(R.id.container);
-            stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
-            editBtn = (ImageButton) v.findViewById(R.id.gridEditBtn);
-            imgBtn = (ImageView) v.findViewById(R.id.gridImg);
+            switch (viewType) {
+                case 1:
+                    sectionText = (TextView) v.findViewById(R.id.sectionText);
+                    break;
+                case 0:
+                    listener = click;
+                    mContainer = (FrameLayout) v.findViewById(R.id.container);
+                    stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
+                    editBtn = (ImageButton) v.findViewById(R.id.gridEditBtn);
+                    imgBtn = (ImageView) v.findViewById(R.id.gridImg);
+                    editBtn.setVisibility(View.VISIBLE);
+                    stickerBtn.setOnClickListener(this);
+                    imgBtn.setOnClickListener(this);
+                    break;
 
-            editBtn.setVisibility(visibility);
-
-            stickerBtn.setOnClickListener(this);
-            imgBtn.setOnClickListener(this);
+            }
         }
 
         @Override
@@ -81,19 +91,29 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
     }
 
 
-    public SectionDraggableGridAdapter(List<GridItem> list, Context ctx, int editVisibility) {
+    public SectionDraggableGridAdapter(List<TovarData> list, Context ctx, int editVisibility) {
         context = ctx;
-        stickerList = list;
-        oldStickerList = list;
+        tovarList = list;
+        oldTovarList = list;
         editButtonVisibility = editVisibility;
         setHasStableIds(true);
     }
 
     @Override
-    public GridHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SectionGridHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        final View v = inflater.inflate(R.layout.grid_item, parent, false);
-        return new GridHolder(v, editButtonVisibility, new onItemClick() {
+        final View v;
+        switch (viewType) {
+            case SECTION:
+                v = inflater.inflate(R.layout.grid_item_section, parent, false);
+                break;
+            case ITEM:
+                v = inflater.inflate(R.layout.grid_item, parent, false);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected viewType (= " + viewType + ")");
+        }
+        return new SectionGridHolder(v, viewType, new onItemClick() {
             @Override
             public void delBtnClick(final int position) {
                 AlertDialog.Builder adb = new AlertDialog.Builder(context);
@@ -125,100 +145,103 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
     }
 
     @Override
-    public void onBindViewHolder(GridHolder holder, int position) {
-        GridItem current = stickerList.get(position);
-        // set text
-        if (current.getURI() != null)
-            Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imgBtn);
-        else
-            Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(holder.imgBtn);
+    public void onBindViewHolder(SectionGridHolder holder, int position) {
+        TovarData current = tovarList.get(position);
+        switch (current.getType()) {
+            case SECTION:
+                holder.sectionText.setText(current.getSectionText());
+                break;
+            case ITEM:
+                if (current.getFRONT() != null)
+                    Picasso.with(context).load(Uri.parse(current.getFRONT())).centerInside().resize(512, 512).into(holder.imgBtn);
+                else
+                    Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(holder.imgBtn);
 
-        // set background resource (target view ID: container)
-        final int dragState = holder.getDragStateFlags();
 
-        if (((dragState & DraggableItemConstants.STATE_FLAG_IS_UPDATED) != 0)) {
-            int bgResId;
+                // set background resource (target view ID: container)
+                final int dragState = holder.getDragStateFlags();
 
-            if ((dragState & DraggableItemConstants.STATE_FLAG_IS_ACTIVE) != 0) {
-                bgResId = R.drawable.bg_item_dragging_active_state;
+                if (((dragState & DraggableItemConstants.STATE_FLAG_IS_UPDATED) != 0)) {
+                    int bgResId;
 
-                // need to clear drawable state here to get correct appearance of the dragging item.
-                DrawableUtils.clearState(holder.mContainer.getForeground());
-            } else if ((dragState & DraggableItemConstants.STATE_FLAG_DRAGGING) != 0) {
-                bgResId = R.drawable.bg_item_dragging_state;
-            } else {
-                bgResId = R.drawable.bg_item_normal_state;
-            }
-            holder.mContainer.setBackgroundResource(bgResId);
+                    if ((dragState & DraggableItemConstants.STATE_FLAG_IS_ACTIVE) != 0) {
+                        bgResId = R.drawable.bg_item_dragging_active_state;
+
+                        // need to clear drawable state here to get correct appearance of the dragging item.
+                        DrawableUtils.clearState(holder.mContainer.getForeground());
+                    } else if ((dragState & DraggableItemConstants.STATE_FLAG_DRAGGING) != 0) {
+                        bgResId = R.drawable.bg_item_dragging_state;
+                    } else {
+                        bgResId = R.drawable.bg_item_normal_state;
+                    }
+                    holder.mContainer.setBackgroundResource(bgResId);
+                }
+                break;
         }
     }
 
-    public List<GridItem> getStickerList() {
-        return stickerList;
+    public List<TovarData> getStickerList() {
+        return tovarList;
     }
 
-    public List<GridItem> getOldStickerList() {
-        return oldStickerList;
+    public List<TovarData> getOldStickerList() {
+        return oldTovarList;
     }
-
-    public void insertItem(String path) {
-        String uniqueID = Long.toString(System.currentTimeMillis());
-        GridItem item = new GridItem();
-        if (stickerList.size() == 0) {
-            item.setID(uniqueID);
-            item.setURI(path);
-            stickerList.add(item);
-            notifyItemInserted(0);
-            databaseChangedFlag = true;
-        } else {
-            item.setID(uniqueID);
-            item.setURI(path);
-            stickerList.add(item);
-            notifyItemInserted(stickerList.size() - 1);
-            databaseChangedFlag = true;
-        }
-    }
-
 
     public void removeItem(int position) {
-        stickerList.remove(position);
+
+        // esli udalim posledniy element kotoriy ne SECTION
+        if (position == tovarList.size() - 1 && tovarList.get(position).getType() == 0) {
+            tovarList.remove(position);
+            notifyItemRemoved(position);
+            if (tovarList.get(position - 1).getType() == 1) {
+                tovarList.remove(position - 1);
+                notifyItemRemoved(position - 1);
+            }
+            databaseChangedFlag = true;
+            return;
+        }
+
+
+        tovarList.remove(position);
         notifyItemRemoved(position);
         databaseChangedFlag = true;
-    }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_PICTURE) {
-                Uri selectedImageURI = intent.getData();
-                String path;
+        if (tovarList.get(position).getType() == 1) {
+            Log.v("TOVAR", "Middle of list LIST");
+            if (tovarList.get(position - 1).getType() == 1) {
+                tovarList.remove(position - 1);
+                notifyItemRemoved(position - 1);
+                databaseChangedFlag = true;
 
-                path = selectedImageURI.toString();
-                if (path != null) {
-                    insertItem(path);
-                }
             }
         }
-    }
 
-    public String getPath(Uri uri) {
-        if (uri == null) {
-            return null;
-        }
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        }
-        return uri.getPath();
-    }
 
-    public void pickImage() {
-        imagePickerIntent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        ((Activity) context).startActivityForResult(imagePickerIntent, SELECT_PICTURE);
+        /*if (position == 0 && tovarList.get(position).getType() == 1) {
+            Log.v("TOVAR", "Beginning of LIST");
+            if (tovarList.get(position + 1).getType() == 1) {
+                tovarList.remove(position);
+                notifyItemRemoved(position);
+            }
+        } else if (position == tovarList.size() - 1 && tovarList.get(position).getType() == 1) {
+            Log.v("TOVAR", "END of LIST");
+            if (tovarList.get(position - 1).getType() == 1) {
+                tovarList.remove(position);
+                notifyItemRemoved(position);
+            }
+        } else if (tovarList.get(position).getType() == 1) {
+            Log.v("TOVAR", "Middle of list LIST");
+            if (tovarList.get(position - 1).getType() == 1 || tovarList.get(position + 1).getType() == 1) {
+                tovarList.remove(position - 1);
+                notifyItemRemoved(position - 1);
+            }}
+        // esli i sleduyuwiy i predidiuwiy element SECTION to udali tekuwiy SECTION
+       /* if (tovarList.get(position).getType() == 1) {
+            Log.v("TOVAR", "is Section  " + Integer.toString(position));
+
+        }*/
+
     }
 
     public boolean isDatabaseChanged() {
@@ -227,17 +250,17 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
 
     @Override
     public long getItemId(int position) {
-        return Long.parseLong(stickerList.get(position).getID());
+        return tovarList.get(position).idiwka;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return 0;
+        return tovarList.get(position).getType();
     }
 
     @Override
     public int getItemCount() {
-        return stickerList.size();
+        return tovarList.size();
     }
 
     @Override
@@ -246,22 +269,68 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
             return;
         }
         Toast.makeText(context, "From " + Integer.toString(fromPosition) + " to " + Integer.toString(toPosition), Toast.LENGTH_SHORT).show();
-        GridItem item = stickerList.remove(fromPosition);
-        stickerList.add(toPosition, item);
+        TovarData item = tovarList.remove(fromPosition);
+        tovarList.add(toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
         databaseChangedFlag = true;
     }
 
     @Override
-    public boolean onCheckCanStartDrag(GridHolder holder, int position, int x, int y) {
-        return true;
+    public boolean onCheckCanStartDrag(SectionGridHolder holder, int position, int x, int y) {
+        // x, y --- relative from the itemView's top-left
+
+        // return false if the item is a section header
+        return holder.getItemViewType() != SECTION;
     }
 
     @Override
-    public ItemDraggableRange onGetItemDraggableRange(GridHolder holder, int position) {
-        // no drag-sortable range specified
-        return null;
+    public ItemDraggableRange onGetItemDraggableRange(SectionGridHolder holder, int position) {
+        final int start = findFirstSectionItem(position);
+        final int end = findLastSectionItem(position);
+
+        return new ItemDraggableRange(start, end);
     }
 
+    private int findFirstSectionItem(int position) {
+        TovarData item = tovarList.get(position);
+
+        if (item.isSection == 1) {
+            throw new IllegalStateException("section item is expected");
+        }
+
+        while (position > 0) {
+            TovarData prevItem = tovarList.get(position - 1);
+
+            if (prevItem.isSection == 1) {
+                break;
+            }
+
+            position -= 1;
+        }
+
+        return position;
+    }
+
+    private int findLastSectionItem(int position) {
+        TovarData item = tovarList.get(position);
+
+        if (item.isSection == 1) {
+            throw new IllegalStateException("section item is expected");
+        }
+
+        final int lastIndex = getItemCount() - 1;
+
+        while (position < lastIndex) {
+            TovarData nextItem = tovarList.get(position + 1);
+
+            if (nextItem.isSection == 1) {
+                break;
+            }
+
+            position += 1;
+        }
+
+        return position;
+    }
 
 }

@@ -3,10 +3,10 @@ package masharipov.certustextile.stickeradd;
 /**
  * Created by Farrukh on 06.04.2016.
  */
-public class GridItem {
+public class StickerData {
     String TAG, URI, ID;
 
-    public GridItem() {
+    public StickerData() {
         URI = null;
         TAG = null;
         ID = null;

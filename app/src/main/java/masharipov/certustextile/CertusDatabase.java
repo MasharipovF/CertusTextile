@@ -5,23 +5,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import masharipov.certustextile.edit.RecyclerData;
-import masharipov.certustextile.stickeradd.GridItem;
+import masharipov.certustextile.stickeradd.StickerData;
 
 
 public class CertusDatabase {
 
     private SQLiteDatabase sdb;
     private List<List<RecyclerData>> goods;
-    private List<GridItem> stickers;
+    private List<StickerData> stickers;
     private String tag, tableName;
     private Context context;
     private String DB_NAME = "certusDB.db";
@@ -47,7 +44,7 @@ public class CertusDatabase {
 
     }
 
-    public CertusDatabase(List<GridItem> item, Context ctx) {
+    public CertusDatabase(List<StickerData> item, Context ctx) {
         context = ctx;
         stickers = item;
     }
@@ -123,8 +120,8 @@ public class CertusDatabase {
         }
     }
 
-    public List<GridItem> getStickersFromDB() {
-        List<GridItem> list = new ArrayList<>();
+    public List<StickerData> getStickersFromDB() {
+        List<StickerData> list = new ArrayList<>();
         String ID = "ID";
         String TAG = "TAG";
         String URI = "URI";
@@ -137,7 +134,7 @@ public class CertusDatabase {
         cursor.moveToFirst();
 
         for (int i = 0; i < cursor.getCount(); i++) {
-            GridItem item = new GridItem();
+            StickerData item = new StickerData();
             item.setID(cursor.getString(cursor.getColumnIndex(ID)));
             if (cursor.getString(cursor.getColumnIndex(TAG)) != null)
                 item.setTAG(cursor.getString(cursor.getColumnIndex(TAG)));

@@ -33,7 +33,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         implements DraggableItemAdapter<GridHolder> {
 
     private Context context;
-    private List<GridItem> stickerList, oldStickerList;
+    private List<StickerData> stickerList, oldStickerList;
     private Intent imagePickerIntent;
     private int SELECT_PICTURE = 1, editButtonVisibility, SECTION = 0, ITEM =1;
     private boolean databaseChangedFlag = false;
@@ -81,7 +81,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     }
 
 
-    public DraggableGridAdapter(List<GridItem> list, Context ctx, int editVisibility) {
+    public DraggableGridAdapter(List<StickerData> list, Context ctx, int editVisibility) {
         context = ctx;
         stickerList = list;
         oldStickerList = list;
@@ -126,7 +126,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
     @Override
     public void onBindViewHolder(GridHolder holder, int position) {
-        GridItem current = stickerList.get(position);
+        StickerData current = stickerList.get(position);
         // set text
         if (current.getURI() != null)
             Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imgBtn);
@@ -153,17 +153,17 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         }
     }
 
-    public List<GridItem> getStickerList() {
+    public List<StickerData> getStickerList() {
         return stickerList;
     }
 
-    public List<GridItem> getOldStickerList() {
+    public List<StickerData> getOldStickerList() {
         return oldStickerList;
     }
 
     public void insertItem(String path) {
         String uniqueID = Long.toString(System.currentTimeMillis());
-        GridItem item = new GridItem();
+        StickerData item = new StickerData();
         if (stickerList.size() == 0) {
             item.setID(uniqueID);
             item.setURI(path);
@@ -246,7 +246,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
             return;
         }
         Toast.makeText(context, "From " + Integer.toString(fromPosition) + " to " + Integer.toString(toPosition), Toast.LENGTH_SHORT).show();
-        GridItem item = stickerList.remove(fromPosition);
+        StickerData item = stickerList.remove(fromPosition);
         stickerList.add(toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
         databaseChangedFlag = true;
