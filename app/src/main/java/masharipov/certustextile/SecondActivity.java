@@ -36,7 +36,7 @@ public class SecondActivity extends AppCompatActivity {
     int rotatC[] = {0, 0};
     float povorotX = 0, povorotY = 0;
     int razmerPol[] = {15, 15, 15};
-    int povorotMas[] = {0, 0, 0};
+    int povorotMas[] = {0, 0, 0,0};
     Vibrator vibr;
     RecyclerView tovarRecycler;
 
@@ -63,7 +63,7 @@ public class SecondActivity extends AppCompatActivity {
         razmer = (TextView) findViewById(R.id.razmerpolzunok);
         povorot = (TextView) findViewById(R.id.povorot);
         timerHand = new Handler();
-        oldi = new ItemFragment(R.drawable.futblka, new ItemFragment.eventZOOM() {
+        oldi = new ItemFragment(R.drawable.expanat, new ItemFragment.eventZOOM() {
             @Override
             public void EVZ(int t) {
                 vibr.vibrate(30);
@@ -88,16 +88,16 @@ public class SecondActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (current_status) {
                     case 0:
-                        oldi.changeSticker(R.drawable.a1);
+                        oldi.changeSticker(R.drawable.nakleka);
 
                         break;
                     case 1:
-                        yon.changeSticker(R.drawable.a1);
+                        yon.changeSticker(R.drawable.naka2);
 
                         break;
                     case 2:
 
-                        orqa.changeSticker(R.drawable.a1);
+                        orqa.changeSticker(R.drawable.naka1);
                         break;
                 }
 
@@ -161,7 +161,7 @@ public class SecondActivity extends AppCompatActivity {
         //bu prosto initsalizovat qivoladi
         // tovar o`zgarganda fragmentdigi changeTovar(URI) funksiyasi chaqiriladi
 
-        yon = new ItemFragment(R.drawable.futblkaikki, new ItemFragment.eventZOOM() {
+        yon = new ItemFragment(R.drawable.expanatbos, new ItemFragment.eventZOOM() {
             @Override
             public void EVZ(int t) {
                 vibr.vibrate(30);
@@ -177,7 +177,7 @@ public class SecondActivity extends AppCompatActivity {
                 povorotMas[current_status]=t;
             }
         });
-        orqa = new ItemFragment(R.drawable.futblkaorqa, new ItemFragment.eventZOOM() {
+        orqa = new ItemFragment(R.drawable.expanatorqa, new ItemFragment.eventZOOM() {
             @Override
             public void EVZ(int t) {
                 vibr.vibrate(30);
@@ -238,9 +238,7 @@ public class SecondActivity extends AppCompatActivity {
 
                         temp03.rotationPlus();
 
-
-                        Log.d("touchl", Integer.toString(rotatC[current_status]));
-                    }
+  }
                     else if (scoree - 50 > evX ) {
                         scoree =evX ;
                         scoree -= 50;
@@ -248,8 +246,6 @@ public class SecondActivity extends AppCompatActivity {
                         temp03.rotationMinus();
 
                         // razmer.setText(Integer.toString(razmerPol[current_status]));
-
-                        Log.d("touchl", Integer.toString(rotatC[current_status]));
 
                     }
                     // Log.d("touchl",Float.toString(event.getX())+"x"+Float.toString(event.getY()));

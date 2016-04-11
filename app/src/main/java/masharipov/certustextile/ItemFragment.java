@@ -5,8 +5,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -41,7 +44,7 @@ public class ItemFragment extends Fragment{
 
     Bitmap bitTovar;
     Bitmap bitSticker;
-
+    ImageView shadow;
     //Bu voqtinchali peremenniyla Resurs bilan ishlashga
 
     FrameLayout frameSt;
@@ -54,7 +57,7 @@ public class ItemFragment extends Fragment{
     int stat_eni=200;
     MyView A1;
     public float xi=0,yi=0;
-
+    Bitmap bitScaled;
     public int frameBalandligi;
     public int frameEni;
 
@@ -102,25 +105,60 @@ public class ItemFragment extends Fragment{
         This=getActivity();
 
     }
+    int leftpad,rightpad;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View fragment_item=inflater.inflate(R.layout.fragment_itemfragmentr,container,false);
-
+        shadow=(ImageView) fragment_item.findViewById(R.id.imageView10);
         tovar =(ImageView) fragment_item.findViewById(R.id.tovar);
         frameSt =(FrameLayout) fragment_item.findViewById(R.id.frameStick);
         tovar.setImageBitmap(bitTovar);
+        tovar.setVisibility(View.INVISIBLE);
         fragment_item.post(new Runnable() {
             @Override
             public void run() {
-                if(bitSticker!=null){
-                frameEni=frameSt.getWidth();
-                frameBalandligi=frameSt.getHeight();
+                tovar.buildDrawingCache();
+                bitScaled = tovar.getDrawingCache();
+
+                leftpad=0;
+                rightpad = 0;
+                int bitHEiG=bitScaled.getHeight();
+                int bitWidgHalf=bitScaled.getWidth()/2;
+                tovar.setVisibility(View.VISIBLE);
+                for(int t=bitWidgHalf;t>0;t--){
+                    if(bitScaled.getPixel(t,bitHEiG-100)==Color.TRANSPARENT){
+                        leftpad=t;
+                        break;
+                    }
+                }
+                for(int t=bitWidgHalf;t<bitWidgHalf*2;t++){
+                    if(bitScaled.getPixel(t,bitHEiG-100)==Color.TRANSPARENT){
+                        rightpad=2*bitWidgHalf-t;
+                        break;
+                    }
+                }
+               shadow.setPadding(leftpad-40,0,rightpad-50,0);
+                Log.d("paddings",Integer.toString(leftpad)+" - "+Integer.toString(rightpad));
+                /*
+                ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(shadow.getLayoutParams());
+                marginParams.setMargins(10, 10, 0, 0);
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(marginParams);
+                shadow.setLayoutParams(layoutParams);*/
+                shadow.setImageResource(R.drawable.shadow);
+
+               // if(bitSticker!=null){
+              /*  frameEni=tovar.getWidth();
+                frameBalandligi=tovar.getHeight();
+            /*    tovar.b
+                bitTovar =Bitmap.createScaledBitmap(bitTovar,frameBalandligi,frameEni,false);
+                tovar.setScaleType(ImageView.ScaleType.MATRIX);
+                tovar.setImageBitmap(bitTovar);*/
                  A1=new MyView(This);
                  frameSt.addView(A1);
                 Log.d("lifee", "Frame size  "+frameEni+"x"+frameBalandligi);}
-                else Log.d("lifee","Null bitmap sticker");
-            }
+               // else Log.d("lifee","Null bitmap sticker");
+
         });
         Log.d("lifee","onCreateView");
        // bitTovar.recycle();
@@ -146,7 +184,7 @@ public class ItemFragment extends Fragment{
         Picasso.with(This).load(voqtinchali_resurs).into(tovar);
         return true;
     }
-
+    float kofetsent=1;
     public boolean changeSticker(Uri pathFile){
         uriS=pathFile;
         Picasso.with(This).load(uriS).into(tovar);
@@ -156,13 +194,31 @@ public class ItemFragment extends Fragment{
 
     public boolean changeSticker(int pathFile){
         voqtinchali_sticker=pathFile;
-        frameEni=frameSt.getWidth();
-        frameBalandligi=frameSt.getHeight();
-        bitSticker=BitmapFactory.decodeResource(getResources(), voqtinchali_sticker);
-     //   bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,true);
+            frameEni = frameSt.getWidth();
+            frameBalandligi = frameSt.getHeight();
+            bitSticker = BitmapFactory.decodeResource(getResources(), voqtinchali_sticker);
+
+            stat_eni = bitSticker.getWidth();
+            stat_baland = bitSticker.getHeight();
+
+        if ((frameEni - leftpad - rightpad - 200) < bitSticker.getWidth()) {
+            kofetsent = (float) (frameEni - leftpad - rightpad - 50) / (float)stat_eni;
+            kofetsent /= 2f;
+        } else {
+            kofetsent = 0.5f;
+        }
+
         frameSt.removeAllViews();
-        A1=new MyView(This);
-        frameSt.addView(A1);
+            A1=new MyView(This);
+            frameSt.addView(A1);
+
+        /*
+        stat_baland= (int) (stat_baland*scaleHeight);
+        stat_eni=frameEni-leftpad-rightpad-50;*/
+       // bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,true);
+
+
+
 
         // return true esli sobitiya proizowlo false esli vozniklo owibka
         return true;
@@ -207,7 +263,7 @@ public class ItemFragment extends Fragment{
         float dragY = 0;
         long rotation=0;
         public float scalePlus(){
-            if(side_en*scaleWidht<540&&side_ba*scaleHeight<540){
+            if(scaleWidht<=2&&scaleHeight<=2){
                 scaleHeight+=0.05f;
                 scaleWidht+=0.05f;
 
@@ -216,11 +272,11 @@ public class ItemFragment extends Fragment{
             stat_eni=side_en;
             stat_baland=side_ba;*/
                 invalidate();
-                peredacha.EVZ((int) (scaleHeight/0.05f)-4);
+                peredacha.EVZ((int) (scaleHeight/0.05f));
                 return scaleHeight;}
             else return 0f;        }
         public float scaleMinus(){
-            if(side_en*scaleWidht>50&&side_ba*scaleHeight>50){
+            if(scaleWidht>0.05f&&scaleHeight>0.05f){
             scaleHeight-=0.05f;
             scaleWidht-=0.05f;
            /* side_en*=scaleWidht;
@@ -228,7 +284,7 @@ public class ItemFragment extends Fragment{
             stat_eni=side_en;
             stat_baland=side_ba;*/
             invalidate();
-                peredacha.EVZ((int) (scaleHeight/0.05f)-4);
+                peredacha.EVZ((int) (scaleHeight/0.05f));
 
                 return scaleHeight;}
             else return 0f;
@@ -252,7 +308,7 @@ public class ItemFragment extends Fragment{
             if(xi==0) {
                 xi = frameEni / 2  ;
 
-                yi = frameBalandligi / 2 - side_ba;
+                yi = frameBalandligi / 2-100 ;
             }
             p = new Paint(Paint.ANTI_ALIAS_FLAG);
             mmatrix= new Matrix();
@@ -271,14 +327,14 @@ public class ItemFragment extends Fragment{
             matrix.postTranslate(-side_en/2f, -side_ba/2f);
             matrix.postRotate(rotatt);
             matrix.postTranslate(+side_en/2f, +side_ba/2f);
-            matrix.postScale((0.0f + scaleWidht),(0.0f + scaleWidht));
+            matrix.postScale((0.0f + scaleWidht*kofetsent),(0.0f + scaleWidht*kofetsent));
 
-            Log.d("Kordinate", Float.toString(scaleHeight)+"  "+Float.toString(scaleWidht));
-            Log.d("Kordinate", ">>>"+Float.toString(-side_ba*scaleHeight)+"  "+Float.toString(-side_ba*scaleWidht));
-            matrix.postTranslate(xi-side_en*scaleWidht/2f, yi-side_ba*scaleHeight/2f);
+            Log.d("Kordinate", Float.toString(scaleHeight*kofetsent)+"  "+Float.toString(scaleWidht*kofetsent));
+            Log.d("Kordinate", ">>>"+Float.toString(-side_ba*scaleHeight*kofetsent)+"  "+Float.toString(-side_ba*scaleWidht*kofetsent));
+            matrix.postTranslate(xi-side_en*scaleWidht*kofetsent/2f, yi-side_ba*scaleHeight*kofetsent/2f);
 
             canvas.drawBitmap(bitSticker, matrix, null);
-            //canvas.drawCircle(xi,yi,5,p);
+            canvas.drawCircle(xi,yi,5,p);
             // рисуем квадрат
             //  canvas.drawRect(x, y, x + side, y + side, p);
             /*matrix.reset();
@@ -290,6 +346,7 @@ public class ItemFragment extends Fragment{
         boolean secondNotPress=true;
         double rostayaniya=0;
         double perviyRostayaniya=0;
+        boolean topleft=true,topright=true,bottomleft=true,bottomright=true;
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             // координаты Touch-события
@@ -301,7 +358,7 @@ public class ItemFragment extends Fragment{
                 case MotionEvent.ACTION_DOWN:
 
                     // если касание было начато в пределах квадрата
-                    if (evX >= xi - side_en*scaleWidht/2-100&& evX <= xi + side_en*scaleWidht/2 +100&& evY >= yi-  side_ba*scaleHeight/2-100 && evY <= yi+side_ba*scaleHeight/2+100) {
+                    if (evX >= xi - side_en*scaleWidht*kofetsent/2-100&& evX <= xi + side_en*scaleWidht*kofetsent/2 +100&& evY >= yi-  side_ba*scaleHeight*kofetsent/2-100 && evY <= yi+side_ba*scaleHeight*kofetsent/2+100) {
                         // включаем режим перетаскивания
                         drag = true;
                         // разница между левым верхним углом квадрата и точкой касания
@@ -333,15 +390,38 @@ public class ItemFragment extends Fragment{
 
                    }
                     else
-                   {
-                       if (drag&&evX - dragX<frameEni-stat_eni*scaleWidht/2f&&evX - dragX>0&&evY - dragY>0&&evY-dragY<frameBalandligi-stat_baland*scaleHeight/2f) {
+                   {    if((int)(5+evX - dragX-stat_eni*scaleWidht*kofetsent/2f)>0&&0<((int)(5+evY - dragY-stat_baland*scaleHeight*kofetsent/2f))&&
+                           (int)(5+evX - dragX-stat_eni*scaleWidht*kofetsent/2f)>0&& (int)(5+evY - dragY+stat_baland*scaleHeight*kofetsent/2f)<frameBalandligi&&
+                           (int)(5+evX - dragX+stat_eni*scaleWidht*kofetsent/2f)<frameEni&&(int)(5+evY - dragY-stat_baland*scaleHeight*kofetsent/2f)>0&&
+                           (int)(5+evX - dragX+stat_eni*scaleWidht*kofetsent/2f)<frameEni&&(int)(5+evY - dragY+stat_baland*scaleHeight*kofetsent/2f)<frameBalandligi
+                           ) {
+                       if (bitScaled.getPixel((int) (5 + evX - dragX - stat_eni * scaleWidht *kofetsent/ 2f), (int) (5 + evY - dragY - stat_baland * scaleHeight*kofetsent / 2f)) == Color.TRANSPARENT)
+                           topleft = false;
+                       else topleft = true;
+
+                       if (bitScaled.getPixel((int) (5 + evX - dragX - stat_eni * scaleWidht*kofetsent / 2f), (int) (5 + evY - dragY + stat_baland * scaleHeight *kofetsent/ 2f)) == Color.TRANSPARENT)
+                           bottomleft = false;
+                       else bottomleft = true;
+                       if (bitScaled.getPixel((int) (5 + evX - dragX + stat_eni * scaleWidht *kofetsent/ 2f), (int) (5 + evY - dragY - stat_baland * scaleHeight *kofetsent/ 2f)) == Color.TRANSPARENT)
+                           topright = false;
+                       else topright = true;
+                       if (bitScaled.getPixel((int) (5 + evX - dragX + stat_eni * scaleWidht *kofetsent/ 2f), (int) (5 + evY - dragY + stat_baland * scaleHeight*kofetsent / 2f)) == Color.TRANSPARENT)
+                           bottomright = false;
+                       else bottomright = true;
+                   }
+                       else topleft = false;
+                       if (drag&&topleft&&topright&&bottomleft&&bottomright&&evX - dragX<frameEni-stat_eni*scaleWidht*kofetsent/2f&&evX - dragX>0&&evY - dragY>0&&evY-dragY<frameBalandligi-stat_baland*scaleHeight*kofetsent/2f) {
                            // определеяем новые координаты для рисования
                            xi = evX - dragX;
                            yi = evY - dragY;
+
+                           Log.d("getPixel",Boolean.toString(bitScaled.getPixel((int)xi,(int)yi)== Color.TRANSPARENT));
+
                            // перерисовываем экран
                            invalidate();
 
                        }
+                       topleft=true;topright=true;bottomright=true;bottomleft=true;
                     // если режим перетаскивания включен
                     }
 

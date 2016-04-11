@@ -10,10 +10,23 @@
         android:id="@+id/tovar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-
+        android:src="@drawable/futblka"
+        android:padding="10dp"
         android:scaleType="centerInside"
-        />
+        android:layout_above="@+id/imageView10" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/imageView10"
+
+        android:scaleType="fitXY"
+
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+
+        android:layout_alignRight="@+id/tovar"
+        android:layout_alignEnd="@+id/tovar" />
     <FrameLayout
         android:id="@+id/frameStick"
         android:layout_width="match_parent"
