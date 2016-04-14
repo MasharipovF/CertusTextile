@@ -1,16 +1,24 @@
 package masharipov.certustextile.stickeradd;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
+import android.support.annotation.IntegerRes;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
@@ -39,15 +47,25 @@ public class NakleykaActivity extends AppCompatActivity {
     private List<List<RecyclerData>> goodsList;
     private int numOfItemsInRow = 3;
     private String extras;
+    private LinearLayout bottomLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_nakleyka);
 
         Intent intent = getIntent();
         extras = intent.getStringExtra("TYPE");
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        bottomLayout = (LinearLayout) findViewById(R.id.layout);
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.widthPixels;
+        Log.v("TOVAR", Integer.toString(height));
+        bottomLayout.setTranslationY(800);
 
         //init recyclerview
         mRecyclerView = (RecyclerView) findViewById(R.id.gridLayout);
@@ -65,28 +83,42 @@ public class NakleykaActivity extends AppCompatActivity {
         if (extras.equals("STICKER")) {
             CertusDatabase cDB = new CertusDatabase(this);
             stickerList = cDB.getStickersFromDB();
-            myItemAdapter = new DraggableGridAdapter(stickerList, this, View.GONE);
+            myItemAdapter = new DraggableGridAdapter(stickerList, this, View.GONE, View.VISIBLE, (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
             mAdapter = myItemAdapter;
             mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
             fab.setVisibility(View.VISIBLE);
+            bottomLayout.setVisibility(View.GONE);
         } else if (extras.equals("GOODS")) {  // agar tovar tanlansa
-            // temp data
-            int j = 0;
+
+            // dobavlenie tovarov v osnovnoy recycler
+            CertusDatabase cDB = new CertusDatabase(this);
+            String tableNames[] = {"Futbolka", "Sviter", "Jemper", "Pidjak"};
             tovarList = new ArrayList<>();
-            for (int i = 0; i < 16; i++) {
-                TovarData tovarData = new TovarData();
-                if (i % 4 == 0) {
-                    tovarData.setType(1);
-                    tovarData.idiwka = i;
-                    tovarData.setSectionText("Section" + Integer.toString(++j));
-                } else {
-                    tovarData.idiwka = i;
-                    tovarData.setType(0);
+
+            // chtobi otobrajal odin tovar po odnomu ID
+            for (String tableName : tableNames) {
+                if (cDB.isTableEmpty(tableName)) continue;
+
+                TovarData sectionData = new TovarData();
+                sectionData.setSectionText(tableName);
+                sectionData.setType(1);
+                tovarList.add(sectionData);
+
+                List<TovarData> items = cDB.getGoodsFromDB(tableName);
+                List<TovarData> finalItems = new ArrayList<>();
+                String tmpID = null;
+                Log.v("TOVAR", tableName + " size  == " + Integer.toString(items.size()));
+                for (int j = 0; j < items.size(); j++) {
+                    if (!items.get(j).getID().equals(tmpID)) {
+                        items.get(j).setSectionText(tableName);
+                        finalItems.add(items.get(j));
+                        tmpID = items.get(j).getID();
+                    }
                 }
-                tovarList.add(tovarData);
+                tovarList.addAll(finalItems);
             }
 
-
+            // dlya otobrajeniya headerov
             mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
@@ -96,9 +128,22 @@ public class NakleykaActivity extends AppCompatActivity {
                         return 1;
                 }
             });
-            tovarAdapter = new SectionDraggableGridAdapter(tovarList, this, View.VISIBLE);
+
+            // dlya pokazivaniya vsex tovarov vibrannoy kategorii
+            bottomLayout.setVisibility(View.VISIBLE);
+            RecyclerView drawerRecycler = (RecyclerView) findViewById(R.id.list);
+            GridLayoutManager drawerLayoutManager = new GridLayoutManager(this, numOfItemsInRow);
+            drawerRecycler.setLayoutManager(drawerLayoutManager);
+            DrawerGridAdapter drawerGridAdapter = new DrawerGridAdapter(this, View.VISIBLE, bottomLayout, tovarAdapter);
+            drawerRecycler.setAdapter(drawerGridAdapter);
+
+
+            // glavniy adapter
+            tovarAdapter = new SectionDraggableGridAdapter(tovarList, this, View.VISIBLE, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), bottomLayout, drawerGridAdapter);
             mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(tovarAdapter);
             fab.setVisibility(View.GONE);
+
+
         }
 
 
@@ -202,6 +247,13 @@ public class NakleykaActivity extends AppCompatActivity {
             adb.show();
         }
 
+    }
+
+    public static float convertPixelsToDp(float px, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
     }
 
 }

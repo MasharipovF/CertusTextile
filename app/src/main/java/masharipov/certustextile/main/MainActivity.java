@@ -55,9 +55,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         mData.add(R.drawable.futbolakakach);
         mData.add(R.drawable.kurkakac);
         mTexts = new ArrayList<>();
-        mTexts.add("Майки");
-        mTexts.add("Футболки");
-        mTexts.add("Куртки");
+        mTexts.add("Mayka");
+        mTexts.add("Futbolka");
+        mTexts.add("Kurtka");
 
 
         mCoverFlowView = (CoverFlowView<MyAdap>) findViewById(R.id.coverflow);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         mCoverFlowView.setCoverFlowListener(new CoverFlowView.CoverFlowListener<MyAdap>() {
             @Override
             public void imageOnTop(CoverFlowView<MyAdap> coverFlowView, int position, float left, float top, float right, float bottom) {
-                Log.d("POSITION",Integer.toString(tempPos)+" "+Integer.toString(position));
+                Log.d("POSITION", Integer.toString(tempPos) + " " + Integer.toString(position));
                 if (position != tempPos) {
                     switcher.setText(mTexts.get(position));
                     tempPos = position;
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 Toast.makeText(getApplicationContext(), Integer.toString(position) + " is on Top", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                 intent.putExtra("POS", position);
+                intent.putExtra("TABLENAME", mTexts.get(position));
                 startActivity(intent);
                 Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
 
@@ -125,14 +126,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         switch (v.getId()) {
             case R.id.leftbtn:
                 mCoverFlowView.toMoveBack();
-
-
                 break;
             case R.id.rightbtn:
                 mCoverFlowView.toMoveNext();
-
-
-
                 break;
             case R.id.slidebtn:
                 intent = new Intent(MainActivity.this, SlideshowActivity.class);
@@ -153,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 break;
             case R.id.editbtn:
                 final Dialog dialog = new Dialog(this);
+                dialog.setCanceledOnTouchOutside(false);
                 dialog.setContentView(R.layout.password_prompt);
                 dialog.setTitle("Введите пароль:");
                 dialog.setCancelable(true);

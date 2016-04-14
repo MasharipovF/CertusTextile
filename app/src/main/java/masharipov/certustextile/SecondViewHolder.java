@@ -9,19 +9,27 @@ import android.widget.ImageView;
 /**
  * Created by developer on 09.04.2016.
  */
-public class SecondViewHolder extends RecyclerView.ViewHolder {
+public class SecondViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public ImageView imageView;
     private Context context;
+    private onClick listener;
 
-    public SecondViewHolder(View itemView, Context ctx, int height) {
+    public SecondViewHolder(View itemView, Context ctx, final onClick listen) {
         super(itemView);
+        listener = listen;
         context = ctx;
-        /*
-        imageView = new ImageView(context);
-        imageView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, height/3));
-        imageView.setImageResource(R.drawable.futblka);*/
         imageView = (ImageView) itemView;
+        imageView.setOnClickListener(this);
+        imageView.setClickable(true);
+    }
 
+    @Override
+    public void onClick(View v) {
+        listener.onClick(imageView, getAdapterPosition());
+    }
+
+    public interface onClick {
+        void onClick(ImageView img, int position);
     }
 }

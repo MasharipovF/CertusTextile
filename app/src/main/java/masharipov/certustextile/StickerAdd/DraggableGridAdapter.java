@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,8 +37,10 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     private Context context;
     private List<StickerData> stickerList, oldStickerList;
     private Intent imagePickerIntent;
-    private int SELECT_PICTURE = 1, editButtonVisibility, SECTION = 0, ITEM =1;
-    private boolean databaseChangedFlag = false;
+    private int SELECT_PICTURE = 1, editButtonVisibility, delButtonVisibility;
+    private int databaseChangedFlag = 0;
+    private CoordinatorLayout coordinatorLayout;
+    public static boolean disableDrag = false;
 
 
     public static class GridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
@@ -45,16 +49,15 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         private onItemClick listener;
 
         // VIEWHOLDER
-        public GridHolder(View v, int visibility, onItemClick click ) {
+        public GridHolder(View v, int editVisibility, int delVisibility, onItemClick click) {
             super(v);
             listener = click;
             mContainer = (FrameLayout) v.findViewById(R.id.container);
             stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
             editBtn = (ImageButton) v.findViewById(R.id.gridEditBtn);
             imgBtn = (ImageView) v.findViewById(R.id.gridImg);
-
-            editBtn.setVisibility(visibility);
-
+            editBtn.setVisibility(editVisibility);
+            stickerBtn.setVisibility(delVisibility);
             stickerBtn.setOnClickListener(this);
             imgBtn.setOnClickListener(this);
         }
@@ -81,11 +84,12 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     }
 
 
-    public DraggableGridAdapter(List<StickerData> list, Context ctx, int editVisibility) {
+    public DraggableGridAdapter(List<StickerData> list, Context ctx, int editVisibility, int delVisibility, CoordinatorLayout layout) {
         context = ctx;
         stickerList = list;
         oldStickerList = list;
         editButtonVisibility = editVisibility;
+        coordinatorLayout = layout;
         setHasStableIds(true);
     }
 
@@ -93,33 +97,14 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     public GridHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         final View v = inflater.inflate(R.layout.grid_item, parent, false);
-        return new GridHolder(v, editButtonVisibility, new onItemClick() {
+        return new GridHolder(v, editButtonVisibility, delButtonVisibility, new onItemClick() {
             @Override
             public void delBtnClick(final int position) {
-                AlertDialog.Builder adb = new AlertDialog.Builder(context);
-                adb.setTitle("Удаление");
-                adb.setMessage("Хотите удалить эту наклейку");
-                adb.setIcon(android.R.drawable.ic_dialog_info);
-                adb.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-
-                adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        removeItem(position);
-                    }
-                });
-                adb.create();
-                adb.show();
-
+                removeItem(position);
             }
 
             @Override
             public void editBtnClick(int position) {
-
             }
         });
     }
@@ -169,21 +154,35 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
             item.setURI(path);
             stickerList.add(item);
             notifyItemInserted(0);
-            databaseChangedFlag = true;
+            databaseChangedFlag++;
         } else {
             item.setID(uniqueID);
             item.setURI(path);
             stickerList.add(item);
             notifyItemInserted(stickerList.size() - 1);
-            databaseChangedFlag = true;
+            databaseChangedFlag++;
         }
     }
 
 
-    public void removeItem(int position) {
+    public void removeItem(final int position) {
+        final StickerData item = stickerList.get(position);
         stickerList.remove(position);
         notifyItemRemoved(position);
-        databaseChangedFlag = true;
+        databaseChangedFlag++;
+
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, "Наклейка удалена", Snackbar.LENGTH_LONG)
+                .setAction("Отменить", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        stickerList.add(position, item);
+                        notifyItemInserted(position);
+                        databaseChangedFlag--;
+                    }
+                });
+
+        snackbar.show();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -222,7 +221,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     }
 
     public boolean isDatabaseChanged() {
-        return databaseChangedFlag;
+        return databaseChangedFlag > 0;
     }
 
     @Override
@@ -249,12 +248,12 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         StickerData item = stickerList.remove(fromPosition);
         stickerList.add(toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
-        databaseChangedFlag = true;
+        databaseChangedFlag++;
     }
 
     @Override
     public boolean onCheckCanStartDrag(GridHolder holder, int position, int x, int y) {
-        return true;
+        return !disableDrag;
     }
 
     @Override

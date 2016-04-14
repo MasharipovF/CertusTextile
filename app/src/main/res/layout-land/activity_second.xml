@@ -14,7 +14,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="35dp"
         android:layout_marginRight="13dp"
-
         android:layout_marginTop="35dp"
         android:background="@drawable/yonpanel"
         android:orientation="vertical">
@@ -49,11 +48,16 @@
                 android:id="@+id/nakleyki"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
                 android:layout_above="@+id/imageView3"
                 android:layout_below="@+id/imageView4"
                 android:layout_margin="5dp">
 
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/stickerRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </android.support.v7.widget.RecyclerView>
             </FrameLayout>
 
             <ImageView
@@ -274,10 +278,31 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/backa"
+            android:id="@+id/yoqa1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="35dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/eyes" />
+
+        <ImageView
+            android:id="@+id/yoqa2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/eyes" />
+
+        <ImageView
+            android:id="@+id/yoqa3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/eyes" />
+
+        <ImageView
+            android:id="@+id/yoqa4"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:src="@drawable/eyes" />
     </LinearLayout>
 
@@ -375,13 +400,17 @@
             <FrameLayout
                 android:id="@+id/stili"
                 android:layout_width="match_parent"
-
                 android:layout_height="match_parent"
-
                 android:layout_above="@+id/imageView5"
-
                 android:layout_below="@+id/imageView6"
                 android:layout_margin="5dp">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/styleRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </android.support.v7.widget.RecyclerView>
 
             </FrameLayout>
 

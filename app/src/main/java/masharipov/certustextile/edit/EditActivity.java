@@ -8,11 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -48,9 +51,11 @@ public class EditActivity extends AppCompatActivity {
         tagEdit = (EditText) findViewById(R.id.itemTag);
         clothes_list = (RecyclerView) findViewById(R.id.recycler_add);
         clothes_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        forDatabase = new ArrayList<>(collarGroup.getChildCount());
-        for (int i = 0; i < collarGroup.getChildCount(); i++)
+        forDatabase = new ArrayList<>();
+        for (int i = 0; i < collarGroup.getChildCount(); i++) {
+            if (collarGroup.getChildAt(i) instanceof ImageView) continue;
             forDatabase.add(null);
+        }
         typeSpinner = (Spinner) findViewById(R.id.type_spinner);
         List<String> spinItems = new ArrayList<>();
         spinItems.add("Futbolka");
@@ -66,7 +71,7 @@ public class EditActivity extends AppCompatActivity {
         collarGroup.check(R.id.collar1);
         gender = "male";
         genderGroup.check(R.id.male);
-        adapter = new RecyclerAdapter(this, newData(collar, gender));
+        adapter = new RecyclerAdapter(this, newData(collar, gender), (RelativeLayout) findViewById(R.id.layoutForSnackbar));
         adapter.collarTag = 0;
         forDatabase.set(adapter.getCollarTag(), adapter.getDatabase());
         clothes_list.setAdapter(adapter);
@@ -76,19 +81,15 @@ public class EditActivity extends AppCompatActivity {
                 switch (checkedId) {
                     case R.id.collar1:
                         setData(adapter.getCollarTag(), 0);
-                        tagEdit.setText(forDatabase.get(0).get(0).tag);
                         break;
                     case R.id.collar2:
                         setData(adapter.getCollarTag(), 1);
-                        tagEdit.setText(forDatabase.get(1).get(0).tag);
                         break;
                     case R.id.collar3:
                         setData(adapter.getCollarTag(), 2);
-                        tagEdit.setText(forDatabase.get(2).get(0).tag);
                         break;
                     case R.id.collar4:
                         setData(adapter.getCollarTag(), 3);
-                        tagEdit.setText(forDatabase.get(3).get(0).tag);
                         break;
                 }
             }
@@ -133,7 +134,7 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        // keeping it for some reasons
+        // keeping it for some reasons)))
       /*  tagEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -189,10 +190,6 @@ public class EditActivity extends AppCompatActivity {
 
     private void setData(int receivedPos, int sentPos) {
 
-        List<RecyclerData> list = forDatabase.get(receivedPos);
-        for (int i = 0; i < list.size(); i++) {
-            list.get(i).setTag(tagEdit.getText().toString());
-        }
         forDatabase.set(receivedPos, adapter.getDatabase());
         try {
             if (forDatabase.get(sentPos) == null) {
@@ -217,12 +214,12 @@ public class EditActivity extends AppCompatActivity {
         RecyclerData rdata = new RecyclerData();
         rdata.setCollar(collar);
         rdata.setGender(gender);
-        rdata.setSize("XS", 0);
+        rdata.setSize("XS");
         mdata.add(rdata);
         return mdata;
     }
 
-    private void saveDialog(Context context, int flag) {
+    private void saveDialog(final Context context, int flag) {
         if (isDatabaseEmpty()) {
             Toast.makeText(context, "База пуста, сначала добавьте товары", Toast.LENGTH_SHORT).show();
         } else {
@@ -241,9 +238,36 @@ public class EditActivity extends AppCompatActivity {
             adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    CertusDatabase certusDatabase = new CertusDatabase(forDatabase, typeSpinner.getSelectedItem().toString(), getApplicationContext());
-                    certusDatabase.saveGoodsToDB();
-                    finish();
+                    List<RecyclerData> list = new ArrayList<>();
+                    for (int i = 0; i < forDatabase.size(); i++) {
+                        List<RecyclerData> tmpList = forDatabase.get(i);
+                        if (tmpList == null || tmpList.size() == 0) continue;
+                        tmpList.remove(tmpList.size() - 1);
+                        if (tmpList.size() != 0) {
+                            list.addAll(tmpList);
+                        }
+                        Log.v("TOVAR", "Extracted from collar " + Integer.toString(i) + ",data size " + Integer.toString(tmpList.size()));
+                    }
+                    CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), list);
+                    certusDatabase.saveGoodsToDB(typeSpinner.getSelectedItem().toString());
+
+                    // ochistka dannix
+                    forDatabase.clear();
+                    adapter.clearDatabase();
+                    int j = 0;
+                    for (int i = 0; i < collarGroup.getChildCount(); i++) {
+                        if (collarGroup.getChildAt(i) instanceof ImageView) continue;
+                        forDatabase.add(null);
+                    }
+                    adapter.collarTag = 0;
+                    collar = "collar1";
+                    gender = "male";
+                    collarGroup.check(R.id.collar1);
+                    genderGroup.check(R.id.male);
+                    adapter.setDatabase(newData(collar, gender));
+                    forDatabase.set(adapter.getCollarTag(), adapter.getDatabase());
+                    adapter.notifyDataSetChanged();
+                    tagEdit.getText().clear();
                 }
             });
             adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
@@ -302,8 +326,18 @@ public class EditActivity extends AppCompatActivity {
             adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    CertusDatabase certusDatabase = new CertusDatabase(forDatabase, typeSpinner.getSelectedItem().toString(), getApplicationContext());
-                    certusDatabase.saveGoodsToDB();
+                    List<RecyclerData> list = new ArrayList<>();
+                    for (int i = 0; i < forDatabase.size(); i++) {
+                        List<RecyclerData> tmpList = forDatabase.get(i);
+                        if (tmpList == null || tmpList.size() == 0) continue;
+                        tmpList.remove(tmpList.size() - 1);
+                        if (tmpList.size() != 0) {
+                            list.addAll(tmpList);
+                        }
+                    }
+                    Log.v("TOVAR", "LIST SIZE " + Integer.toString(list.size()));
+                    CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), list);
+                    certusDatabase.saveGoodsToDB(typeSpinner.getSelectedItem().toString());
                     finish();
                 }
             });

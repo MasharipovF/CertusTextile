@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +29,10 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import masharipov.certustextile.CertusDatabase;
 import masharipov.certustextile.R;
 
 
@@ -38,8 +43,13 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     private List<TovarData> tovarList, oldTovarList;
     private Intent imagePickerIntent;
     private int SELECT_PICTURE = 1, editButtonVisibility;
+    private DrawerGridAdapter drawerAdapter;
     final int SECTION = 1, ITEM = 0;
-    private boolean databaseChangedFlag = false;
+
+    private int databaseChangedFlag = 0;
+    private CoordinatorLayout coordinatorLayout;
+    private LinearLayout recyclerLayout;
+    private int tmp = 0, clickedPos = -1;
 
 
     public static class SectionGridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
@@ -78,6 +88,8 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                 case R.id.gridEditBtn:
                     listener.editBtnClick(getAdapterPosition());
                     break;
+                case R.id.gridImg:
+                    listener.onImageClick(stickerBtn, getAdapterPosition());
             }
         }
     }
@@ -87,15 +99,19 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
 
         void editBtnClick(int position);
 
-        // void imgClick(int position, ImageButton img);
+        void onImageClick(ImageView img, int position);
+
     }
 
 
-    public SectionDraggableGridAdapter(List<TovarData> list, Context ctx, int editVisibility) {
+    public SectionDraggableGridAdapter(List<TovarData> list, Context ctx, int editVisibility, CoordinatorLayout Clayout, LinearLayout Llayout, DrawerGridAdapter adapter) {
         context = ctx;
         tovarList = list;
         oldTovarList = list;
         editButtonVisibility = editVisibility;
+        coordinatorLayout = Clayout;
+        recyclerLayout = Llayout;
+        drawerAdapter = adapter;
         setHasStableIds(true);
     }
 
@@ -116,30 +132,39 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
         return new SectionGridHolder(v, viewType, new onItemClick() {
             @Override
             public void delBtnClick(final int position) {
-                AlertDialog.Builder adb = new AlertDialog.Builder(context);
-                adb.setTitle("Удаление");
-                adb.setMessage("Хотите удалить эту наклейку");
-                adb.setIcon(android.R.drawable.ic_dialog_info);
-                adb.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-
-                adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        removeItem(position);
-                    }
-                });
-                adb.create();
-                adb.show();
-
+                removeItem(position);
             }
 
             @Override
             public void editBtnClick(int position) {
+            }
 
+            @Override
+            public void onImageClick(ImageView img, int position) {
+                if (clickedPos != position && tmp == 0) {
+                    recyclerLayout.animate().translationYBy(-400);
+                    tmp++;
+                    clickedPos = position;
+                    img.setEnabled(false);
+                    CertusDatabase cDB = new CertusDatabase(context);
+
+                    List<TovarData> drawerData = cDB.getGoodsFromDB("Futbolka"), finalData = new ArrayList<>();
+                    String tempId = tovarList.get(position).getID();
+                    for (int j = 0; j < drawerData.size(); j++) {
+                        if (tempId.equals(drawerData.get(j).getID())) {
+                            finalData.add(drawerData.get(j));
+                        }
+                    }
+                    Log.v("TOVAR", "FINAL DATA SIZE == " + Integer.toString(finalData.size()));
+                    drawerAdapter.setDataBase(finalData);
+                } else if (clickedPos == position && tmp != 0) {
+                    recyclerLayout.animate().translationYBy(400);
+                    tmp--;
+                    clickedPos = -1;
+                    img.setEnabled(true);
+                    drawerAdapter.clearDatabase();
+                    drawerAdapter.notifyDataSetChanged();
+                }
             }
         });
     }
@@ -180,6 +205,11 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
         }
     }
 
+    public int getPosition() {
+        return clickedPos;
+    }
+
+
     public List<TovarData> getStickerList() {
         return tovarList;
     }
@@ -188,64 +218,81 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
         return oldTovarList;
     }
 
-    public void removeItem(int position) {
+    private TovarData delitem, delsection;
+    private int secpos;
+
+    public void removeItem(final int position) {
+
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, "Товар удален", Snackbar.LENGTH_LONG);
 
         // esli udalim posledniy element kotoriy ne SECTION
         if (position == tovarList.size() - 1 && tovarList.get(position).getType() == 0) {
+            delitem = tovarList.get(position);
             tovarList.remove(position);
             notifyItemRemoved(position);
             if (tovarList.get(position - 1).getType() == 1) {
+                delsection = tovarList.get(position - 1);
+                secpos = position - 1;
                 tovarList.remove(position - 1);
                 notifyItemRemoved(position - 1);
             }
-            databaseChangedFlag = true;
-            return;
+            databaseChangedFlag++;
+            snackbar.setAction("Отменить", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (delsection != null) {
+                        tovarList.add(secpos, delsection);
+                        notifyItemInserted(secpos);
+                        databaseChangedFlag--;
+                        delsection = null;
+                        secpos = -1;
+                    }
+                    tovarList.add(position, delitem);
+                    notifyItemInserted(position);
+                    databaseChangedFlag--;
+                }
+            });
+        } else {
+            // udalyayem element v seredine
+            delitem = tovarList.get(position);
+            tovarList.remove(position);
+            notifyItemRemoved(position);
+            databaseChangedFlag++;
+            if (tovarList.get(position).getType() == 1) {
+                Log.v("TOVAR", "Middle of list LIST");
+                if (tovarList.get(position - 1).getType() == 1) {
+                    delsection = tovarList.get(position - 1);
+                    secpos = position - 1;
+                    tovarList.remove(position - 1);
+                    notifyItemRemoved(position - 1);
+                    databaseChangedFlag++;
+
+                }
+            }
+            snackbar.setAction("Отменить", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (delsection != null) {
+                        tovarList.add(secpos, delsection);
+                        notifyItemInserted(secpos);
+                        databaseChangedFlag--;
+                        delsection = null;
+                        secpos = -1;
+                    }
+                    tovarList.add(position, delitem);
+                    notifyItemInserted(position);
+                    databaseChangedFlag--;
+                }
+            });
         }
+        snackbar.show();
 
-
-        tovarList.remove(position);
-        notifyItemRemoved(position);
-        databaseChangedFlag = true;
-
-        if (tovarList.get(position).getType() == 1) {
-            Log.v("TOVAR", "Middle of list LIST");
-            if (tovarList.get(position - 1).getType() == 1) {
-                tovarList.remove(position - 1);
-                notifyItemRemoved(position - 1);
-                databaseChangedFlag = true;
-
-            }
-        }
-
-
-        /*if (position == 0 && tovarList.get(position).getType() == 1) {
-            Log.v("TOVAR", "Beginning of LIST");
-            if (tovarList.get(position + 1).getType() == 1) {
-                tovarList.remove(position);
-                notifyItemRemoved(position);
-            }
-        } else if (position == tovarList.size() - 1 && tovarList.get(position).getType() == 1) {
-            Log.v("TOVAR", "END of LIST");
-            if (tovarList.get(position - 1).getType() == 1) {
-                tovarList.remove(position);
-                notifyItemRemoved(position);
-            }
-        } else if (tovarList.get(position).getType() == 1) {
-            Log.v("TOVAR", "Middle of list LIST");
-            if (tovarList.get(position - 1).getType() == 1 || tovarList.get(position + 1).getType() == 1) {
-                tovarList.remove(position - 1);
-                notifyItemRemoved(position - 1);
-            }}
-        // esli i sleduyuwiy i predidiuwiy element SECTION to udali tekuwiy SECTION
-       /* if (tovarList.get(position).getType() == 1) {
-            Log.v("TOVAR", "is Section  " + Integer.toString(position));
-
-        }*/
 
     }
 
     public boolean isDatabaseChanged() {
-        return databaseChangedFlag;
+        return databaseChangedFlag > 0;
     }
 
     @Override
@@ -272,7 +319,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
         TovarData item = tovarList.remove(fromPosition);
         tovarList.add(toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
-        databaseChangedFlag = true;
+        databaseChangedFlag++;
     }
 
     @Override

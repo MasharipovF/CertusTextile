@@ -3,9 +3,9 @@ package masharipov.certustextile.edit;
 import masharipov.certustextile.R;
 
 public class RecyclerData {
-    String styleUri, frontUri, sideUri, backUri;
+    String styleUri, frontUri, sideUri, backUri, uniqueID;
     String gender, tag, collar, size, type, addText;
-    int addID, sizePos, typePos, uniqueID;
+    int addID, sizePos, selectedColor;
     boolean isAddButton;
 
     public RecyclerData() {
@@ -17,12 +17,10 @@ public class RecyclerData {
         addID = R.drawable.ic_add_green_800_24dp;
         addText = "Добавить";
         size = null;
-        sizePos = 0;
         gender = null;
         tag = "";
         collar = null;
         type = null;
-        typePos = 0;
     }
 
     //SETTERS
@@ -34,9 +32,16 @@ public class RecyclerData {
         addText = name;
     }
 
-    public void setSize(String string, int pos) {
-        sizePos = pos;
+    public void setSize(String string) {
         size = string;
+    }
+
+    public void setID(String id) {
+        uniqueID = id;
+    }
+
+    public void setSelectedColor(int color) {
+        selectedColor = color;
     }
 
     public void setImageUri(String type, String path) {
@@ -59,8 +64,7 @@ public class RecyclerData {
 
     }
 
-    public void setType(String string, int pos) {
-        typePos = pos;
+    public void setType(String string) {
         type = string;
     }
 
@@ -100,6 +104,10 @@ public class RecyclerData {
         return returnPath;
     }
 
+    public String getID() {
+        return uniqueID;
+    }
+
     public String getTag() {
         return tag;
     }
@@ -118,6 +126,10 @@ public class RecyclerData {
 
     public int getAddID() {
         return addID;
+    }
+
+    public int getSelectedColor() {
+        return selectedColor;
     }
 
 }

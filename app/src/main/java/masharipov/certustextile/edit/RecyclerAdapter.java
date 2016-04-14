@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,14 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import masharipov.certustextile.R;
 
 
@@ -37,8 +36,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     private int SELECT_PICTURE = 1, GALLERY_INTENT_CALLED = 0, GALLERY_KITKAT_INTENT_CALLED = 2, imageAddPosition = -1;
     private String imageID = null;
     public int collarTag = -1;
+    private RelativeLayout layout;
 
-    public RecyclerAdapter(Context context, List<RecyclerData> list) {
+
+    public RecyclerAdapter(Context context, List<RecyclerData> list, RelativeLayout lay) {
+        layout = lay;
         inflater = LayoutInflater.from(context);
         this.context = context;
         database = list;
@@ -76,7 +78,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
 
             @Override
             public void onSizeSpinnerSelect(String item, int itemPos, int position) {
-                database.get(position).setSize(item, itemPos);
+                database.get(position).setSize(item);
             }
 
             @Override
@@ -92,14 +94,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
                     // } else
                     //  Toast.makeText(context, "Please add images for all imageboxes!", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context, "size " + recyclerData.size + "\n" +
-                            "gender " + recyclerData.gender + "\n" +
-                            "collar " + recyclerData.collar + "\n" +
-                            "tag " + recyclerData.tag + "\n" +
-                            "type " + recyclerData.type, Toast.LENGTH_LONG).show();
-                    createDeleteDialog(position);
+                    deleteItem(position);
+                   // createDeleteDialog(position);
                 }
-
             }
         });
         return holder;
@@ -110,9 +107,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         RecyclerData current = database.get(position);
         if (current.styleUri != null)
             Picasso.with(context).load(Uri.parse(current.styleUri)).centerInside().resize(512, 512).into(holder.style);
-
         else
             Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.style);
+
         if (current.frontUri != null)
             Picasso.with(context).load(Uri.parse(current.frontUri)).centerInside().resize(512, 512).into(holder.front);
         else
@@ -146,17 +143,30 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         return counter == 4;
     }
 
-    public void deleteItem(int position) {
+    public void deleteItem(final int position) {
+        final RecyclerData tmpData = database.get(position);
         database.remove(position);
         notifyItemRemoved(position);
+
+        Snackbar snackbar = Snackbar
+                .make(layout, "Товар удален", Snackbar.LENGTH_LONG)
+                .setAction("Отменить", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        database.add(position, tmpData);
+                        notifyItemInserted(position);
+                    }
+                });
+
+        snackbar.show();
     }
 
     public void insertItem(RecyclerData rdata, int position) {
         rdata.setCollar("collar" + Integer.toString(collarTag + 1));
-        rdata.setType(database.get(position - 1).type, database.get(position - 1).typePos);
+        rdata.setType(database.get(position - 1).type);
         rdata.setTag(database.get(position - 1).tag);
         rdata.setGender(database.get(position - 1).gender);
-        rdata.setSize("XS", 0);
+        rdata.setSize("XS");
         database.add(position, rdata);
         notifyItemInserted(position);
     }

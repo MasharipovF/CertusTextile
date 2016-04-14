@@ -15,18 +15,16 @@
 
         <activity
             android:name=".SplashScreen"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:screenOrientation="landscape"></activity>
 
         //first activity
         <activity
             android:name=".main.MainActivity"
             android:screenOrientation="landscape">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         //slideshow
@@ -45,9 +43,7 @@
         <activity
             android:name=".edit.EditActivity"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-
-        </activity>
+            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
 
         //stickeradd
         <activity
