@@ -116,6 +116,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 List<RecyclerData> list = forDatabase.get(adapter.getCollarTag());
+                if (list == null || list.size() == 0) return;
                 RecyclerData recyclerData = list.get(list.size() - 1);
                 switch (checkedId) {
                     case R.id.male:
@@ -215,6 +216,7 @@ public class EditActivity extends AppCompatActivity {
         rdata.setCollar(collar);
         rdata.setGender(gender);
         rdata.setSize("XS");
+        rdata.setSizePos(0);
         mdata.add(rdata);
         return mdata;
     }
@@ -263,7 +265,7 @@ public class EditActivity extends AppCompatActivity {
                     collar = "collar1";
                     gender = "male";
                     collarGroup.check(R.id.collar1);
-                    genderGroup.check(R.id.male);
+                    //  genderGroup.check(R.id.male);
                     adapter.setDatabase(newData(collar, gender));
                     forDatabase.set(adapter.getCollarTag(), adapter.getDatabase());
                     adapter.notifyDataSetChanged();

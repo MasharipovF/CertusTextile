@@ -53,12 +53,14 @@ public class TovarRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
     @Override
     public void onBindViewHolder(SecondViewHolder holder, int position) {
         RecyclerData current = tovarList.get(position);
+
         if (current.getImageUri("front") != null)
             Picasso.with(context).load(Uri.parse(current.getImageUri("front"))).centerInside().resize(512, 512).into(holder.imageView);
+        else if (current.getGenderImageResourse() != -1)
+            Picasso.with(context).load(current.getGenderImageResourse()).into(holder.imageView);
         else
-            Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.imageView);
-        if (current.getSelectedColor()!= -1)
-        holder.imageView.setBackgroundColor(current.getSelectedColor());
+            Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(holder.imageView);
+
     }
 
     @Override
@@ -69,6 +71,11 @@ public class TovarRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
     @Override
     public void onClick(View v) {
 
+    }
+
+    public void changeList(List<RecyclerData> list) {
+        tovarList = list;
+        notifyDataSetChanged();
     }
 
     public interface clickListener {

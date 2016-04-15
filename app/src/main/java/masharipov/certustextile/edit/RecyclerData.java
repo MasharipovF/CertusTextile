@@ -5,7 +5,7 @@ import masharipov.certustextile.R;
 public class RecyclerData {
     String styleUri, frontUri, sideUri, backUri, uniqueID;
     String gender, tag, collar, size, type, addText;
-    int addID, sizePos, selectedColor;
+    int addID, sizePos, selectedColor, genderImageResourse;
     boolean isAddButton;
 
     public RecyclerData() {
@@ -21,6 +21,7 @@ public class RecyclerData {
         tag = "";
         collar = null;
         type = null;
+        genderImageResourse = -1;
     }
 
     //SETTERS
@@ -35,6 +36,9 @@ public class RecyclerData {
     public void setSize(String string) {
         size = string;
     }
+    public void setSizePos(int pos){
+        sizePos = pos;
+    }
 
     public void setID(String id) {
         uniqueID = id;
@@ -42,6 +46,10 @@ public class RecyclerData {
 
     public void setSelectedColor(int color) {
         selectedColor = color;
+    }
+
+    public void setGenderImageResourse(int rID) {
+        genderImageResourse = rID;
     }
 
     public void setImageUri(String type, String path) {
@@ -132,4 +140,7 @@ public class RecyclerData {
         return selectedColor;
     }
 
+    public int getGenderImageResourse() {
+        return genderImageResourse;
+    }
 }

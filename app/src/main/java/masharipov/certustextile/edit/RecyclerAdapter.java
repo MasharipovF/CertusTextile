@@ -18,10 +18,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import masharipov.certustextile.R;
 
 
@@ -79,6 +82,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
             @Override
             public void onSizeSpinnerSelect(String item, int itemPos, int position) {
                 database.get(position).setSize(item);
+                database.get(position).setSizePos(itemPos);
             }
 
             @Override
@@ -95,7 +99,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
                     //  Toast.makeText(context, "Please add images for all imageboxes!", Toast.LENGTH_SHORT).show();
                 } else {
                     deleteItem(position);
-                   // createDeleteDialog(position);
+                    // createDeleteDialog(position);
                 }
             }
         });
@@ -167,6 +171,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         rdata.setTag(database.get(position - 1).tag);
         rdata.setGender(database.get(position - 1).gender);
         rdata.setSize("XS");
+        rdata.setSizePos(0);
         database.add(position, rdata);
         notifyItemInserted(position);
     }
@@ -235,5 +240,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         });
         adb.create();
         adb.show();
+    }
+
+    public interface addListener {
+        void onAddListener();
     }
 }

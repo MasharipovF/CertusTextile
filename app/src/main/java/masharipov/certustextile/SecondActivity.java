@@ -15,7 +15,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +22,11 @@ import java.util.List;
 import masharipov.certustextile.edit.RecyclerData;
 import masharipov.certustextile.stickeradd.StickerData;
 
-public class SecondActivity extends AppCompatActivity {
+public class SecondActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout panelyoqa;
     Handler timerHand;
     Runnable backanim;
-    int current_status;
+    int current_status, old_status;
     TextView razmer, povorot;
     ItemFragment oldi, yon, orqa;
     float razmer_baland = 0, razmer_eni = 0;
@@ -40,11 +39,15 @@ public class SecondActivity extends AppCompatActivity {
     Vibrator vibr;
     RecyclerView tovarRecycler, styleRecycler, stickerrecycler;
     TovarRecyclerAdapter tovarRecyclerAdapter;
+    ImageView tovarArrow, stickerArrow, styleArrow;
     StyleRecyclerAdapter styleRecyclerAdapter;
     StickerRecyclerAdapter stickerRecyclerAdapter;
+    List<RecyclerData> genderPicker;
+    boolean isGenderPicked = false;
+    String[] genderNames = {"male", "female", "boy", "girl"};
     CertusDatabase cDB;
     String tableName;
-    String selectedItemID, selectedItemCollar;
+    String selectedItemID, selectedItemCollar, selectedGender;
     int ifClickedImagePositionNotChangedDoNotChangeStyleList = -1, ifStickerPositionIsTheSameDoNotChange = -1;
     List<RecyclerData> initialData; // polnaya baza po vibrannoy categorii tovara
 
@@ -76,11 +79,22 @@ public class SecondActivity extends AppCompatActivity {
             selectedItemCollar = initialData.get(0).getCollar();
         }
 
+        //snachala nujno vibrat pol, poetomu v recycler gruzim pol
+        genderPicker = new ArrayList<>();
+        Integer[] gArray = {R.drawable.gendermuj, R.drawable.genderjen, R.drawable.genderdetmuj, R.drawable.genderdetjen};
+        for (Integer aGArray : gArray) {
+            RecyclerData gData = new RecyclerData();
+            gData.setGenderImageResourse(aGArray);
+            genderPicker.add(gData);
+        }
+        Log.v("ddd", "ddd");
+
         // tovar recycler
         tovarRecycler = (RecyclerView) findViewById(R.id.tovarRecycler);
+        tovarArrow = (ImageView) findViewById(R.id.tovarPastStrelka);
+        tovarArrow.setVisibility(View.GONE);
         styleRecycler = (RecyclerView) findViewById(R.id.styleRecycler);
         stickerrecycler = (RecyclerView) findViewById(R.id.stickerRecycler);
-
 
         // tovar redaktirovanie
         vibr = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
@@ -115,14 +129,12 @@ public class SecondActivity extends AppCompatActivity {
                 switch (current_status) {
                     case 0:
                         oldi.changeSticker(R.drawable.nakleka);
-
                         break;
                     case 1:
                         yon.changeSticker(R.drawable.naka2);
 
                         break;
                     case 2:
-
                         orqa.changeSticker(R.drawable.naka1);
                         break;
                 }
@@ -136,24 +148,6 @@ public class SecondActivity extends AppCompatActivity {
                 panelyoqa.animate().translationX(-140).start();
             }
         };
-
-        panelyoqa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                panelyoqa.animate().translationX(140).start();
-                timerHand.postDelayed(backanim, 1000);
-            }
-        });
-
-        for (count = 0; count < 4; count++) {
-            findViewById(collarChooser[count]).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedItemCollar = collarName[count];
-                    styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar));
-                }
-            });
-        }
 
         findViewById(R.id.burish).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,6 +178,10 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.yoqa1).setOnClickListener(this);
+        findViewById(R.id.yoqa2).setOnClickListener(this);
+        findViewById(R.id.yoqa3).setOnClickListener(this);
+        findViewById(R.id.yoqa4).setOnClickListener(this);
     }
 
     @Override
@@ -348,27 +346,23 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void initTovarRecycler() {
-        List<RecyclerData> finalData = new ArrayList<>();
-
-        String tmpID = null;
-        for (int j = 0; j < initialData.size(); j++) {
-            if (!initialData.get(j).getID().equals(tmpID)) {
-                initialData.get(j).setType(tableName);
-                finalData.add(initialData.get(j));
-                tmpID = initialData.get(j).getID();
-            }
-        }
-        tovarRecyclerAdapter = new TovarRecyclerAdapter(this, finalData, tovarBoyi, new TovarRecyclerAdapter.clickListener() {
+        tovarRecyclerAdapter = new TovarRecyclerAdapter(this, genderPicker, tovarBoyi, new TovarRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position, List<RecyclerData> dataList) {
+                if (!isGenderPicked) {
+                    selectedGender = genderNames[position];
+                    tovarRecyclerAdapter.changeList(getTovarData(selectedGender));
+                    styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar, selectedGender));
+                    isGenderPicked = true;
+                    return;
+                }
                 if (position != ifClickedImagePositionNotChangedDoNotChangeStyleList) {
                     selectedItemID = dataList.get(position).getID();
-                    styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar));
-
-                    panelyoqa.animate().translationX(-140).start();
-
+                    styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar, selectedGender));
                     ifClickedImagePositionNotChangedDoNotChangeStyleList = position;
                 }
+                panelyoqa.animate().translationX(140).start();
+                timerHand.postDelayed(backanim, 3000);
             }
         });
         tovarRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -376,8 +370,7 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void initStyleRecycler() {
-        List<RecyclerData> data = getStyleData(selectedItemID, selectedItemCollar);
-        Log.v("SECONDACTIVITY", "SIZE OF STYLE ITEMS == " + data.size());
+        List<RecyclerData> data = new ArrayList<>();
         styleRecyclerAdapter = new StyleRecyclerAdapter(this, data, styleBoyi, new StyleRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position) {
@@ -389,14 +382,28 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void initStickerRecycler() {
-        List<StickerData> list = cDB.getStickersFromDB();
+        List<StickerData> list = new ArrayList<>();
+        list = cDB.getStickersFromDB();
         Log.v("SECONDACTIVITY", "SIZE OF STICKER ITEMS == " + list.size());
         stickerRecyclerAdapter = new StickerRecyclerAdapter(this, list, stickerBoyi, new StickerRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position) {
                 if (ifStickerPositionIsTheSameDoNotChange != position) {
                     Log.v("SECONDACTIVITY", "STICKERITEM AT  " + Integer.toString(position) + " CLICKED");
+                    switch (current_status) {
+                        case 0:
+                            oldi.changeSticker(R.drawable.nakleka);
+                            break;
+                        case 1:
+                            yon.changeSticker(R.drawable.naka2);
+
+                            break;
+                        case 2:
+                            orqa.changeSticker(R.drawable.naka1);
+                            break;
+                    }
                     ifStickerPositionIsTheSameDoNotChange = position;
+                    old_status = current_status;
                 }
             }
         });
@@ -404,10 +411,11 @@ public class SecondActivity extends AppCompatActivity {
         stickerrecycler.setAdapter(stickerRecyclerAdapter);
     }
 
-    public List<RecyclerData> getStyleData(String id, String collar) {
+    public List<RecyclerData> getStyleData(String id, String collar, String gender) {
         List<RecyclerData> finalData = new ArrayList<>();
+        String tmpURI = null; // chtobi brat po odnomu tovaru iz odinakovix stiley (esli sprosyat sdelaem) poka ne rabotaet
         for (int j = 0; j < initialData.size(); j++) {
-            if (initialData.get(j).getID().equals(id) && initialData.get(j).getCollar().equals(collar)) {
+            if (initialData.get(j).getID().equals(id) && initialData.get(j).getCollar().equals(collar) && initialData.get(j).getGender().equals(gender)) {
                 initialData.get(j).setType(tableName);
                 finalData.add(initialData.get(j));
             }
@@ -416,4 +424,57 @@ public class SecondActivity extends AppCompatActivity {
         return finalData;
     }
 
+    public List<RecyclerData> getTovarData(String gender) {
+        List<RecyclerData> finalData = new ArrayList<>();
+        String tmpID = initialData.get(0).getID();
+        int genderFound = 0;
+        for (int j = 0; j < initialData.size(); j++) {
+            if (initialData.get(j).getID().equals(tmpID) && initialData.get(j).getGender().equals(gender) && genderFound == 0) {
+                initialData.get(j).setType(tableName);
+                finalData.add(initialData.get(j));
+                genderFound++;
+            } else {
+                if (!initialData.get(j).getID().equals(tmpID)) {
+                    genderFound = 0;
+                    tmpID = initialData.get(j).getID();
+
+                }
+                if (initialData.get(j).getID().equals(tmpID) && initialData.get(j).getGender().equals(gender) && genderFound == 0) {
+                    initialData.get(j).setType(tableName);
+                    finalData.add(initialData.get(j));
+                    genderFound++;
+                }
+            }
+        }
+        return finalData;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.yoqa1:
+                selectedItemCollar = "collar1";
+                break;
+            case R.id.yoqa2:
+                selectedItemCollar = "collar2";
+                break;
+            case R.id.yoqa3:
+                selectedItemCollar = "collar3";
+                break;
+            case R.id.yoqa4:
+                selectedItemCollar = "collar4";
+                break;
+        }
+        styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar, selectedGender));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isGenderPicked) {
+            isGenderPicked = false;
+            tovarRecyclerAdapter.changeList(genderPicker);
+            styleRecyclerAdapter.changeStyleList(new ArrayList<RecyclerData>());
+        } else
+            super.onBackPressed();
+    }
 }
