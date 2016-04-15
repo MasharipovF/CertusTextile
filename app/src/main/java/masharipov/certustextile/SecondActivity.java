@@ -388,23 +388,20 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         stickerRecyclerAdapter = new StickerRecyclerAdapter(this, list, stickerBoyi, new StickerRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position) {
-                if (ifStickerPositionIsTheSameDoNotChange != position) {
-                    Log.v("SECONDACTIVITY", "STICKERITEM AT  " + Integer.toString(position) + " CLICKED");
-                    switch (current_status) {
-                        case 0:
-                            oldi.changeSticker(R.drawable.nakleka);
-                            break;
-                        case 1:
-                            yon.changeSticker(R.drawable.naka2);
-
-                            break;
-                        case 2:
-                            orqa.changeSticker(R.drawable.naka1);
-                            break;
-                    }
-                    ifStickerPositionIsTheSameDoNotChange = position;
-                    old_status = current_status;
+                Log.v("SECONDACTIVITY", "STICKERITEM AT  " + Integer.toString(position) + " CLICKED");
+                switch (current_status) {
+                    case 0:
+                        oldi.changeSticker(R.drawable.nakleka);
+                        break;
+                    case 1:
+                        yon.changeSticker(R.drawable.naka2);
+                        break;
+                    case 2:
+                        orqa.changeSticker(R.drawable.naka1);
+                        break;
                 }
+
+
             }
         });
         stickerrecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -414,10 +411,12 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     public List<RecyclerData> getStyleData(String id, String collar, String gender) {
         List<RecyclerData> finalData = new ArrayList<>();
         String tmpURI = null; // chtobi brat po odnomu tovaru iz odinakovix stiley (esli sprosyat sdelaem) poka ne rabotaet
-        for (int j = 0; j < initialData.size(); j++) {
-            if (initialData.get(j).getID().equals(id) && initialData.get(j).getCollar().equals(collar) && initialData.get(j).getGender().equals(gender)) {
-                initialData.get(j).setType(tableName);
-                finalData.add(initialData.get(j));
+        if (initialData.size() != 0) {
+            for (int j = 0; j < initialData.size(); j++) {
+                if (initialData.get(j).getID().equals(id) && initialData.get(j).getCollar().equals(collar) && initialData.get(j).getGender().equals(gender)) {
+                    initialData.get(j).setType(tableName);
+                    finalData.add(initialData.get(j));
+                }
             }
         }
         Log.v("SECONDACTIVITY", "SIZE OF STYLE ITEMS == " + finalData.size());
@@ -426,26 +425,29 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     public List<RecyclerData> getTovarData(String gender) {
         List<RecyclerData> finalData = new ArrayList<>();
-        String tmpID = initialData.get(0).getID();
-        int genderFound = 0;
-        for (int j = 0; j < initialData.size(); j++) {
-            if (initialData.get(j).getID().equals(tmpID) && initialData.get(j).getGender().equals(gender) && genderFound == 0) {
-                initialData.get(j).setType(tableName);
-                finalData.add(initialData.get(j));
-                genderFound++;
-            } else {
-                if (!initialData.get(j).getID().equals(tmpID)) {
-                    genderFound = 0;
-                    tmpID = initialData.get(j).getID();
-
-                }
+        if (initialData.size() != 0) {
+            String tmpID = initialData.get(0).getID();
+            int genderFound = 0;
+            for (int j = 0; j < initialData.size(); j++) {
                 if (initialData.get(j).getID().equals(tmpID) && initialData.get(j).getGender().equals(gender) && genderFound == 0) {
                     initialData.get(j).setType(tableName);
                     finalData.add(initialData.get(j));
                     genderFound++;
+                } else {
+                    if (!initialData.get(j).getID().equals(tmpID)) {
+                        genderFound = 0;
+                        tmpID = initialData.get(j).getID();
+
+                    }
+                    if (initialData.get(j).getID().equals(tmpID) && initialData.get(j).getGender().equals(gender) && genderFound == 0) {
+                        initialData.get(j).setType(tableName);
+                        finalData.add(initialData.get(j));
+                        genderFound++;
+                    }
                 }
             }
         }
+
         return finalData;
     }
 
