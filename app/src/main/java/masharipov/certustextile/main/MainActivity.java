@@ -51,13 +51,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
 
         mData = new ArrayList<>();
-        mData.add(R.drawable.maykakac);
-        mData.add(R.drawable.futbolakakach);
-        mData.add(R.drawable.kurkakac);
+        mData.add(R.drawable.mayka2);
+        mData.add(R.drawable.futblki3);
+        mData.add(R.drawable.poloone);
         mTexts = new ArrayList<>();
-        mTexts.add("Mayka");
-        mTexts.add("Futbolka");
-        mTexts.add("Kurtka");
+        mTexts.add("Майки");
+        mTexts.add("Футболки");
+        mTexts.add("Поло");
 
 
         mCoverFlowView = (CoverFlowView<MyAdap>) findViewById(R.id.coverflow);
@@ -79,12 +79,26 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
             @Override
             public void topImageClicked(CoverFlowView<MyAdap> coverFlowView, int position) {
-                Toast.makeText(getApplicationContext(), Integer.toString(position) + " is on Top", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(), Integer.toString(position) + " is on Top", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                 intent.putExtra("POS", position);
-                intent.putExtra("TABLENAME", mTexts.get(position));
+                String togo="Futbolka";
+                switch (position){
+                    case 0:
+                        togo="Futbolka";
+                        break;
+                    case 1:
+                        togo="Polo";
+                        break;
+                    case 2:
+                        togo="Mayki";
+                        break;
+                    default:
+                        togo="Futbolka";
+                }
+                intent.putExtra("TABLENAME", "Futbolka");
                 startActivity(intent);
-                Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
+           //     Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
 
             }
 
