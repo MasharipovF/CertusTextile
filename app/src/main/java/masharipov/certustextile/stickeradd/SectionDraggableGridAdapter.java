@@ -11,6 +11,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,8 +49,9 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
 
     private int databaseChangedFlag = 0;
     private CoordinatorLayout coordinatorLayout;
-    private LinearLayout recyclerLayout;
+    private CardView recyclerLayout;
     private int tmp = 0, clickedPos = -1;
+    private boolean panelOpened = false;
 
 
     public static class SectionGridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
@@ -104,7 +106,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     }
 
 
-    public SectionDraggableGridAdapter(List<TovarData> list, Context ctx, int editVisibility, CoordinatorLayout Clayout, LinearLayout Llayout, DrawerGridAdapter adapter) {
+    public SectionDraggableGridAdapter(List<TovarData> list, Context ctx, int editVisibility, CoordinatorLayout Clayout, CardView Llayout, DrawerGridAdapter adapter) {
         context = ctx;
         tovarList = list;
         oldTovarList = list;
@@ -143,12 +145,13 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
             public void onImageClick(ImageView img, int position) {
                 if (clickedPos != position && tmp == 0) {
                     recyclerLayout.animate().translationYBy(-400);
+                    panelOpened = true;
                     tmp++;
                     clickedPos = position;
                     img.setEnabled(false);
                     CertusDatabase cDB = new CertusDatabase(context);
 
-                    List<TovarData> drawerData = cDB.getGoodsFromDB("Futbolka"), finalData = new ArrayList<>();
+                    List<TovarData> drawerData = cDB.getGoodsFromDB(tovarList.get(position).getSectionText()), finalData = new ArrayList<>();
                     String tempId = tovarList.get(position).getID();
                     for (int j = 0; j < drawerData.size(); j++) {
                         if (tempId.equals(drawerData.get(j).getID())) {
@@ -159,6 +162,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                     drawerAdapter.setDataBase(finalData);
                 } else if (clickedPos == position && tmp != 0) {
                     recyclerLayout.animate().translationYBy(400);
+                    panelOpened = false;
                     tmp--;
                     clickedPos = -1;
                     img.setEnabled(true);
@@ -378,6 +382,14 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
         }
 
         return position;
+    }
+
+    public boolean isPanelOpen() {
+        return panelOpened;
+    }
+
+    public void setPanelOpened(boolean b) {
+        panelOpened = b;
     }
 
 }

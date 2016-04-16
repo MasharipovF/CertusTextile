@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -47,7 +48,7 @@ public class NakleykaActivity extends AppCompatActivity {
     private List<List<RecyclerData>> goodsList;
     private int numOfItemsInRow = 3;
     private String extras;
-    private LinearLayout bottomLayout;
+    private CardView bottomLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class NakleykaActivity extends AppCompatActivity {
         extras = intent.getStringExtra("TYPE");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        bottomLayout = (LinearLayout) findViewById(R.id.layout);
+        bottomLayout = (CardView) findViewById(R.id.layout);
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.widthPixels;
@@ -92,7 +93,7 @@ public class NakleykaActivity extends AppCompatActivity {
 
             // dobavlenie tovarov v osnovnoy recycler
             CertusDatabase cDB = new CertusDatabase(this);
-            String tableNames[] = {"Futbolka", "Sviter", "Jemper", "Pidjak"};
+            String tableNames[] = {"Futbolka", "Mayka", "Polo"};
             tovarList = new ArrayList<>();
 
             // chtobi otobrajal odin tovar po odnomu ID
@@ -207,8 +208,14 @@ public class NakleykaActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (extras.equals("GOODS")) super.onBackPressed();
-        else {
+        if (extras.equals("GOODS")) {
+            if (tovarAdapter.isPanelOpen()) {
+                bottomLayout.animate().translationYBy(400);
+                tovarAdapter.setPanelOpened(false);
+                return;
+            }
+            super.onBackPressed();
+        } else {
             if (!myItemAdapter.isDatabaseChanged()) {
                 super.onBackPressed();
                 CertusDatabase certusDatabase = new CertusDatabase(myItemAdapter.getStickerList(), getApplicationContext());

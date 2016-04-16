@@ -23,7 +23,7 @@ public class CertusDatabase {
     private String tag;
     private Context context;
     private String DB_NAME = "certus.db";
-    private String tableNames[] = {"Futbolka", "Sviter", "Jemper", "Pidjak"};
+    private String tableNames[] = {"Futbolka", "Mayka", "Polo"};
     private boolean isFromEdit = true;
     private ExternalDbOpenHelper externalDbOpenHelper;
 

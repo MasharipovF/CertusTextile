@@ -21,8 +21,11 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
 
     private Context context;
     private List<StickerData> stickerlist;
-    private int height;
+    private int height, tmpheight = -1;
     private clickListener listener;
+    private RecyclerView.LayoutParams layoutParams;
+    private ImageView imageView;
+
 
     public StickerRecyclerAdapter(Context c, List<StickerData> list, int h, clickListener l) {
         context = c;
@@ -33,7 +36,7 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
 
     @Override
     public SecondViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ImageView imageView = new ImageView(context);
+        imageView = new ImageView(context);
         imageView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, height / 3));
         SecondViewHolder holder = new SecondViewHolder(imageView, context, new SecondViewHolder.onClick() {
             @Override
@@ -46,6 +49,9 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
 
     @Override
     public void onBindViewHolder(SecondViewHolder holder, int position) {
+        layoutParams = (RecyclerView.LayoutParams) holder.imageView.getLayoutParams();
+        layoutParams.height = height / 3;
+
         StickerData current = stickerlist.get(position);
         if (current.getURI() != null)
             Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imageView);
@@ -65,5 +71,10 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
 
     public interface clickListener {
         void onItemClick(ImageView img, int position);
+    }
+
+    public void setImageParams(int h) {
+        height = h;
+        notifyDataSetChanged();
     }
 }

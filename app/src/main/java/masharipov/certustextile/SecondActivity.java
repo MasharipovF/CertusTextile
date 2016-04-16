@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,7 +43,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     ImageView tovarArrow, stickerArrow, styleArrow;
     StyleRecyclerAdapter styleRecyclerAdapter;
     StickerRecyclerAdapter stickerRecyclerAdapter;
-    List<RecyclerData> genderPicker;
+    List<RecyclerData> genderPicker, tovarData, styleData;
+    LinearLayoutManager tovarLayoutManager, styleLayoutManager, stickerLayoutManager;
+    List<StickerData> stickerData;
     boolean isGenderPicked = false;
     String[] genderNames = {"male", "female", "boy", "girl"};
     CertusDatabase cDB;
@@ -57,7 +60,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     int count;
 
     // recycler uchun
-    int tovarBoyi, styleBoyi, stickerBoyi;
+    int tovarBoyi, styleBoyi, stickerBoyi, strelkaBoyi;
 
 
     @Override
@@ -69,6 +72,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
         Intent intent = getIntent();
         tableName = intent.getStringExtra("TABLENAME");
+        Log.v("DATAA", "Table name == " + tableName);
 
         cDB = new CertusDatabase(this);
         initialData = cDB.getTovarFromDB(tableName);
@@ -87,14 +91,20 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             gData.setGenderImageResourse(aGArray);
             genderPicker.add(gData);
         }
-        Log.v("ddd", "ddd");
+
 
         // tovar recycler
         tovarRecycler = (RecyclerView) findViewById(R.id.tovarRecycler);
         tovarArrow = (ImageView) findViewById(R.id.tovarPastStrelka);
-        tovarArrow.setVisibility(View.GONE);
+        tovarArrow.setOnClickListener(this);
+        //  tovarArrow.setVisibility(View.GONE);
         styleRecycler = (RecyclerView) findViewById(R.id.styleRecycler);
+        styleArrow = (ImageView) findViewById(R.id.stylePastStrelka);
+        styleArrow.setOnClickListener(this);
+        styleArrow.setVisibility(View.GONE);
         stickerrecycler = (RecyclerView) findViewById(R.id.stickerRecycler);
+        stickerArrow = (ImageView) findViewById(R.id.stickerPastStrelka);
+        stickerArrow.setOnClickListener(this);
 
         // tovar redaktirovanie
         vibr = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
@@ -334,8 +344,11 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         Log.d("touchhl", Float.toString(razmer_eni) + "xxx" + Float.toString(razmer_baland));
 
 
+        strelkaBoyi = tovarArrow.getHeight();
+
         // dlya togo chtobi v recycler pomeshalis 3 elementa
         tovarBoyi = tovarRecycler.getHeight();
+        Log.v("DATAA", "Init tovat boyi = " + Integer.toString(tovarBoyi));
         initTovarRecycler();
 
         styleBoyi = styleRecycler.getHeight();
@@ -346,6 +359,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initTovarRecycler() {
+        tovarData = genderPicker;
+
         tovarRecyclerAdapter = new TovarRecyclerAdapter(this, genderPicker, tovarBoyi, new TovarRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position, List<RecyclerData> dataList) {
@@ -365,7 +380,16 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 timerHand.postDelayed(backanim, 3000);
             }
         });
-        tovarRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        if (genderPicker.size() > 3) {
+            tovarArrow.setVisibility(View.VISIBLE);
+            tovarRecyclerAdapter.setImageParams(tovarBoyi);
+        } else {
+            tovarArrow.setVisibility(View.GONE);
+            tovarRecyclerAdapter.setImageParams(tovarBoyi + strelkaBoyi);
+        }
+
+        tovarLayoutManager = new LinearLayoutManager(getApplicationContext());
+        tovarRecycler.setLayoutManager(tovarLayoutManager);
         tovarRecycler.setAdapter(tovarRecyclerAdapter);
     }
 
@@ -377,17 +401,20 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 // some code when style item clicked
             }
         });
-        styleRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        styleLayoutManager = new LinearLayoutManager(getApplicationContext());
+        styleRecycler.setLayoutManager(styleLayoutManager);
         styleRecycler.setAdapter(styleRecyclerAdapter);
     }
 
     private void initStickerRecycler() {
         List<StickerData> list = new ArrayList<>();
         list = cDB.getStickersFromDB();
+        stickerData = list;
         Log.v("SECONDACTIVITY", "SIZE OF STICKER ITEMS == " + list.size());
         stickerRecyclerAdapter = new StickerRecyclerAdapter(this, list, stickerBoyi, new StickerRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position) {
+
                 Log.v("SECONDACTIVITY", "STICKERITEM AT  " + Integer.toString(position) + " CLICKED");
                 switch (current_status) {
                     case 0:
@@ -404,7 +431,15 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
-        stickerrecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        if (list.size() > 3) {
+            stickerArrow.setVisibility(View.VISIBLE);
+            stickerRecyclerAdapter.setImageParams(stickerBoyi);
+        } else {
+            stickerArrow.setVisibility(View.GONE);
+            stickerRecyclerAdapter.setImageParams(stickerBoyi + strelkaBoyi);
+        }
+        stickerLayoutManager = new LinearLayoutManager(getApplicationContext());
+        stickerrecycler.setLayoutManager(stickerLayoutManager);
         stickerrecycler.setAdapter(stickerRecyclerAdapter);
     }
 
@@ -420,6 +455,14 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
         Log.v("SECONDACTIVITY", "SIZE OF STYLE ITEMS == " + finalData.size());
+        if (finalData.size() > 3) {
+            styleArrow.setVisibility(View.VISIBLE);
+            styleRecyclerAdapter.setImageParams(styleBoyi);
+        } else {
+            styleArrow.setVisibility(View.GONE);
+            styleRecyclerAdapter.setImageParams(styleBoyi + strelkaBoyi);
+        }
+        styleData = finalData;
         return finalData;
     }
 
@@ -447,7 +490,17 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
+        if (finalData.size() > 3) {
+            tovarArrow.setVisibility(View.VISIBLE);
+            tovarRecyclerAdapter.setImageParams(tovarBoyi);
 
+        } else {
+            tovarArrow.setVisibility(View.GONE);
+            tovarRecyclerAdapter.setImageParams(tovarBoyi + strelkaBoyi);
+        }
+        Log.v("DATAA", "tovat boyi after gender choose = " + Integer.toString(tovarBoyi));
+
+        tovarData = finalData;
         return finalData;
     }
 
@@ -466,6 +519,21 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.yoqa4:
                 selectedItemCollar = "collar4";
                 break;
+            case R.id.tovarPastStrelka:
+                if (tovarLayoutManager.findLastCompletelyVisibleItemPosition() != tovarData.size() - 1) {
+                    tovarRecycler.scrollToPosition(tovarLayoutManager.findLastCompletelyVisibleItemPosition() + 1);
+                }
+                break;
+            case R.id.stylePastStrelka:
+                if (styleLayoutManager.findLastCompletelyVisibleItemPosition() != styleData.size() - 1) {
+                    styleRecycler.scrollToPosition(styleLayoutManager.findLastCompletelyVisibleItemPosition() + 1);
+                }
+                break;
+            case R.id.stickerPastStrelka:
+                if (stickerLayoutManager.findLastCompletelyVisibleItemPosition() != stickerData.size() - 1) {
+                    stickerrecycler.scrollToPosition(stickerLayoutManager.findLastCompletelyVisibleItemPosition() + 1);
+                }
+                break;
         }
         styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar, selectedGender));
     }
@@ -476,6 +544,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             isGenderPicked = false;
             tovarRecyclerAdapter.changeList(genderPicker);
             styleRecyclerAdapter.changeStyleList(new ArrayList<RecyclerData>());
+            if (genderPicker.size() > 3) {
+                tovarArrow.setVisibility(View.VISIBLE);
+                tovarRecyclerAdapter.setImageParams(tovarBoyi);
+            } else {
+                tovarArrow.setVisibility(View.GONE);
+                tovarRecyclerAdapter.setImageParams(tovarBoyi + strelkaBoyi);
+            }
         } else
             super.onBackPressed();
     }

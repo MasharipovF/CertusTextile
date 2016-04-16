@@ -3,6 +3,7 @@ package masharipov.certustextile.stickeradd;
 import android.content.Context;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ public class DrawerGridAdapter extends RecyclerView.Adapter<DrawerGridAdapter.Dr
     private List<TovarData> tovarDataList;
     private int editButtonVisibility;
     private int databaseChangedFlag = 0;
-    private LinearLayout linearLayout;
+    private CardView linearLayout;
     private List<TovarData> drawerData;
     private SectionDraggableGridAdapter tovarDataAdapter;
 
@@ -78,7 +79,7 @@ public class DrawerGridAdapter extends RecyclerView.Adapter<DrawerGridAdapter.Dr
     }
 
 
-    public DrawerGridAdapter(Context ctx, int editVisibility, LinearLayout layout, SectionDraggableGridAdapter adapter) {
+    public DrawerGridAdapter(Context ctx, int editVisibility, CardView layout, SectionDraggableGridAdapter adapter) {
         context = ctx;
         tovarDataAdapter = adapter;
         drawerData = new ArrayList<>();

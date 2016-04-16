@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import masharipov.certustextile.CertusDatabase;
@@ -37,6 +38,7 @@ public class EditActivity extends AppCompatActivity {
     private String collar, gender;
     private Context contextforDialog = this;
     private int SAVE_BUTTON = 1, BACK_BUTTON = 2;
+    private String[] categories = {"Futbolka", "Mayka", "Polo"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +59,7 @@ public class EditActivity extends AppCompatActivity {
             forDatabase.add(null);
         }
         typeSpinner = (Spinner) findViewById(R.id.type_spinner);
-        List<String> spinItems = new ArrayList<>();
-        spinItems.add("Futbolka");
-        spinItems.add("Sviter");
-        spinItems.add("Jemper");
-        spinItems.add("Pidjak");
+        List<String> spinItems = Arrays.asList(categories);
         ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinItems);
         spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(spinAdapter);
@@ -265,7 +263,7 @@ public class EditActivity extends AppCompatActivity {
                     collar = "collar1";
                     gender = "male";
                     collarGroup.check(R.id.collar1);
-                    //  genderGroup.check(R.id.male);
+                    genderGroup.check(R.id.male);
                     adapter.setDatabase(newData(collar, gender));
                     forDatabase.set(adapter.getCollarTag(), adapter.getDatabase());
                     adapter.notifyDataSetChanged();

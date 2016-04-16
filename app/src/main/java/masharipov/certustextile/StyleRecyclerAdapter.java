@@ -22,6 +22,8 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
     private List<RecyclerData> styleList;
     private int height;
     private clickListener listener;
+    private RecyclerView.LayoutParams layoutParams;
+
 
     public StyleRecyclerAdapter(Context c, List<RecyclerData> list, int h, clickListener l) {
         context = c;
@@ -46,6 +48,8 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
 
     @Override
     public void onBindViewHolder(SecondViewHolder holder, int position) {
+        layoutParams = (RecyclerView.LayoutParams) holder.imageView.getLayoutParams();
+        layoutParams.height = height / 3;
         RecyclerData current = styleList.get(position);
         if (current.getImageUri("style") != null)
             Picasso.with(context).load(Uri.parse(current.getImageUri("style"))).centerInside().resize(512, 512).into(holder.imageView);
@@ -62,12 +66,17 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
     public void onClick(View v) {
     }
 
-    public void changeStyleList(List<RecyclerData> list){
+    public void changeStyleList(List<RecyclerData> list) {
         styleList = list;
         notifyDataSetChanged();
     }
 
     public interface clickListener {
         void onItemClick(ImageView img, int position);
+    }
+
+    public void setImageParams(int h) {
+        height = h;
+        notifyDataSetChanged();
     }
 }

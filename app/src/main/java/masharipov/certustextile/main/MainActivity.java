@@ -85,18 +85,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 String togo="Futbolka";
                 switch (position){
                     case 0:
-                        togo="Futbolka";
+                        togo="Mayka";
                         break;
                     case 1:
-                        togo="Polo";
+                        togo="Futbolka";
                         break;
                     case 2:
-                        togo="Mayki";
+                        togo="Polo";
                         break;
                     default:
                         togo="Futbolka";
                 }
-                intent.putExtra("TABLENAME", "Futbolka");
+                intent.putExtra("TABLENAME", togo);
                 startActivity(intent);
            //     Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
 

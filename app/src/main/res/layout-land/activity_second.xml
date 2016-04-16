@@ -48,7 +48,7 @@
                 android:id="@+id/nakleyki"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/imageView3"
+                android:layout_above="@+id/stickerPastStrelka"
                 android:layout_below="@+id/imageView4"
                 android:layout_margin="5dp">
 
@@ -61,7 +61,7 @@
             </FrameLayout>
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/stickerPastStrelka"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_alignParentBottom="true"
@@ -403,7 +403,7 @@
                 android:id="@+id/stili"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/imageView5"
+                android:layout_above="@+id/stylePastStrelka"
                 android:layout_below="@+id/imageView6"
                 android:layout_margin="5dp">
 
@@ -417,7 +417,7 @@
             </FrameLayout>
 
             <ImageView
-                android:id="@+id/imageView5"
+                android:id="@+id/stylePastStrelka"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_alignParentBottom="true"

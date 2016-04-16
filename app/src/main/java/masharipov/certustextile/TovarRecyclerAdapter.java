@@ -27,6 +27,8 @@ public class TovarRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
     private List<RecyclerData> tovarList;
     int height;
     private clickListener listener;
+    private ImageView imageView;
+    private RecyclerView.LayoutParams layoutParams;
 
     public TovarRecyclerAdapter(Context ctx, List<RecyclerData> list, int h, clickListener l) {
         context = ctx;
@@ -38,7 +40,7 @@ public class TovarRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
     @Override
     public SecondViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        ImageView imageView = new ImageView(context);
+        imageView = new ImageView(context);
         imageView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, height / 3));
         SecondViewHolder holder = new SecondViewHolder(imageView, context, new SecondViewHolder.onClick() {
             @Override
@@ -52,12 +54,14 @@ public class TovarRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
 
     @Override
     public void onBindViewHolder(SecondViewHolder holder, int position) {
+        layoutParams = (RecyclerView.LayoutParams) holder.imageView.getLayoutParams();
+        layoutParams.height = height / 3;
         RecyclerData current = tovarList.get(position);
-
         if (current.getImageUri("front") != null)
             Picasso.with(context).load(Uri.parse(current.getImageUri("front"))).centerInside().resize(512, 512).into(holder.imageView);
         else if (current.getGenderImageResourse() != -1)
-            Picasso.with(context).load(current.getGenderImageResourse()).into(holder.imageView);
+            holder.imageView.setImageResource(current.getGenderImageResourse());
+            //Picasso.with(context).load(current.getGenderImageResourse()).into(holder.imageView);
         else
             Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(holder.imageView);
 
@@ -80,6 +84,11 @@ public class TovarRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
 
     public interface clickListener {
         void onItemClick(ImageView img, int position, List<RecyclerData> dataList);
+    }
+
+    public void setImageParams(int h) {
+        height = h;
+        notifyDataSetChanged();
     }
 }
 
