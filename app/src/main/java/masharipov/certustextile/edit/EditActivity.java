@@ -11,9 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -38,15 +40,34 @@ public class EditActivity extends AppCompatActivity {
     private String collar, gender;
     private Context contextforDialog = this;
     private int SAVE_BUTTON = 1, BACK_BUTTON = 2;
+    private String[] categoriesRus = {"Футболки", "Майки", "Поло"};
     private String[] categories = {"Futbolka", "Mayka", "Polo"};
+    private String categoryForBaza;
+
+    private ImageView collar1, collar2, collar3, collar4;
+    private RadioButton collarBtn1, collarBtn2, collarBtn3, collarBtn4;
+    Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.shirokiyvorot, R.drawable.vorotpugi, R.drawable.vvorot};
+    Integer[] maykaCollar = {R.drawable.mayka_krugliy, R.drawable.mayka_lodachka, R.drawable.mayka_vobrazniy};
+    Integer[] poloCollar = {R.drawable.polo_stoykayoqa, R.drawable.poloyoqa, R.drawable.poloyoqa3};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.modern_edit);
+
+
+        // dlya otobrajeniya VOROTnikov
+        collar1 = (ImageView) findViewById(R.id.collarImg1);
+        collar2 = (ImageView) findViewById(R.id.collarImg2);
+        collar3 = (ImageView) findViewById(R.id.collarImg3);
+        collar4 = (ImageView) findViewById(R.id.collarImg4);
+        collarBtn1 = (RadioButton) findViewById(R.id.collarRadio1);
+        collarBtn2 = (RadioButton) findViewById(R.id.collarRadio2);
+        collarBtn3 = (RadioButton) findViewById(R.id.collarRadio3);
+        collarBtn4 = (RadioButton) findViewById(R.id.collarRadio4);
+
 
         collarGroup = (RadioGroup) findViewById(R.id.collarGroup);
         genderGroup = (RadioGroup) findViewById(R.id.genderGroup);
@@ -59,7 +80,7 @@ public class EditActivity extends AppCompatActivity {
             forDatabase.add(null);
         }
         typeSpinner = (Spinner) findViewById(R.id.type_spinner);
-        List<String> spinItems = Arrays.asList(categories);
+        List<String> spinItems = Arrays.asList(categoriesRus);
         ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinItems);
         spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSpinner.setAdapter(spinAdapter);
@@ -77,37 +98,59 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.collar1:
+                    case R.id.collarRadio1:
                         setData(adapter.getCollarTag(), 0);
                         break;
-                    case R.id.collar2:
+                    case R.id.collarRadio2:
                         setData(adapter.getCollarTag(), 1);
                         break;
-                    case R.id.collar3:
+                    case R.id.collarRadio3:
                         setData(adapter.getCollarTag(), 2);
                         break;
-                    case R.id.collar4:
+                    case R.id.collarRadio4:
                         setData(adapter.getCollarTag(), 3);
                         break;
                 }
             }
         });
 
-        /*
-        final RadioButton collarRadio = (RadioButton) findViewById(R.id.collar4).setVisibility(View.GONE);
 
         typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (typeSpinner.getSelectedItem().toString() == "") collarRadio.setVisibility(View.GONE);
-                else collarRadio.setVisibility(View.VISIBLE);
+                switch (typeSpinner.getSelectedItem().toString()) {
+                    case "Футболки":
+                        categoryForBaza = categories[0];
+                        setCollarImages(futbolkaCollar);
+                        collar4.setVisibility(View.VISIBLE);
+                        collarBtn4.setVisibility(View.VISIBLE);
+                        break;
+                    case "Майки":
+                        categoryForBaza = categories[1];
+                        setCollarImages(maykaCollar);
+                        collar4.setVisibility(View.GONE);
+                        collarBtn4.setVisibility(View.GONE);
+                        break;
+                    case "Поло":
+                        categoryForBaza = categories[2];
+                        setCollarImages(poloCollar);
+                        collar4.setVisibility(View.GONE);
+                        collarBtn4.setVisibility(View.GONE);
+                        break;
+                    default:
+                        categoryForBaza = categories[0];
+                        setCollarImages(futbolkaCollar);
+                        collar4.setVisibility(View.VISIBLE);
+                        collarBtn4.setVisibility(View.VISIBLE);
+                        break;
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });*/
+        });
 
 
         genderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -249,7 +292,7 @@ public class EditActivity extends AppCompatActivity {
                         Log.v("TOVAR", "Extracted from collar " + Integer.toString(i) + ",data size " + Integer.toString(tmpList.size()));
                     }
                     CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), list);
-                    certusDatabase.saveGoodsToDB(typeSpinner.getSelectedItem().toString());
+                    certusDatabase.saveGoodsToDB(categoryForBaza);
 
                     // ochistka dannix
                     forDatabase.clear();
@@ -300,6 +343,16 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
+
+    public void setCollarImages(Integer[] images) {
+        collar1.setImageResource(images[0]);
+        collar2.setImageResource(images[1]);
+        collar3.setImageResource(images[2]);
+        if (images.length == 4)
+            collar4.setImageResource(images[3]);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         adapter.onActivityResult(requestCode, resultCode, data);
@@ -337,7 +390,7 @@ public class EditActivity extends AppCompatActivity {
                     }
                     Log.v("TOVAR", "LIST SIZE " + Integer.toString(list.size()));
                     CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), list);
-                    certusDatabase.saveGoodsToDB(typeSpinner.getSelectedItem().toString());
+                    certusDatabase.saveGoodsToDB(categoryForBaza);
                     finish();
                 }
             });

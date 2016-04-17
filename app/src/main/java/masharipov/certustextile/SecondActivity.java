@@ -38,14 +38,22 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     int razmerPol[] = {15, 15, 15};
     int povorotMas[] = {0, 0, 0, 0};
     Vibrator vibr;
+
+    ImageView tovarArrow, stickerArrow, styleArrow;
+    ImageView collar1, collar2, collar3, collar4;
+    Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.shirokiyvorot, R.drawable.vorotpugi, R.drawable.vvorot};
+    Integer[] maykaCollar = {R.drawable.mayka_krugliy, R.drawable.mayka_lodachka, R.drawable.mayka_vobrazniy};
+    Integer[] poloCollar = {R.drawable.polo_stoykayoqa, R.drawable.poloyoqa, R.drawable.poloyoqa3};
+
+
     RecyclerView tovarRecycler, styleRecycler, stickerrecycler;
     TovarRecyclerAdapter tovarRecyclerAdapter;
-    ImageView tovarArrow, stickerArrow, styleArrow;
     StyleRecyclerAdapter styleRecyclerAdapter;
     StickerRecyclerAdapter stickerRecyclerAdapter;
     List<RecyclerData> genderPicker, tovarData, styleData;
     LinearLayoutManager tovarLayoutManager, styleLayoutManager, stickerLayoutManager;
     List<StickerData> stickerData;
+
     boolean isGenderPicked = false;
     String[] genderNames = {"male", "female", "boy", "girl"};
     CertusDatabase cDB;
@@ -70,10 +78,11 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_second);
 
+        //vibrannaya kategoriya
         Intent intent = getIntent();
         tableName = intent.getStringExtra("TABLENAME");
-        Log.v("DATAA", "Table name == " + tableName);
 
+        // izvlekaem data s vibrannoy kategorii
         cDB = new CertusDatabase(this);
         initialData = cDB.getTovarFromDB(tableName);
 
@@ -95,16 +104,44 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
         // tovar recycler
         tovarRecycler = (RecyclerView) findViewById(R.id.tovarRecycler);
-        tovarArrow = (ImageView) findViewById(R.id.tovarPastStrelka);
-        tovarArrow.setOnClickListener(this);
-        //  tovarArrow.setVisibility(View.GONE);
         styleRecycler = (RecyclerView) findViewById(R.id.styleRecycler);
-        styleArrow = (ImageView) findViewById(R.id.stylePastStrelka);
-        styleArrow.setOnClickListener(this);
-        styleArrow.setVisibility(View.GONE);
         stickerrecycler = (RecyclerView) findViewById(R.id.stickerRecycler);
+
+        tovarArrow = (ImageView) findViewById(R.id.tovarPastStrelka);
+        styleArrow = (ImageView) findViewById(R.id.stylePastStrelka);
         stickerArrow = (ImageView) findViewById(R.id.stickerPastStrelka);
+
+        tovarArrow.setOnClickListener(this);
+        styleArrow.setOnClickListener(this);
         stickerArrow.setOnClickListener(this);
+
+        //vorotniki
+        collar1 = (ImageView) findViewById(R.id.yoqa1);
+        collar2 = (ImageView) findViewById(R.id.yoqa2);
+        collar3 = (ImageView) findViewById(R.id.yoqa3);
+        collar4 = (ImageView) findViewById(R.id.yoqa4);
+
+        collar1.setOnClickListener(this);
+        collar2.setOnClickListener(this);
+        collar3.setOnClickListener(this);
+        collar4.setOnClickListener(this);
+
+        if (tableName.equals("Mayka") || tableName.equals("Polo")) {
+            collar4.setVisibility(View.GONE);
+        }
+
+        switch (tableName) {
+            case "Futbolka":
+                setCollarImages(futbolkaCollar);
+                break;
+            case "Mayka":
+                setCollarImages(maykaCollar);
+                break;
+            case "Polo":
+                setCollarImages(poloCollar);
+                break;
+        }
+
 
         // tovar redaktirovanie
         vibr = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
@@ -187,11 +224,6 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         });
-
-        findViewById(R.id.yoqa1).setOnClickListener(this);
-        findViewById(R.id.yoqa2).setOnClickListener(this);
-        findViewById(R.id.yoqa3).setOnClickListener(this);
-        findViewById(R.id.yoqa4).setOnClickListener(this);
     }
 
     @Override
@@ -394,6 +426,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initStyleRecycler() {
+        styleArrow.setVisibility(View.GONE);
         List<RecyclerData> data = new ArrayList<>();
         styleRecyclerAdapter = new StyleRecyclerAdapter(this, data, styleBoyi, new StyleRecyclerAdapter.clickListener() {
             @Override
@@ -502,6 +535,15 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
         tovarData = finalData;
         return finalData;
+    }
+
+
+    public void setCollarImages(Integer[] images) {
+        collar1.setImageResource(images[0]);
+        collar2.setImageResource(images[1]);
+        collar3.setImageResource(images[2]);
+        if (images.length == 4)
+            collar4.setImageResource(images[3]);
     }
 
     @Override

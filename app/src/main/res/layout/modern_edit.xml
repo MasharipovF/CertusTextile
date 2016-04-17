@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/layoutForSnackbar"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ebebeb"
     tools:context=".edit.EditActivity">
@@ -66,7 +66,7 @@
                 android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/collar1"
+                    android:id="@+id/collarRadio1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text=""
@@ -74,6 +74,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
+                    android:id="@+id/collarImg1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -82,7 +83,7 @@
                     android:src="@drawable/kruglivorot" />
 
                 <RadioButton
-                    android:id="@+id/collar2"
+                    android:id="@+id/collarRadio2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text=""
@@ -90,6 +91,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
+                    android:id="@+id/collarImg2"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -98,7 +100,7 @@
                     android:src="@drawable/vvorot" />
 
                 <RadioButton
-                    android:id="@+id/collar3"
+                    android:id="@+id/collarRadio3"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text=""
@@ -106,6 +108,8 @@
                     android:textSize="20sp" />
 
                 <ImageView
+                    android:id="@+id/collarImg3"
+
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -114,7 +118,7 @@
                     android:src="@drawable/vorotpugi" />
 
                 <RadioButton
-                    android:id="@+id/collar4"
+                    android:id="@+id/collarRadio4"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text=""
@@ -122,6 +126,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
+                    android:id="@+id/collarImg4"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -250,8 +255,8 @@
                     android:id="@+id/goodsBtn"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:padding="5dp"
                     android:clickable="true"
+                    android:padding="5dp"
                     android:src="@drawable/ic_action_edit_ik" />
 
                 <TextView
