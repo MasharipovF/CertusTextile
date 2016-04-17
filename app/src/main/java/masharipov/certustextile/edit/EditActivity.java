@@ -87,7 +87,7 @@ public class EditActivity extends AppCompatActivity {
 
         // znacheniya po umolchaniyu
         collar = "collar1";
-        collarGroup.check(R.id.collar1);
+        collarGroup.check(R.id.collarRadio1);
         gender = "male";
         genderGroup.check(R.id.male);
         adapter = new RecyclerAdapter(this, newData(collar, gender), (RelativeLayout) findViewById(R.id.layoutForSnackbar));
@@ -124,6 +124,7 @@ public class EditActivity extends AppCompatActivity {
                         setCollarImages(futbolkaCollar);
                         collar4.setVisibility(View.VISIBLE);
                         collarBtn4.setVisibility(View.VISIBLE);
+                        collarGroup.check(R.id.collarRadio1);
                         break;
                     case "Майки":
                         categoryForBaza = categories[1];
@@ -305,7 +306,7 @@ public class EditActivity extends AppCompatActivity {
                     adapter.collarTag = 0;
                     collar = "collar1";
                     gender = "male";
-                    collarGroup.check(R.id.collar1);
+                    collarGroup.check(R.id.collarRadio1);
                     genderGroup.check(R.id.male);
                     adapter.setDatabase(newData(collar, gender));
                     forDatabase.set(adapter.getCollarTag(), adapter.getDatabase());
