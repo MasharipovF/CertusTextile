@@ -2,6 +2,7 @@ package masharipov.certustextile;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Random;
 
@@ -232,6 +235,58 @@ public class ItemFragment extends Fragment {
         return true;
     }
 
+    public String getPath(Uri uri) {
+        // just some safety built in
+        if( uri == null ) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        // try to retrieve the image from the media store first
+        // this will only work for images selected from gallery
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
+        if( cursor != null ){
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        // this is our fallback here
+        return uri.getPath();
+    }
+
+
+    public boolean changeStickerUri(String UriString) {
+       File getBit=new File(getPath(Uri.parse(UriString)));
+
+      frameEni = frameSt.getWidth();
+        frameBalandligi = frameSt.getHeight();
+
+        bitSticker = BitmapFactory.decodeFile(getBit.getAbsolutePath());
+
+            Log.v("SECONDACTIVITY", bitSticker.toString());
+        stat_eni = bitSticker.getWidth();
+        stat_baland = bitSticker.getHeight();
+
+        if ((frameEni - leftpad - rightpad - 200) < bitSticker.getWidth()) {
+            kofetsent = (float) (frameEni - leftpad - rightpad - 50) / (float) stat_eni;
+            kofetsent /= 2f;
+        } else {
+            kofetsent = 0.5f;
+        }
+
+        frameSt.removeAllViews();
+        A1 = new MyView(This);
+        frameSt.addView(A1);
+
+
+        return true;
+    }
+
+
+
+
+
     public interface eventZOOM {
         void EVZ(int t);
 
@@ -353,7 +408,7 @@ public class ItemFragment extends Fragment {
             matrix.postTranslate(xi - side_en * scaleWidht * kofetsent / 2f, yi - side_ba * scaleHeight * kofetsent / 2f);
 
             canvas.drawBitmap(bitSticker, matrix, null);
-            canvas.drawCircle(xi, yi, 5, p);
+           // canvas.drawCircle(xi, yi, 5, p);
             // рисуем квадрат
             //  canvas.drawRect(x, y, x + side, y + side, p);
             /*matrix.reset();

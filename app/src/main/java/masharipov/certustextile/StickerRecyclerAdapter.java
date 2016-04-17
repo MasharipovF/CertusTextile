@@ -41,7 +41,7 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
         SecondViewHolder holder = new SecondViewHolder(imageView, context, new SecondViewHolder.onClick() {
             @Override
             public void onClick(ImageView img, int position) {
-                listener.onItemClick(img, position);
+                listener.onItemClick(img, position,stickerlist.get(position).getURI());
             }
         });
         return holder;
@@ -70,7 +70,7 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
     }
 
     public interface clickListener {
-        void onItemClick(ImageView img, int position);
+        void onItemClick(ImageView img, int position,String strUri);
     }
 
     public void setImageParams(int h) {

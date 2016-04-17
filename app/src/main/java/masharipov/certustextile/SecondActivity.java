@@ -446,12 +446,12 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         Log.v("SECONDACTIVITY", "SIZE OF STICKER ITEMS == " + list.size());
         stickerRecyclerAdapter = new StickerRecyclerAdapter(this, list, stickerBoyi, new StickerRecyclerAdapter.clickListener() {
             @Override
-            public void onItemClick(ImageView img, int position) {
+            public void onItemClick(ImageView img, int position,String str) {
 
-                Log.v("SECONDACTIVITY", "STICKERITEM AT  " + Integer.toString(position) + " CLICKED");
+                Log.v("SECONDACTIVITY", str);
                 switch (current_status) {
                     case 0:
-                        oldi.changeSticker(R.drawable.nakleka);
+                        oldi.changeStickerUri(str);
                         break;
                     case 1:
                         yon.changeSticker(R.drawable.naka2);
