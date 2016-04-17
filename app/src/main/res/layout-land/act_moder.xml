@@ -103,7 +103,7 @@
             android:layout_marginBottom="20dp"
             android:id="@+id/dds"
             android:textSize="20sp"
-            android:textColor="#ffb74d"
+            android:textColor="#CAAC2E"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
     <ImageView

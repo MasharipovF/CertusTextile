@@ -74,6 +74,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
+                    android:id="@+id/krugliy"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -90,6 +91,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
+                    android:id="@+id/vobraz"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -106,6 +108,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
+                    android:id="@+id/otherone"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -122,6 +125,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
+                    android:id="@+id/othersecond"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
