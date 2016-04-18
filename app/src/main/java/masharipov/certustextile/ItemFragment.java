@@ -66,10 +66,10 @@ public class ItemFragment extends Fragment {
 
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onDetach() {
+        super.onDetach();
         Log.d("lifee", "onAttach");
-        This = context;
+
         if (bitTovar != null)
             bitTovar.recycle();
         if (bitSticker != null)
@@ -84,12 +84,17 @@ public class ItemFragment extends Fragment {
     @Override
     public void onCreate(Bundle context) {
         super.onCreate(context);
+        This=getActivity();
+        File stickBit;
         Log.d("lifee", "onCreate");
-        if (voqtinchali_sticker != 0) {
-            bitSticker = BitmapFactory.decodeResource(getResources(), voqtinchali_sticker);
+        if (uriS != null) {
+            stickBit = new File(getPath(uriS));
+            bitSticker = BitmapFactory.decodeFile(stickBit.getAbsolutePath());
             //      bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,false);
-
         }
+       // else
+        //    bitSticker = BitmapFactory.decodeResource(getResources(), voqtinchali_sticker);
+
         File getBit;
         if(voqtinchali_resurs==0){
             getBit = new File(getPath(uriT));
@@ -130,7 +135,7 @@ public class ItemFragment extends Fragment {
         tovar = (ImageView) fragment_item.findViewById(R.id.tovar);
         frameSt = (FrameLayout) fragment_item.findViewById(R.id.frameStick);
         tovar.setImageBitmap(bitTovar);
-        tovar.setVisibility(View.INVISIBLE);
+       // tovar.setVisibility(View.INVISIBLE);
         fragment_item.post(new Runnable() {
             @Override
             public void run() {
@@ -141,7 +146,7 @@ public class ItemFragment extends Fragment {
                 rightpad = 0;
                 int bitHEiG = bitScaled.getHeight();
                 int bitWidgHalf = bitScaled.getWidth() / 2;
-                tovar.setVisibility(View.VISIBLE);
+              //  tovar.setVisibility(View.VISIBLE);
                 for (int t = bitWidgHalf; t > 0; t--) {
                     if (bitScaled.getPixel(t, bitHEiG - 100) == Color.TRANSPARENT) {
                         leftpad = t;
@@ -195,7 +200,6 @@ public class ItemFragment extends Fragment {
         uriT = pathFile;
         File f1=new File(getPath(uriT));
         bitTovar=BitmapFactory.decodeFile(f1.getAbsolutePath());
-        tovar.setImageBitmap(bitTovar);
         return true;
     }
 
@@ -267,7 +271,7 @@ public class ItemFragment extends Fragment {
 
     public boolean changeStickerUri(String UriString) {
         File getBit = new File(getPath(Uri.parse(UriString)));
-
+        uriS=Uri.parse(UriString);
         frameEni = frameSt.getWidth();
         frameBalandligi = frameSt.getHeight();
 

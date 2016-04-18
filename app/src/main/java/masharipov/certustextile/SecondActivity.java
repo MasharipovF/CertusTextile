@@ -2,6 +2,7 @@ package masharipov.certustextile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.IntegerRes;
@@ -225,13 +226,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
     }
-
+    boolean keyStart=true;
     @Override
     public void onStart() {
         super.onStart();
         //bu prosto initsalizovat qivoladi
         // tovar o`zgarganda fragmentdigi changeTovar(URI) funksiyasi chaqiriladi
-
+        if (keyStart){
         yon = new ItemFragment(R.drawable.expanat, new ItemFragment.eventZOOM() {
             @Override
             public void EVZ(int t) {
@@ -263,6 +264,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 povorotMas[current_status] = t;
             }
         });
+        keyStart=false;}
+
     }
 
     float startAction_DownX = 0;
@@ -439,6 +442,79 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 String oldiUri = tanlanganTovar.getImageUri("front");
                 String orqaUri = tanlanganTovar.getImageUri("back");
                 String yonUri = tanlanganTovar.getImageUri("side");
+                oldi=null;
+                oldi = new ItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
+                    @Override
+                    public void EVZ(int t) {
+                        vibr.vibrate(30);
+                        razmer.setText(Integer.toString(t));
+                        razmerPol[current_status] = t;
+                    }
+
+                    @Override
+                    public void EVR(int t) {
+                        vibr.vibrate(30);
+                        povorot.setText(Integer.toString(t));
+                        povorotMas[current_status] = t;
+                    }
+                });
+                yon=null;
+                yon = new ItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
+                    @Override
+                    public void EVZ(int t) {
+                        vibr.vibrate(30);
+                        razmer.setText(Integer.toString(t));
+                        razmerPol[current_status] = t;
+                    }
+
+                    @Override
+                    public void EVR(int t) {
+                        vibr.vibrate(30);
+                        povorot.setText(Integer.toString(t));
+                        povorotMas[current_status] = t;
+                    }
+                });
+                orqa=null;
+                orqa = new ItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
+                    @Override
+                    public void EVZ(int t) {
+                        vibr.vibrate(30);
+                        razmer.setText(Integer.toString(t));
+                        razmerPol[current_status] = t;
+                    }
+
+                    @Override
+                    public void EVR(int t) {
+                        vibr.vibrate(30);
+                        povorot.setText(Integer.toString(t));
+                        povorotMas[current_status] = t;
+                    }
+                });
+
+                switch (current_status) {
+                    case 0:
+
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frame, oldi, "OLDI")
+                            .commit();
+                    break;
+
+                    case 1:
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame, yon, "YON")
+                                .commit();
+                        break;
+
+                    case 2:
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame, orqa, "ORQA")
+                                .commit();
+                        break;
+
+                }
                 // some code when style item clicked
             }
         });
@@ -462,10 +538,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         oldi.changeStickerUri(str);
                         break;
                     case 1:
-                        yon.changeSticker(R.drawable.naka2);
+                        yon.changeStickerUri(str);
                         break;
                     case 2:
-                        orqa.changeSticker(R.drawable.naka1);
+                        orqa.changeStickerUri(str);
                         break;
                 }
 
