@@ -360,34 +360,39 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    boolean keyfirst = true;
+
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        razmer.getLocationOnScreen(razmerC);
+        if (keyfirst) {
+            razmer.getLocationOnScreen(razmerC);
 
-        razmer_baland = razmer.getHeight();
-        razmer_eni = razmer.getWidth();
+            razmer_baland = razmer.getHeight();
+            razmer_eni = razmer.getWidth();
 
-        povorot.getLocationOnScreen(rotatC);
+            povorot.getLocationOnScreen(rotatC);
 
-        rotate_baland = povorot.getHeight();
-        rotate_eni = povorot.getWidth();
+            rotate_baland = povorot.getHeight();
+            rotate_eni = povorot.getWidth();
 
-        Log.d("touchhl", Integer.toString(razmerC[0]) + "xxx" + Integer.toString(razmerC[1]));
-        Log.d("touchhl", Float.toString(razmer_eni) + "xxx" + Float.toString(razmer_baland));
+            Log.d("touchhl", Integer.toString(razmerC[0]) + "xxx" + Integer.toString(razmerC[1]));
+            Log.d("touchhl", Float.toString(razmer_eni) + "xxx" + Float.toString(razmer_baland));
 
 
-        strelkaBoyi = tovarArrow.getHeight();
+            strelkaBoyi = tovarArrow.getHeight();
 
-        // dlya togo chtobi v recycler pomeshalis 3 elementa
-        tovarBoyi = tovarRecycler.getHeight();
-        Log.v("DATAA", "Init tovat boyi = " + Integer.toString(tovarBoyi));
-        initTovarRecycler();
+            // dlya togo chtobi v recycler pomeshalis 3 elementa
+            tovarBoyi = tovarRecycler.getHeight();
+            Log.v("DATAA", "Init tovat boyi = " + Integer.toString(tovarBoyi));
+            initTovarRecycler();
 
-        styleBoyi = styleRecycler.getHeight();
-        initStyleRecycler();
+            styleBoyi = styleRecycler.getHeight();
+            initStyleRecycler();
 
-        stickerBoyi = stickerrecycler.getHeight();
-        initStickerRecycler();
+            stickerBoyi = stickerrecycler.getHeight();
+            initStickerRecycler();
+            keyfirst = false;
+        }
     }
 
     private void initTovarRecycler() {
@@ -446,7 +451,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         Log.v("SECONDACTIVITY", "SIZE OF STICKER ITEMS == " + list.size());
         stickerRecyclerAdapter = new StickerRecyclerAdapter(this, list, stickerBoyi, new StickerRecyclerAdapter.clickListener() {
             @Override
-            public void onItemClick(ImageView img, int position,String str) {
+            public void onItemClick(ImageView img, int position, String str) {
 
                 Log.v("SECONDACTIVITY", str);
                 switch (current_status) {

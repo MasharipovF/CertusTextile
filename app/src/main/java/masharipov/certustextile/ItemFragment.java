@@ -90,7 +90,14 @@ public class ItemFragment extends Fragment {
             //      bitSticker =Bitmap.createScaledBitmap(bitSticker,stat_eni,stat_baland,false);
 
         }
-        bitTovar = BitmapFactory.decodeResource(getResources(), voqtinchali_resurs);
+        File getBit;
+        if(voqtinchali_resurs==0){
+            getBit = new File(getPath(uriT));
+            bitTovar=BitmapFactory.decodeFile(getBit.getAbsolutePath());
+        }
+        else
+            bitTovar = BitmapFactory.decodeResource(getResources(), voqtinchali_resurs);
+
 
     }
 
@@ -107,10 +114,10 @@ public class ItemFragment extends Fragment {
 
     }
 
-    public ItemFragment(Uri pathFile) {
+    public ItemFragment(Uri pathFile, eventZOOM eve) {
         uriT = pathFile;
         This = getActivity();
-
+        peredacha = eve;
     }
 
     int leftpad, rightpad;
@@ -186,7 +193,9 @@ public class ItemFragment extends Fragment {
 
     public boolean changeTovar(Uri pathFile) {
         uriT = pathFile;
-        Picasso.with(This).load(uriT).into(tovar);
+        File f1=new File(getPath(uriT));
+        bitTovar=BitmapFactory.decodeFile(f1.getAbsolutePath());
+        tovar.setImageBitmap(bitTovar);
         return true;
     }
 
@@ -237,15 +246,15 @@ public class ItemFragment extends Fragment {
 
     public String getPath(Uri uri) {
         // just some safety built in
-        if( uri == null ) {
+        if (uri == null) {
             // TODO perform some logging or show user feedback
             return null;
         }
         // try to retrieve the image from the media store first
         // this will only work for images selected from gallery
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
-        if( cursor != null ){
+        if (cursor != null) {
             int column_index = cursor
                     .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
@@ -257,14 +266,14 @@ public class ItemFragment extends Fragment {
 
 
     public boolean changeStickerUri(String UriString) {
-       File getBit=new File(getPath(Uri.parse(UriString)));
+        File getBit = new File(getPath(Uri.parse(UriString)));
 
-      frameEni = frameSt.getWidth();
+        frameEni = frameSt.getWidth();
         frameBalandligi = frameSt.getHeight();
 
         bitSticker = BitmapFactory.decodeFile(getBit.getAbsolutePath());
 
-            Log.v("SECONDACTIVITY", bitSticker.toString());
+        Log.v("SECONDACTIVITY", bitSticker.toString());
         stat_eni = bitSticker.getWidth();
         stat_baland = bitSticker.getHeight();
 
@@ -282,9 +291,6 @@ public class ItemFragment extends Fragment {
 
         return true;
     }
-
-
-
 
 
     public interface eventZOOM {
@@ -408,7 +414,7 @@ public class ItemFragment extends Fragment {
             matrix.postTranslate(xi - side_en * scaleWidht * kofetsent / 2f, yi - side_ba * scaleHeight * kofetsent / 2f);
 
             canvas.drawBitmap(bitSticker, matrix, null);
-           // canvas.drawCircle(xi, yi, 5, p);
+            // canvas.drawCircle(xi, yi, 5, p);
             // рисуем квадрат
             //  canvas.drawRect(x, y, x + side, y + side, p);
             /*matrix.reset();
