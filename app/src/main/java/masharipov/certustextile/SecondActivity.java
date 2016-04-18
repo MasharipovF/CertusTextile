@@ -435,7 +435,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         List<RecyclerData> data = new ArrayList<>();
         styleRecyclerAdapter = new StyleRecyclerAdapter(this, data, styleBoyi, new StyleRecyclerAdapter.clickListener() {
             @Override
-            public void onItemClick(ImageView img, int position) {
+            public void onItemClick(ImageView img, int position, RecyclerData tanlanganTovar) {
+                String oldiUri = tanlanganTovar.getImageUri("front");
+                String orqaUri = tanlanganTovar.getImageUri("back");
+                String yonUri = tanlanganTovar.getImageUri("side");
                 // some code when style item clicked
             }
         });

@@ -40,7 +40,7 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
         SecondViewHolder holder = new SecondViewHolder(imageView, context, new SecondViewHolder.onClick() {
             @Override
             public void onClick(ImageView img, int position) {
-                listener.onItemClick(img, position);
+                listener.onItemClick(img, position, styleList.get(position));
             }
         });
         return holder;
@@ -72,7 +72,7 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
     }
 
     public interface clickListener {
-        void onItemClick(ImageView img, int position);
+        void onItemClick(ImageView img, int position, RecyclerData tanlanganTovar);
     }
 
     public void setImageParams(int h) {
