@@ -109,6 +109,7 @@ public class CertusDatabase {
             list.add(item);
             cursor.moveToNext();
         }
+        cursor.moveToFirst();
         cursor.close();
         return list;
     }
@@ -150,6 +151,7 @@ public class CertusDatabase {
             list.add(item);
             cursor.moveToNext();
         }
+        cursor.moveToFirst();
         cursor.close();
         return list;
     }
@@ -194,6 +196,7 @@ public class CertusDatabase {
             list.add(item);
             cursor.moveToNext();
         }
+        cursor.moveToFirst();
         cursor.close();
         return list;
     }

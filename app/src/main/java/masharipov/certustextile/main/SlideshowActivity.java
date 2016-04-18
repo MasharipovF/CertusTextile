@@ -60,7 +60,7 @@ public class SlideshowActivity extends AppCompatActivity {
         carouselView.setImageListener(imageListener);
         carouselView.setPageTransformer(new FadePageTransformer());
         carouselView.setPageTransformInterval(800);
-        carouselView.setRadius(10);
+
         carouselView.setAnimateOnBoundary(false);
         carouselView.setSlideInterval(4500);
     }

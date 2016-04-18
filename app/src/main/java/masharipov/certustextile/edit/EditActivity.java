@@ -46,9 +46,9 @@ public class EditActivity extends AppCompatActivity {
 
     private ImageView collar1, collar2, collar3, collar4;
     private RadioButton collarBtn1, collarBtn2, collarBtn3, collarBtn4;
-    Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.shirokiyvorot, R.drawable.vorotpugi, R.drawable.vvorot};
+    Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.vvorot, R.drawable.vorotpugi, R.drawable.shirokiyvorot};
     Integer[] maykaCollar = {R.drawable.mayka_krugliy, R.drawable.mayka_lodachka, R.drawable.mayka_vobrazniy};
-    Integer[] poloCollar = {R.drawable.polo_stoykayoqa, R.drawable.poloyoqa, R.drawable.poloyoqa3};
+    Integer[] poloCollar = {R.drawable.poloyoqa, R.drawable.poloyoqa3, R.drawable.polo_stoykayoqa};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

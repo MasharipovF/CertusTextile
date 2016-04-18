@@ -23,6 +23,7 @@ import java.util.List;
 
 import masharipov.certustextile.edit.RecyclerData;
 import masharipov.certustextile.stickeradd.StickerData;
+import masharipov.certustextile.tpriew.Tview;
 
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout panelyoqa;
@@ -42,9 +43,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     ImageView tovarArrow, stickerArrow, styleArrow;
     ImageView collar1, collar2, collar3, collar4;
-    Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.shirokiyvorot, R.drawable.vorotpugi, R.drawable.vvorot};
+    Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.vvorot, R.drawable.vorotpugi, R.drawable.shirokiyvorot};
     Integer[] maykaCollar = {R.drawable.mayka_krugliy, R.drawable.mayka_lodachka, R.drawable.mayka_vobrazniy};
-    Integer[] poloCollar = {R.drawable.polo_stoykayoqa, R.drawable.poloyoqa, R.drawable.poloyoqa3};
+    Integer[] poloCollar = {R.drawable.poloyoqa, R.drawable.poloyoqa3, R.drawable.polo_stoykayoqa};
+
 
 
     RecyclerView tovarRecycler, styleRecycler, stickerrecycler;
@@ -151,42 +153,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         razmer = (TextView) findViewById(R.id.razmerpolzunok);
         povorot = (TextView) findViewById(R.id.povorot);
         timerHand = new Handler();
-        oldi = new ItemFragment(R.drawable.expanat, new ItemFragment.eventZOOM() {
-            @Override
-            public void EVZ(int t) {
-                vibr.vibrate(30);
-                razmer.setText(Integer.toString(t));
-                razmerPol[current_status] = t;
-            }
 
-            @Override
-            public void EVR(int t) {
-                vibr.vibrate(30);
-                povorot.setText(Integer.toString(t));
-                povorotMas[current_status] = t;
-            }
-        });
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.frame, oldi, "OLDI")
-                .commit();
 
         findViewById(R.id.glaz).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (current_status) {
-                    case 0:
-                        oldi.changeSticker(R.drawable.nakleka);
-                        break;
-                    case 1:
-                        yon.changeSticker(R.drawable.naka2);
-
-                        break;
-                    case 2:
-                        orqa.changeSticker(R.drawable.naka1);
-                        break;
-                }
-
+                Intent tview=new Intent(SecondActivity.this,Tview.class);
+                startActivity(tview);
             }
         });
 
@@ -232,39 +205,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         super.onStart();
         //bu prosto initsalizovat qivoladi
         // tovar o`zgarganda fragmentdigi changeTovar(URI) funksiyasi chaqiriladi
-        if (keyStart){
-        yon = new ItemFragment(R.drawable.expanat, new ItemFragment.eventZOOM() {
-            @Override
-            public void EVZ(int t) {
-                vibr.vibrate(30);
-                razmer.setText(Integer.toString(t));
-                razmerPol[current_status] = t;
 
-            }
-
-            @Override
-            public void EVR(int t) {
-                vibr.vibrate(30);
-                povorot.setText(Integer.toString(t));
-                povorotMas[current_status] = t;
-            }
-        });
-        orqa = new ItemFragment(R.drawable.expanatorqa, new ItemFragment.eventZOOM() {
-            @Override
-            public void EVZ(int t) {
-                vibr.vibrate(30);
-                razmer.setText(Integer.toString(t));
-                razmerPol[current_status] = t;
-            }
-
-            @Override
-            public void EVR(int t) {
-                vibr.vibrate(30);
-                povorot.setText(Integer.toString(t));
-                povorotMas[current_status] = t;
-            }
-        });
-        keyStart=false;}
 
     }
 
@@ -668,6 +609,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     public void onBackPressed() {
         if (isGenderPicked) {
             isGenderPicked = false;
+            ifClickedImagePositionNotChangedDoNotChangeStyleList = -1;
             tovarRecyclerAdapter.changeList(genderPicker);
             styleRecyclerAdapter.changeStyleList(new ArrayList<RecyclerData>());
             if (genderPicker.size() > 3) {

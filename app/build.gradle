@@ -33,6 +33,8 @@ dependencies {
         transitive=true
     }
     compile 'com.melnykov:floatingactionbutton:1.3.0'
+    compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
+
 
     // for splashscreen
     compile 'com.github.ViksaaSkool:AwesomeSplash:v1.0.0'

@@ -12,47 +12,37 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
         <activity
             android:name=".SplashScreen"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         //first activity
         <activity
             android:name=".main.MainActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         //slideshow
         <activity
             android:name=".main.SlideshowActivity"
             android:screenOrientation="landscape" />
-
         //second
         <activity
             android:name=".SecondActivity"
-            android:screenOrientation="landscape">
-
-        </activity>
-
+            android:screenOrientation="landscape"></activity>
         //edit
         <activity
             android:name=".edit.EditActivity"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
-
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         //stickeradd
         <activity
             android:name=".stickeradd.NakleykaActivity"
-            android:screenOrientation="landscape">
-
-        </activity>
-
-
+            android:screenOrientation="landscape"></activity>
+        <activity android:name=".tpriew.Tview"></activity>
     </application>
 
 </manifest>

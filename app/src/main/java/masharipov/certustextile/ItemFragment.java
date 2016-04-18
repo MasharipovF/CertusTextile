@@ -119,6 +119,7 @@ public class ItemFragment extends Fragment {
 
     }
 
+
     public ItemFragment(Uri pathFile, eventZOOM eve) {
         uriT = pathFile;
         This = getActivity();
