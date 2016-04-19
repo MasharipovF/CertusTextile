@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             public void imageOnTop(CoverFlowView<MyAdap> coverFlowView, int position, float left, float top, float right, float bottom) {
                 Log.d("POSITION", Integer.toString(tempPos) + " " + Integer.toString(position));
                 if (position != tempPos) {
+
                     switcher.setText(mTexts.get(position));
                     tempPos = position;
                 }
@@ -139,9 +140,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.leftbtn:
+             //   mCoverFlowView.setSelection(++tempPos%3);
                 mCoverFlowView.toMoveBack();
                 break;
             case R.id.rightbtn:
+
+             //   mCoverFlowView.setSelection(--tempPos%3);
                 mCoverFlowView.toMoveNext();
                 break;
             case R.id.slidebtn:

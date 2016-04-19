@@ -25,6 +25,7 @@ import java.util.List;
 
 import masharipov.certustextile.edit.RecyclerData;
 import masharipov.certustextile.stickeradd.StickerData;
+import masharipov.certustextile.tpriew.Tview;
 
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout panelyoqa;
@@ -153,41 +154,91 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         razmer = (TextView) findViewById(R.id.razmerpolzunok);
         povorot = (TextView) findViewById(R.id.povorot);
         timerHand = new Handler();
-        oldi = new ItemFragment(R.drawable.expanat, new ItemFragment.eventZOOM() {
-            @Override
-            public void EVZ(int t) {
-                vibr.vibrate(30);
-                razmer.setText(Integer.toString(t));
-                razmerPol[current_status] = t;
-            }
-
-            @Override
-            public void EVR(int t) {
-                vibr.vibrate(30);
-                povorot.setText(Integer.toString(t));
-                povorotMas[current_status] = t;
-            }
-        });
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.frame, oldi, "OLDI")
-                .commit();
-
-        findViewById(R.id.glaz).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.shot).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (current_status) {
                     case 0:
-                        oldi.changeSticker(R.drawable.nakleka);
-                        break;
-                    case 1:
-                        yon.changeSticker(R.drawable.naka2);
+                        oldi = null;
+                        oldi = new ItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
+                            @Override
+                            public void EVZ(int t) {
+                                vibr.vibrate(30);
+                                razmer.setText(Integer.toString(t));
+                                razmerPol[current_status] = t;
+                            }
 
+                            @Override
+                            public void EVR(int t) {
+                                vibr.vibrate(30);
+                                povorot.setText(Integer.toString(t));
+                                povorotMas[current_status] = t;
+                            }
+                        });
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame, oldi, "YON")
+                                .commit();
                         break;
+
+                    case 1:
+
+                        yon = null;
+                        yon = new ItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
+                            @Override
+                            public void EVZ(int t) {
+                                vibr.vibrate(30);
+                                razmer.setText(Integer.toString(t));
+                                razmerPol[current_status] = t;
+                            }
+
+                            @Override
+                            public void EVR(int t) {
+                                vibr.vibrate(30);
+                                povorot.setText(Integer.toString(t));
+                                povorotMas[current_status] = t;
+                            }
+                        });
+
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame, yon, "YON")
+                                .commit();
+                        break;
+
                     case 2:
-                        orqa.changeSticker(R.drawable.naka1);
+                        orqa = null;
+                        orqa = new ItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
+                            @Override
+                            public void EVZ(int t) {
+                                vibr.vibrate(30);
+                                razmer.setText(Integer.toString(t));
+                                razmerPol[current_status] = t;
+                            }
+
+                            @Override
+                            public void EVR(int t) {
+                                vibr.vibrate(30);
+                                povorot.setText(Integer.toString(t));
+                                povorotMas[current_status] = t;
+                            }
+                        });
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame, orqa, "ORQA")
+                                .commit();
                         break;
+
                 }
+            }
+        });
+
+        findViewById(R.id.glaz).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent tview=new Intent(SecondActivity.this,Tview.class);
+                        startActivity(tview);
 
             }
         });
@@ -203,26 +254,30 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onClick(View v) {
                 if (current_status == 0) {
-                    getSupportFragmentManager()
-                            .beginTransaction().replace(R.id.frame, yon).commit();
+                    if (yon!=null) {
+                        getSupportFragmentManager()
+                                .beginTransaction().replace(R.id.frame, yon).commit();
 
-                    current_status = 1;
-                    razmer.setText(Integer.toString(razmerPol[current_status]));
-                    povorot.setText(Integer.toString(povorotMas[current_status]));
-                } else if (current_status == 1) {
+                        current_status = 1;
+                        razmer.setText(Integer.toString(razmerPol[current_status]));
+                        povorot.setText(Integer.toString(povorotMas[current_status]));
+                    }
+                    } else if (current_status == 1) {
+                    if (orqa!=null) {
                     getSupportFragmentManager()
                             .beginTransaction().replace(R.id.frame, orqa).commit();
                     current_status = 2;
                     razmer.setText(Integer.toString(razmerPol[current_status]));
-                    povorot.setText(Integer.toString(povorotMas[current_status]));
+                    povorot.setText(Integer.toString(povorotMas[current_status]));}
 
                 } else if (current_status == 2) {
-                    getSupportFragmentManager()
-                            .beginTransaction().replace(R.id.frame, oldi).commit();
-                    current_status = 0;
-                    razmer.setText(Integer.toString(razmerPol[current_status]));
-                    povorot.setText(Integer.toString(povorotMas[current_status]));
-
+                    if (oldi!=null) {
+                        getSupportFragmentManager()
+                                .beginTransaction().replace(R.id.frame, oldi).commit();
+                        current_status = 0;
+                        razmer.setText(Integer.toString(razmerPol[current_status]));
+                        povorot.setText(Integer.toString(povorotMas[current_status]));
+                    }
 
                 }
             }
@@ -236,40 +291,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         super.onStart();
         //bu prosto initsalizovat qivoladi
         // tovar o`zgarganda fragmentdigi changeTovar(URI) funksiyasi chaqiriladi
-        if (keyStart) {
-            yon = new ItemFragment(R.drawable.expanat, new ItemFragment.eventZOOM() {
-                @Override
-                public void EVZ(int t) {
-                    vibr.vibrate(30);
-                    razmer.setText(Integer.toString(t));
-                    razmerPol[current_status] = t;
 
-                }
-
-                @Override
-                public void EVR(int t) {
-                    vibr.vibrate(30);
-                    povorot.setText(Integer.toString(t));
-                    povorotMas[current_status] = t;
-                }
-            });
-            orqa = new ItemFragment(R.drawable.expanatorqa, new ItemFragment.eventZOOM() {
-                @Override
-                public void EVZ(int t) {
-                    vibr.vibrate(30);
-                    razmer.setText(Integer.toString(t));
-                    razmerPol[current_status] = t;
-                }
-
-                @Override
-                public void EVR(int t) {
-                    vibr.vibrate(30);
-                    povorot.setText(Integer.toString(t));
-                    povorotMas[current_status] = t;
-                }
-            });
-            keyStart = false;
-        }
 
     }
 
@@ -437,16 +459,18 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         tovarRecycler.setLayoutManager(tovarLayoutManager);
         tovarRecycler.setAdapter(tovarRecyclerAdapter);
     }
-
+    String oldiUri;
+    String orqaUri;
+    String yonUri;
     private void initStyleRecycler() {
         styleArrow.setVisibility(View.GONE);
         List<RecyclerData> data = new ArrayList<>();
         styleRecyclerAdapter = new StyleRecyclerAdapter(this, data, styleBoyi, new StyleRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position, RecyclerData tanlanganTovar) {
-                String oldiUri = tanlanganTovar.getImageUri("front");
-                String orqaUri = tanlanganTovar.getImageUri("back");
-                String yonUri = tanlanganTovar.getImageUri("side");
+                 oldiUri = tanlanganTovar.getImageUri("front");
+                 orqaUri = tanlanganTovar.getImageUri("back");
+                 yonUri = tanlanganTovar.getImageUri("side");
                 oldi = null;
                 oldi = new ItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
                     @Override

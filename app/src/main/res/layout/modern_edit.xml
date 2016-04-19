@@ -258,9 +258,11 @@
 
                     <ImageView
                         android:id="@+id/goodsBtn"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="16dp"
                         android:clickable="true"
+
                         android:padding="5dp"
                         android:src="@drawable/ic_action_edit_ik" />
 
@@ -281,8 +283,10 @@
 
                     <ImageView
                         android:id="@+id/stickerBtn"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="16dp"
                         android:src="@drawable/ic_action_important" />
 
                     <TextView
@@ -304,18 +308,19 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
-
                     <ImageView
-                        android:id="@+id/savebutton"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/ic_action_save" />
+                        android:id="@+id/slidebutton"
+
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+
+                        android:src="@drawable/ic_slideshow_grey_600_24dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Сохранить" />
+                        android:text="Слайдшоу" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -325,17 +330,18 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
+
                     <ImageView
-                        android:id="@+id/slidebutton"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/ic_slideshow_grey_600_24dp" />
+                        android:id="@+id/savebutton"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_action_save" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Слайдшоу" />
+                        android:text="Сохранить" />
                 </LinearLayout>
 
             </LinearLayout>

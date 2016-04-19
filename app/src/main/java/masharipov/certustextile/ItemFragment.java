@@ -149,6 +149,7 @@ public class ItemFragment extends Fragment  {
         fragment_item.post(new Runnable() {
             @Override
             public void run() {
+
                 tovar.buildDrawingCache();
                 bitScaled = tovar.getDrawingCache();
 
@@ -212,7 +213,9 @@ public class ItemFragment extends Fragment  {
         bitTovar=BitmapFactory.decodeFile(f1.getAbsolutePath());
         return true;
     }
+    public void deleteSticker(){
 
+    }
     public boolean changeTovar(int pathFile) {
         voqtinchali_resurs = pathFile;
         Picasso.with(This).load(voqtinchali_resurs).into(tovar);
@@ -258,15 +261,18 @@ public class ItemFragment extends Fragment  {
         return true;
     }
 
-
+    boolean isSave=false;
+    public void setSave(){
+        isSave=true;
+    }
     public String saveScreen(){
         String mPath = Environment.getExternalStorageDirectory().toString() + "/" + Long.toString(System.currentTimeMillis())+".jpg";
 // create bitmap screen capture
         Bitmap bitmap;
-        View v1 = getView().getRootView();
-        v1.setDrawingCacheEnabled(true);
-        bitmap = Bitmap.createBitmap(v1.getDrawingCache());
-        v1.setDrawingCacheEnabled(false);
+
+        thatall.setDrawingCacheEnabled(true);
+        bitmap = Bitmap.createBitmap(thatall.getDrawingCache());
+        thatall.setDrawingCacheEnabled(false);
 
         OutputStream fout = null;
         File imageFile = new File(mPath);
@@ -284,6 +290,7 @@ public class ItemFragment extends Fragment  {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        isSave=false;
         return mPath;
     };
     public String getPath(Uri uri) {

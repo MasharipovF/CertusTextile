@@ -481,9 +481,10 @@ public class CoverFlowView<T extends CoverFlowAdapter> extends View {
             drawChild(canvas, mid, i, i - offset);
         }
 
-        if ((offset - (int) offset) == 0.0f) {
+        //if ((offset - (int) offset) == 0.0f) {
+            Log.v("xuyyo","ISSSS");
             imageOnTop(getActuallyPosition((int) offset));
-        }
+       // }
 
         super.onDraw(canvas);
 
@@ -945,6 +946,14 @@ public class CoverFlowView<T extends CoverFlowAdapter> extends View {
         topImageClickEnable = true;
     }
     public void toMoveBack(){
+        if (getParent() != null) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
+        if (mScroller.computeScrollOffset()) {
+            mScroller.abortAnimation();
+
+        }
+
         final int from = (int) ((mOffset==0)?mAdapter.getCount():mOffset * 100);
         final int disX = (int) -100 ;
         mScroller.startScroll(
@@ -958,7 +967,18 @@ public class CoverFlowView<T extends CoverFlowAdapter> extends View {
         invalidate();
 
     }
+    public void scrollll(){
+
+    }
     public void toMoveNext(){
+        if (getParent() != null) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
+        if (mScroller.computeScrollOffset()) {
+            mScroller.abortAnimation();
+            invalidate();
+        }
+
         final int from = (int) ((mOffset==0)?mAdapter.getCount():mOffset * 100);
         final int disX = (int) 100 ;
         mScroller.startScroll(
