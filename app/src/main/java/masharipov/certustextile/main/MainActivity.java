@@ -3,6 +3,7 @@ package masharipov.certustextile.main;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     int tempPos = -1;
     MyAdap adapter;
     CoverFlowView<MyAdap> mCoverFlowView;
+    SharedPreferences sPref;
+    SharedPreferences.Editor ed;
+    String passkey = "passkey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +49,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.act_moder);
+
+        // to store passwords
+        sPref = getSharedPreferences("password", MODE_PRIVATE);
+        ed = sPref.edit();
+
+
         switcher = (TextSwitcher) findViewById(R.id.textswitcherr);
 
 
@@ -80,26 +89,26 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
             @Override
             public void topImageClicked(CoverFlowView<MyAdap> coverFlowView, int position) {
-               // Toast.makeText(getApplicationContext(), Integer.toString(position) + " is on Top", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getApplicationContext(), Integer.toString(position) + " is on Top", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                 intent.putExtra("POS", position);
-                String togo="Futbolka";
-                switch (position){
+                String togo = "Futbolka";
+                switch (position) {
                     case 0:
-                        togo="Mayka";
+                        togo = "Mayka";
                         break;
                     case 1:
-                        togo="Futbolka";
+                        togo = "Futbolka";
                         break;
                     case 2:
-                        togo="Polo";
+                        togo = "Polo";
                         break;
                     default:
-                        togo="Futbolka";
+                        togo = "Futbolka";
                 }
                 intent.putExtra("TABLENAME", togo);
                 startActivity(intent);
-           //     Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
+                //     Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
 
             }
 
@@ -140,12 +149,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.leftbtn:
-             //   mCoverFlowView.setSelection(++tempPos%3);
+                //   mCoverFlowView.setSelection(++tempPos%3);
                 mCoverFlowView.toMoveBack();
                 break;
             case R.id.rightbtn:
 
-             //   mCoverFlowView.setSelection(--tempPos%3);
+                //   mCoverFlowView.setSelection(--tempPos%3);
                 mCoverFlowView.toMoveNext();
                 break;
             case R.id.slidebtn:
@@ -167,28 +176,82 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 break;
             case R.id.editbtn:
 
-                // TODO vremmenno, uberu posle zaversheniya projecta
+                /* TODO vremmenno, uberu posle zaversheniya projecta
                 intent = new Intent(MainActivity.this, EditActivity.class);
-                startActivity(intent);
+                startActivity(intent);*/
 
-               /* final Dialog dialog = new Dialog(this);
+                final Dialog dialog = new Dialog(this);
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.setContentView(R.layout.password_prompt);
                 dialog.setTitle("Введите пароль:");
                 dialog.setCancelable(true);
+
                 Button posBtn = (Button) dialog.findViewById(R.id.dialogPos);
                 Button negBtn = (Button) dialog.findViewById(R.id.dialogNeg);
                 final EditText userInput = (EditText) dialog.findViewById(R.id.editTextDialogUserInput);
+                final EditText newpass1 = (EditText) dialog.findViewById(R.id.newpass1);
+                final EditText newpass2 = (EditText) dialog.findViewById(R.id.newpass2);
+                final TextView changePasBtn = (TextView) dialog.findViewById(R.id.changepass);
                 userInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                newpass1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                newpass2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+                // esli net parolya
+                if (sPref.getString(passkey, "").equals("")) {
+                    newpass1.setVisibility(View.VISIBLE);
+                    newpass2.setVisibility(View.VISIBLE);
+                    userInput.setVisibility(View.GONE);
+                    changePasBtn.setVisibility(View.GONE);
+                }
+
+                changePasBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        newpass1.setVisibility(View.VISIBLE);
+                        newpass2.setVisibility(View.VISIBLE);
+                        changePasBtn.setVisibility(View.GONE);
+                    }
+                });
+
                 posBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (userInput.getText().toString().equals("123456") && !TextUtils.isEmpty(userInput.getText())) {
-                            intent = new Intent(MainActivity.this, EditActivity.class);
-                            startActivity(intent);
-                            dialog.dismiss();
+                        if (newpass1.getVisibility() == View.VISIBLE && newpass2.getVisibility() == View.VISIBLE) { // esli v rejime izmeneiya parolya
+                            if (sPref.getString(passkey, "").equals("")) { // esli parolya ewe net
+                                if (newPassChecker(newpass1, newpass2)) { // esli noviy parol zapisan
+                                    newpass1.setVisibility(View.GONE);
+                                    newpass2.setVisibility(View.GONE);
+                                    changePasBtn.setVisibility(View.VISIBLE);
+                                    userInput.setVisibility(View.VISIBLE);
+                                }
+                            } else { // esli parol uje est
+                                newpass1.setVisibility(View.VISIBLE);
+                                newpass2.setVisibility(View.VISIBLE);
+                                userInput.setVisibility(View.VISIBLE);
+                                changePasBtn.setVisibility(View.GONE);
+
+                                if (sPref.getString(passkey, "").equals(userInput.getText().toString())) { // esli parol sovpadaye
+                                    if (newPassChecker(newpass1, newpass2)) {
+                                        newpass1.setVisibility(View.GONE);
+                                        newpass2.setVisibility(View.GONE);
+                                        userInput.setVisibility(View.VISIBLE);
+                                        changePasBtn.setVisibility(View.VISIBLE);
+                                        userInput.getText().clear();
+
+                                    }
+                                } else {
+                                    userInput.setError("Неправильный пароль");
+                                }
+                            }
+
                         } else {
-                            userInput.setError("Неправильный пароль (123456)");
+                            if (sPref.getString(passkey, "").equals(userInput.getText().toString()) && !TextUtils.isEmpty(userInput.getText())) {
+                                intent = new Intent(MainActivity.this, EditActivity.class);
+                                startActivity(intent);
+                                dialog.dismiss();
+                            } else {
+                                userInput.setError("Неправильный пароль (123456)");
+                            }
                         }
                     }
                 });
@@ -198,10 +261,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                         dialog.dismiss();
                     }
                 });
-                dialog.show();*/
+                dialog.show();
 
             default:
                 break;
+        }
+    }
+
+    public boolean newPassChecker(EditText e1, EditText e2) {
+        if (e1.getText().toString().equals(e2.getText().toString())) { // vvedennie paroli sovpadayut
+            ed.putString(passkey, e1.getText().toString());
+            ed.commit();
+            return true;
+        } else {
+            e2.setError("Пароли не совпадают");
+            return false;
         }
     }
 }
