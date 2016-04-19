@@ -1,6 +1,7 @@
 package masharipov.certustextile;
 
 import android.content.Intent;
+import android.view.WindowManager;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.viksaa.sssplash.lib.activity.AwesomeSplash;
@@ -13,6 +14,8 @@ import masharipov.certustextile.main.MainActivity;
 public class SplashScreen extends AwesomeSplash {
     @Override
     public void initSplash(ConfigSplash configSplash) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //Customize Circular Reveal
         configSplash.setBackgroundColor(R.color.cardview_light_background); //any color you want form colors.xml
         configSplash.setAnimCircularRevealDuration(2000); //int ms
@@ -22,7 +25,7 @@ public class SplashScreen extends AwesomeSplash {
         //Choose LOGO OR PATH; if you don't provide String value for path it's logo by default
 
         //Customize Logo
-        configSplash.setLogoSplash(R.drawable.certuslogo); //or any other drawable
+        configSplash.setLogoSplash(R.mipmap.ic_launcher); //or any other drawable
         configSplash.setAnimLogoSplashDuration(2000); //int ms
         configSplash.setAnimLogoSplashTechnique(Techniques.FadeIn); //choose one form Techniques (ref: https://github.com/daimajia/AndroidViewAnimations)
 

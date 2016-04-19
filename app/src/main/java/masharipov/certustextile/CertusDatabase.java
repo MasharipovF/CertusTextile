@@ -66,7 +66,6 @@ public class CertusDatabase {
 
         if (goods != null && goods.size() > 0) {
             uniqueID = Long.toString(System.currentTimeMillis());
-            Toast.makeText(context, "Data size " + Integer.toString(goods.size()), Toast.LENGTH_SHORT).show();
             for (int i = 0; i < goods.size(); i++) {
                 RecyclerData recyclerData = goods.get(i);
                 ContentValues content = new ContentValues();
@@ -149,7 +148,6 @@ public class CertusDatabase {
                 sdb.insert(tableName, null, cv);
             }
         } else {
-            Toast.makeText(context, "Sticker Database is empty", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -192,7 +190,6 @@ public class CertusDatabase {
                 sdb.insert(tableName, null, cv);
             }
         } else {
-            Toast.makeText(context, "Slideshow Database is empty", Toast.LENGTH_SHORT).show();
         }
     }
 

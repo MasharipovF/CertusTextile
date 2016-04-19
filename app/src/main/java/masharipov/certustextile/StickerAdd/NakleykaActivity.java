@@ -60,8 +60,6 @@ public class NakleykaActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_nakleyka);
 
-        backgroundImage = (ImageView) findViewById(R.id.backNakleyka);
-
         Intent intent = getIntent();
         extras = intent.getStringExtra("TYPE");
         cDB = new CertusDatabase(this);

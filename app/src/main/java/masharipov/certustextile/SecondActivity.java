@@ -66,6 +66,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     int ifClickedImagePositionNotChangedDoNotChangeStyleList = -1, ifStickerPositionIsTheSameDoNotChange = -1;
     List<RecyclerData> initialData; // polnaya baza po vibrannoy categorii tovara
 
+    RecyclerData initData;
     // yoqa panel
     Integer[] collarChooser = {R.id.yoqa1, R.id.yoqa2, R.id.yoqa3, R.id.yoqa4};
     String[] collarName = {"collar1", "collar2", "collar3", "collar4"};
@@ -237,8 +238,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onClick(View v) {
 
-                Intent tview=new Intent(SecondActivity.this,Tview.class);
-                        startActivity(tview);
+                Intent tview = new Intent(SecondActivity.this, Tview.class);
+                startActivity(tview);
 
             }
         });
@@ -254,7 +255,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onClick(View v) {
                 if (current_status == 0) {
-                    if (yon!=null) {
+                    if (yon != null) {
                         getSupportFragmentManager()
                                 .beginTransaction().replace(R.id.frame, yon).commit();
 
@@ -262,16 +263,17 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         razmer.setText(Integer.toString(razmerPol[current_status]));
                         povorot.setText(Integer.toString(povorotMas[current_status]));
                     }
-                    } else if (current_status == 1) {
-                    if (orqa!=null) {
-                    getSupportFragmentManager()
-                            .beginTransaction().replace(R.id.frame, orqa).commit();
-                    current_status = 2;
-                    razmer.setText(Integer.toString(razmerPol[current_status]));
-                    povorot.setText(Integer.toString(povorotMas[current_status]));}
+                } else if (current_status == 1) {
+                    if (orqa != null) {
+                        getSupportFragmentManager()
+                                .beginTransaction().replace(R.id.frame, orqa).commit();
+                        current_status = 2;
+                        razmer.setText(Integer.toString(razmerPol[current_status]));
+                        povorot.setText(Integer.toString(povorotMas[current_status]));
+                    }
 
                 } else if (current_status == 2) {
-                    if (oldi!=null) {
+                    if (oldi != null) {
                         getSupportFragmentManager()
                                 .beginTransaction().replace(R.id.frame, oldi).commit();
                         current_status = 0;
@@ -436,12 +438,16 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     tovarRecyclerAdapter.changeList(getTovarData(selectedGender));
                     styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar, selectedGender));
                     isGenderPicked = true;
+                    if (initData != null)
+                        setItemtoFrsgment(initData);
                     return;
                 }
                 if (position != ifClickedImagePositionNotChangedDoNotChangeStyleList) {
                     selectedItemID = dataList.get(position).getID();
                     styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar, selectedGender));
                     ifClickedImagePositionNotChangedDoNotChangeStyleList = position;
+                    if (getStyleData(selectedItemID, selectedItemCollar, selectedGender).get(0) != null)
+                        setItemtoFrsgment(getStyleData(selectedItemID, selectedItemCollar, selectedGender).get(0));
                 }
                 panelyoqa.animate().translationX(140).start();
                 timerHand.postDelayed(backanim, Toast.LENGTH_SHORT);
@@ -459,91 +465,18 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         tovarRecycler.setLayoutManager(tovarLayoutManager);
         tovarRecycler.setAdapter(tovarRecyclerAdapter);
     }
+
     String oldiUri;
     String orqaUri;
     String yonUri;
+
     private void initStyleRecycler() {
         styleArrow.setVisibility(View.GONE);
         List<RecyclerData> data = new ArrayList<>();
         styleRecyclerAdapter = new StyleRecyclerAdapter(this, data, styleBoyi, new StyleRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position, RecyclerData tanlanganTovar) {
-                 oldiUri = tanlanganTovar.getImageUri("front");
-                 orqaUri = tanlanganTovar.getImageUri("back");
-                 yonUri = tanlanganTovar.getImageUri("side");
-                oldi = null;
-                oldi = new ItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
-                    @Override
-                    public void EVZ(int t) {
-                        vibr.vibrate(30);
-                        razmer.setText(Integer.toString(t));
-                        razmerPol[current_status] = t;
-                    }
-
-                    @Override
-                    public void EVR(int t) {
-                        vibr.vibrate(30);
-                        povorot.setText(Integer.toString(t));
-                        povorotMas[current_status] = t;
-                    }
-                });
-                yon = null;
-                yon = new ItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
-                    @Override
-                    public void EVZ(int t) {
-                        vibr.vibrate(30);
-                        razmer.setText(Integer.toString(t));
-                        razmerPol[current_status] = t;
-                    }
-
-                    @Override
-                    public void EVR(int t) {
-                        vibr.vibrate(30);
-                        povorot.setText(Integer.toString(t));
-                        povorotMas[current_status] = t;
-                    }
-                });
-                orqa = null;
-                orqa = new ItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
-                    @Override
-                    public void EVZ(int t) {
-                        vibr.vibrate(30);
-                        razmer.setText(Integer.toString(t));
-                        razmerPol[current_status] = t;
-                    }
-
-                    @Override
-                    public void EVR(int t) {
-                        vibr.vibrate(30);
-                        povorot.setText(Integer.toString(t));
-                        povorotMas[current_status] = t;
-                    }
-                });
-
-                switch (current_status) {
-                    case 0:
-
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.frame, oldi, "OLDI")
-                                .commit();
-                        break;
-
-                    case 1:
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.frame, yon, "YON")
-                                .commit();
-                        break;
-
-                    case 2:
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.frame, orqa, "ORQA")
-                                .commit();
-                        break;
-
-                }
+                setItemtoFrsgment(tanlanganTovar);
                 // some code when style item clicked
             }
         });
@@ -589,11 +522,17 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         stickerrecycler.setAdapter(stickerRecyclerAdapter);
     }
 
+    boolean somekey = false;
+
     public List<RecyclerData> getStyleData(String id, String collar, String gender) {
         List<RecyclerData> finalData = new ArrayList<>();
         String tmpURI = null; // chtobi brat po odnomu tovaru iz odinakovix stiley (esli sprosyat sdelaem) poka ne rabotaet
         if (initialData.size() != 0) {
             for (int j = 0; j < initialData.size(); j++) {
+                if (!somekey) {
+                    initData = initialData.get(j);
+                    somekey = true;
+                }
                 if (initialData.get(j).getID().equals(id) && initialData.get(j).getCollar().equals(collar) && initialData.get(j).getGender().equals(gender)) {
                     initialData.get(j).setType(tableName);
                     finalData.add(initialData.get(j));
@@ -708,5 +647,84 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
         } else
             super.onBackPressed();
+    }
+
+    public void setItemtoFrsgment(RecyclerData data) {
+        oldiUri = data.getImageUri("front");
+        orqaUri = data.getImageUri("back");
+        yonUri = data.getImageUri("side");
+        oldi = null;
+        oldi = new ItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
+            @Override
+            public void EVZ(int t) {
+                vibr.vibrate(30);
+                razmer.setText(Integer.toString(t));
+                razmerPol[current_status] = t;
+            }
+
+            @Override
+            public void EVR(int t) {
+                vibr.vibrate(30);
+                povorot.setText(Integer.toString(t));
+                povorotMas[current_status] = t;
+            }
+        });
+        yon = null;
+        yon = new ItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
+            @Override
+            public void EVZ(int t) {
+                vibr.vibrate(30);
+                razmer.setText(Integer.toString(t));
+                razmerPol[current_status] = t;
+            }
+
+            @Override
+            public void EVR(int t) {
+                vibr.vibrate(30);
+                povorot.setText(Integer.toString(t));
+                povorotMas[current_status] = t;
+            }
+        });
+        orqa = null;
+        orqa = new ItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
+            @Override
+            public void EVZ(int t) {
+                vibr.vibrate(30);
+                razmer.setText(Integer.toString(t));
+                razmerPol[current_status] = t;
+            }
+
+            @Override
+            public void EVR(int t) {
+                vibr.vibrate(30);
+                povorot.setText(Integer.toString(t));
+                povorotMas[current_status] = t;
+            }
+        });
+
+        switch (current_status) {
+            case 0:
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frame, oldi, "OLDI")
+                        .commit();
+                break;
+
+            case 1:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frame, yon, "YON")
+                        .commit();
+                break;
+
+            case 2:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frame, orqa, "ORQA")
+                        .commit();
+                break;
+
+        }
     }
 }
