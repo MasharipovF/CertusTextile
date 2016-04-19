@@ -49,15 +49,12 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         private onItemClick listener;
 
         // VIEWHOLDER
-        public GridHolder(View v, int editVisibility, int delVisibility, onItemClick click) {
+        public GridHolder(View v, onItemClick click) {
             super(v);
             listener = click;
             mContainer = (FrameLayout) v.findViewById(R.id.container);
             stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
-            editBtn = (ImageButton) v.findViewById(R.id.gridEditBtn);
             imgBtn = (ImageView) v.findViewById(R.id.gridImg);
-            editBtn.setVisibility(editVisibility);
-            stickerBtn.setVisibility(delVisibility);
             stickerBtn.setOnClickListener(this);
             imgBtn.setOnClickListener(this);
         }
@@ -68,9 +65,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
                 case R.id.gridDelBtn:
                     listener.delBtnClick(getAdapterPosition());
                     break;
-                case R.id.gridEditBtn:
-                    listener.editBtnClick(getAdapterPosition());
-                    break;
+
             }
         }
     }
@@ -84,11 +79,10 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     }
 
 
-    public DraggableGridAdapter(List<StickerData> list, Context ctx, int editVisibility, int delVisibility, CoordinatorLayout layout) {
+    public DraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout) {
         context = ctx;
         stickerList = list;
         oldStickerList = list;
-        editButtonVisibility = editVisibility;
         coordinatorLayout = layout;
         setHasStableIds(true);
     }
@@ -97,7 +91,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     public GridHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         final View v = inflater.inflate(R.layout.grid_item, parent, false);
-        return new GridHolder(v, editButtonVisibility, delButtonVisibility, new onItemClick() {
+        return new GridHolder(v, new onItemClick() {
             @Override
             public void delBtnClick(final int position) {
                 removeItem(position);
@@ -172,7 +166,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         databaseChangedFlag++;
 
         Snackbar snackbar = Snackbar
-                .make(coordinatorLayout, "Наклейка удалена", Snackbar.LENGTH_LONG)
+                .make(coordinatorLayout, "Удалено", Snackbar.LENGTH_LONG)
                 .setAction("Отменить", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
-import android.support.annotation.IntegerRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,7 +18,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
@@ -39,16 +39,19 @@ public class NakleykaActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
-    private DraggableGridAdapter myItemAdapter;
+    private DraggableGridAdapter stickerAdapter, slideshowAdapter;
     private SectionDraggableGridAdapter tovarAdapter;
     private RecyclerView.Adapter mWrappedAdapter, mAdapter;
     private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
-    private List<StickerData> stickerList;
-    private List<TovarData> tovarList;
+    private List<StickerData> stickerList, slideshowList;
+    private List<RecyclerData> tovarList;
     private List<List<RecyclerData>> goodsList;
     private int numOfItemsInRow = 6;
     private String extras;
     private CardView bottomLayout;
+    private FloatingActionButton fab;
+    private CertusDatabase cDB;
+    private ImageView backgroundImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +60,21 @@ public class NakleykaActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_nakleyka);
 
+        backgroundImage = (ImageView) findViewById(R.id.backNakleyka);
+
         Intent intent = getIntent();
         extras = intent.getStringExtra("TYPE");
+        cDB = new CertusDatabase(this);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         bottomLayout = (CardView) findViewById(R.id.layout);
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = displaymetrics.widthPixels;
-        Log.v("TOVAR", Integer.toString(height));
+
+        // chtobi spryatat nijnuyu panel
         bottomLayout.setTranslationY(800);
+        bottomLayout.setVisibility(View.GONE);
 
         //init recyclerview
         mRecyclerView = (RecyclerView) findViewById(R.id.gridLayout);
@@ -81,72 +89,31 @@ public class NakleykaActivity extends AppCompatActivity {
         mRecyclerViewDragDropManager.setLongPressTimeout(750);
 
         // agar sticker tanlansa
-        if (extras.equals("STICKER")) {
-            CertusDatabase cDB = new CertusDatabase(this);
-            stickerList = cDB.getStickersFromDB();
-            myItemAdapter = new DraggableGridAdapter(stickerList, this, View.GONE, View.VISIBLE, (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
-            mAdapter = myItemAdapter;
-            mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
-            fab.setVisibility(View.VISIBLE);
-            bottomLayout.setVisibility(View.GONE);
-        } else if (extras.equals("GOODS")) {  // agar tovar tanlansa
-
-            // dobavlenie tovarov v osnovnoy recycler
-            CertusDatabase cDB = new CertusDatabase(this);
-            String tableNames[] = {"Futbolka", "Mayka", "Polo"};
-            tovarList = new ArrayList<>();
-
-            // chtobi otobrajal odin tovar po odnomu ID
-            for (String tableName : tableNames) {
-                if (cDB.isTableEmpty(tableName)) continue;
-
-                TovarData sectionData = new TovarData();
-                sectionData.setSectionText(tableName);
-                sectionData.setType(1);
-                tovarList.add(sectionData);
-
-                List<TovarData> items = cDB.getGoodsFromDB(tableName);
-                List<TovarData> finalItems = new ArrayList<>();
-                String tmpID = null;
-                Log.v("TOVAR", tableName + " size  == " + Integer.toString(items.size()));
-                for (int j = 0; j < items.size(); j++) {
-                    if (!items.get(j).getID().equals(tmpID)) {
-                        items.get(j).setSectionText(tableName);
-                        finalItems.add(items.get(j));
-                        tmpID = items.get(j).getID();
+        switch (extras) {
+            case "STICKER":
+                initStickerAdapter();
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        stickerAdapter.pickImage();
                     }
-                }
-                tovarList.addAll(finalItems);
-            }
+                });
 
-            // dlya otobrajeniya headerov
-            mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    if (tovarList.get(position).getType() == 1)
-                        return numOfItemsInRow;
-                    else
-                        return 1;
-                }
-            });
+                break;
+            case "GOODS":
+                initTovarAdapter();
+                break;
+            case "SLIDESHOW":
+                initSlideshowAdapter();
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        slideshowAdapter.pickImage();
+                    }
+                });
 
-            // dlya pokazivaniya vsex tovarov vibrannoy kategorii
-            bottomLayout.setVisibility(View.VISIBLE);
-            RecyclerView drawerRecycler = (RecyclerView) findViewById(R.id.list);
-            GridLayoutManager drawerLayoutManager = new GridLayoutManager(this, numOfItemsInRow);
-            drawerRecycler.setLayoutManager(drawerLayoutManager);
-            DrawerGridAdapter drawerGridAdapter = new DrawerGridAdapter(this, View.VISIBLE, bottomLayout, tovarAdapter);
-            drawerRecycler.setAdapter(drawerGridAdapter);
-
-
-            // glavniy adapter
-            tovarAdapter = new SectionDraggableGridAdapter(tovarList, this, View.VISIBLE, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), bottomLayout, drawerGridAdapter);
-            mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(tovarAdapter);
-            fab.setVisibility(View.GONE);
-
-
+                break;
         }
-
 
         final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
 
@@ -163,12 +130,6 @@ public class NakleykaActivity extends AppCompatActivity {
         }
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myItemAdapter.pickImage();
-            }
-        });
     }
 
     @Override
@@ -202,65 +163,293 @@ public class NakleykaActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        myItemAdapter.onActivityResult(requestCode, resultCode, data);
+        switch (extras) {
+            case "STICKER":
+                stickerAdapter.onActivityResult(requestCode, resultCode, data);
+                break;
+            case "SLIDESHOW":
+                slideshowAdapter.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
 
     }
 
     @Override
     public void onBackPressed() {
-        if (extras.equals("GOODS")) {
-            if (tovarAdapter.isPanelOpen()) {
-                bottomLayout.animate().translationYBy(400);
-                tovarAdapter.setPanelOpened(false);
-                return;
-            }
-            super.onBackPressed();
-        } else {
-            if (!myItemAdapter.isDatabaseChanged()) {
-                super.onBackPressed();
-                CertusDatabase certusDatabase = new CertusDatabase(myItemAdapter.getStickerList(), getApplicationContext());
-                certusDatabase.saveStickersToDB();
-                return;
-            }
-            if (myItemAdapter.getStickerList() == null || myItemAdapter.getStickerList().size() == 0) {
-                super.onBackPressed();
-                return;
-            }
-            AlertDialog.Builder adb = new AlertDialog.Builder(this);
-            adb.setTitle("Сохранить изменения?");
-            adb.setMessage("Сохранить внесенные изменения в базу данных?");
-            adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
 
-            adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    CertusDatabase certusDatabase = new CertusDatabase(myItemAdapter.getStickerList(), getApplicationContext());
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle("Сохранить изменения?");
+        adb.setMessage("Сохранить внесенные изменения в базу данных?");
+        adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        switch (extras) {
+            ///////////////////////////////////////////////////////////////////
+            case "STICKER":
+                if (!stickerAdapter.isDatabaseChanged()) {
+                    super.onBackPressed();
+                    CertusDatabase certusDatabase = new CertusDatabase(stickerAdapter.getStickerList(), getApplicationContext());
                     certusDatabase.saveStickersToDB();
-                    finish();
+                    return;
                 }
-            });
-            adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            adb.setIcon(android.R.drawable.ic_dialog_info);
-            adb.create();
-            adb.show();
-        }
+                adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CertusDatabase certusDatabase = new CertusDatabase(stickerAdapter.getStickerList(), getApplicationContext());
+                        certusDatabase.saveStickersToDB();
+                        finish();
+                    }
+                });
+                adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                adb.setIcon(android.R.drawable.ic_dialog_info);
+                adb.create();
+                adb.show();
 
+                break;
+            ////////////////////////////////////////////////////////
+            case "SLIDESHOW":
+                if (!slideshowAdapter.isDatabaseChanged()) {
+                    super.onBackPressed();
+                    CertusDatabase certusDatabase = new CertusDatabase(slideshowAdapter.getStickerList(), getApplicationContext());
+                    certusDatabase.saveSlideshowItemsToDB();
+                    return;
+                }
+
+
+                adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CertusDatabase certusDatabase = new CertusDatabase(slideshowAdapter.getStickerList(), getApplicationContext());
+                        certusDatabase.saveSlideshowItemsToDB();
+                        finish();
+                    }
+                });
+                adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                adb.setIcon(android.R.drawable.ic_dialog_info);
+                adb.create();
+                adb.show();
+                break;
+            ////////////////////////////////////////////////
+            case "GOODS":
+                if (!tovarAdapter.isDatabaseChanged()) {
+                    super.onBackPressed();
+                    return;
+                }
+                adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (tovarAdapter.getTovarList() == null || tovarAdapter.getTovarList().size() == 0) {
+                            CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext());
+                            certusDatabase.clearDB();
+                            finish();
+                            return;
+                        }
+                        List<RecyclerData> items = tovarAdapter.getTovarList();
+                        List<RecyclerData> finalItems = new ArrayList<>();
+                        String curTableName = null;
+                        for (int i = 0; i < items.size(); i++) {
+                            RecyclerData tmpData = items.get(i);
+                            if (tmpData.getSection() == 1) {
+                                if (!tmpData.getType().equals(curTableName)) {
+                                    if (curTableName != null) {
+                                        CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), finalItems);
+                                        certusDatabase.saveGoodsToDB(curTableName, true);
+                                        Log.v("SAVEDB", curTableName + "  saved");
+                                    }
+                                    curTableName = tmpData.getType();
+                                    finalItems.clear();
+                                    continue;
+                                }
+                            }
+                            finalItems.add(tmpData);
+                        }
+                        Log.v("SAVEDB", curTableName + "  savdfsdfsded");
+                        CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), finalItems);
+                        certusDatabase.saveGoodsToDB(curTableName, true);
+                        finish();
+                    }
+                });
+                adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                adb.setIcon(android.R.drawable.ic_dialog_info);
+                adb.create();
+                adb.show();
+
+
+
+                /*if (tovarAdapter.isPanelOpen()) {
+                    Log.v("DATAA", "PANEL OPEN");
+                    bottomLayout.animate().translationYBy(400);
+                    tovarAdapter.closePanel();
+                    return;
+                }
+                if (tovarAdapter.isDatabaseChanged()) {
+
+                    List<RecyclerData> mainList = tovarAdapter.getTovarList();
+                    if (mainList.size() == 0) {
+                        CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext());
+                        certusDatabase.clearDB();
+                        return;
+                    }
+
+
+                    List<RecyclerData> futbolka = tovarAdapter.getFutbolkaList();
+                    List<RecyclerData> mayka = tovarAdapter.getMaykaList();
+                    List<RecyclerData> polo = tovarAdapter.getPoloList();
+                    List<RecyclerData> finalList = new ArrayList<>();
+                    String tableNames[] = {"Futbolka", "Mayka", "Polo"};
+                    String currentTable = null;
+                    String tmpID = null;
+
+                    for (int i = 0; i < mainList.size(); i++) {
+                        RecyclerData tmpData = mainList.get(i);
+
+                        //esli item = section
+                        if (!tmpData.getType().equals(currentTable)) {
+                            CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), finalList);
+                            if (currentTable != null)
+                                certusDatabase.saveGoodsToDB(currentTable, true);
+
+                            currentTable = tmpData.getType();
+                            Log.v("SAVEDB", "TableName == " + currentTable + "    number of items" + Integer.toString(finalList.size()));
+                            finalList.clear();
+                            continue;
+                        }
+
+                        switch (currentTable) {
+                            case "Futbolka":
+                                tmpID = tmpData.getID();
+                                Log.v("SAVEDB", "futbolka size =  " + Integer.toString(futbolka.size()));
+                                for (int k = 0; k < futbolka.size(); k++) {
+                                    if (futbolka.get(k).getID().equals(tmpID)) {
+                                        finalList.add(futbolka.get(k));
+                                        futbolka.remove(k);
+                                    }
+                                }
+                                Log.v("SAVEDB", "TableName == " + currentTable + "    number of items" + Integer.toString(finalList.size()));
+
+                                break;
+                            case "Mayka":
+
+                                break;
+                            case "Polo":
+
+                                break;
+                        }
+
+                    }
+
+                    CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), finalList);
+                    if (currentTable != null)
+                        certusDatabase.saveGoodsToDB(currentTable, true);
+
+                    super.onBackPressed();
+                    return;
+                }*/
+                break;
+        }
     }
 
-    public static float convertPixelsToDp(float px, Context context) {
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return dp;
+    private boolean initTovarAdapter() {
+        // dobavlenie tovarov v osnovnoy recycler
+        String tableNames[] = {"Futbolka", "Mayka", "Polo"};
+        String tableNamesRus[] = {"Футболка", "Майка", "Поло"};
+        tovarList = new ArrayList<>();
+
+        int stID = 0; // stable ID chtobi content ne dublirovalsya
+        for (String tableName : tableNames) {
+            if (cDB.isTableEmpty(tableName)) continue;
+
+            RecyclerData sectionData = new RecyclerData();
+            sectionData.setType(tableName);
+            sectionData.setSection(1);
+            sectionData.stableID = stID++;
+            tovarList.add(sectionData);
+            List<RecyclerData> data = cDB.getTovarFromDB(tableName);
+            for (int i = 0; i < data.size(); i++) {
+                RecyclerData mData = data.get(i);
+                mData.stableID = stID++;
+                tovarList.add(mData);
+            }
+
+            /*List<RecyclerData> items = cDB.getTovarFromDB(tableName);
+            List<RecyclerData> finalItems = new ArrayList<>();
+            String tmpID = null;
+            Log.v("TOVAR", tableName + " size  == " + Integer.toString(items.size()));
+            for (int j = 0; j < items.size(); j++) {
+                if (!items.get(j).getID().equals(tmpID)) {
+                    items.get(j).setType(tableName);
+                    finalItems.add(items.get(j));
+                    tmpID = items.get(j).getID();
+                }
+            }
+            tovarList.addAll(finalItems);*/
+        }
+
+        // dlya otobrajeniya headerov
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (tovarList.get(position).getSection() == 1)
+                    return numOfItemsInRow;
+                else
+                    return 1;
+            }
+        });
+
+        // childAdapter
+        bottomLayout.setVisibility(View.VISIBLE);
+        RecyclerView drawerRecycler = (RecyclerView) findViewById(R.id.list);
+        GridLayoutManager drawerLayoutManager = new GridLayoutManager(this, numOfItemsInRow);
+        drawerRecycler.setLayoutManager(drawerLayoutManager);
+        SectionChildDraggableGridAdapter drawerGridAdapter = new SectionChildDraggableGridAdapter(this, View.VISIBLE, bottomLayout, tovarAdapter);
+        drawerRecycler.setAdapter(drawerGridAdapter);
+
+
+        // glavniy adapter
+        tovarAdapter = new SectionDraggableGridAdapter(tovarList, this, View.VISIBLE, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), bottomLayout, drawerGridAdapter);
+        mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(tovarAdapter);
+        fab.setVisibility(View.GONE);
+
+        return tovarList.size() > 0;
+    }
+
+    private boolean initStickerAdapter() {
+        stickerList = cDB.getStickersFromDB();
+        stickerAdapter = new DraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
+        mAdapter = stickerAdapter;
+        mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(stickerAdapter);
+        fab.setVisibility(View.VISIBLE);
+        bottomLayout.setVisibility(View.GONE);
+
+        return stickerList.size() > 0;
+    }
+
+    private boolean initSlideshowAdapter() {
+        slideshowList = cDB.getSlideshowItemsFromDB();
+        Log.v("DATAA", "SLIDESHOW SIZE == " + Integer.toString(slideshowList.size()));
+        slideshowAdapter = new DraggableGridAdapter(slideshowList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
+        mWrappedAdapter = slideshowAdapter;
+        mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(slideshowAdapter);
+        fab.setVisibility(View.VISIBLE);
+        bottomLayout.setVisibility(View.GONE);
+
+        return slideshowList.size() > 0;
     }
 
 }

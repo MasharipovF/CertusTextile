@@ -1,18 +1,15 @@
 package masharipov.certustextile.stickeradd;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,16 +31,19 @@ import java.util.List;
 
 import masharipov.certustextile.CertusDatabase;
 import masharipov.certustextile.R;
+import masharipov.certustextile.edit.RecyclerData;
 
 
 public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDraggableGridAdapter.SectionGridHolder>
         implements DraggableItemAdapter<SectionDraggableGridAdapter.SectionGridHolder> {
 
     private Context context;
-    private List<TovarData> tovarList, oldTovarList;
+    private List<RecyclerData> tovarList, oldTovarList;
+    private List<RecyclerData> futbolkaList, maykaList, poloList;
+    private List<RecyclerData> childItemList;
     private Intent imagePickerIntent;
     private int SELECT_PICTURE = 1, editButtonVisibility;
-    private DrawerGridAdapter drawerAdapter;
+    private SectionChildDraggableGridAdapter drawerAdapter;
     final int SECTION = 1, ITEM = 0;
 
     private int databaseChangedFlag = 0;
@@ -52,11 +51,12 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     private CardView recyclerLayout;
     private int tmp = 0, clickedPos = -1;
     private boolean panelOpened = false;
+    private CertusDatabase cDB;
 
 
     public static class SectionGridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
         public FrameLayout mContainer;
-        public ImageView imgBtn, stickerBtn, editBtn;
+        public ImageView imgBtn, stickerBtn;
         private onItemClick listener;
         private TextView sectionText;
 
@@ -71,9 +71,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                     listener = click;
                     mContainer = (FrameLayout) v.findViewById(R.id.container);
                     stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
-                    editBtn = (ImageButton) v.findViewById(R.id.gridEditBtn);
                     imgBtn = (ImageView) v.findViewById(R.id.gridImg);
-                    editBtn.setVisibility(View.VISIBLE);
                     stickerBtn.setOnClickListener(this);
                     imgBtn.setOnClickListener(this);
                     break;
@@ -86,9 +84,6 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
             switch (v.getId()) {
                 case R.id.gridDelBtn:
                     listener.delBtnClick(getAdapterPosition());
-                    break;
-                case R.id.gridEditBtn:
-                    listener.editBtnClick(getAdapterPosition());
                     break;
                 case R.id.gridImg:
                     listener.onImageClick(stickerBtn, getAdapterPosition());
@@ -106,14 +101,20 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     }
 
 
-    public SectionDraggableGridAdapter(List<TovarData> list, Context ctx, int editVisibility, CoordinatorLayout Clayout, CardView Llayout, DrawerGridAdapter adapter) {
+    public SectionDraggableGridAdapter(List<RecyclerData> list, Context ctx, int editVisibility, CoordinatorLayout Clayout, CardView Llayout, SectionChildDraggableGridAdapter adapter) {
         context = ctx;
         tovarList = list;
-        oldTovarList = list;
+        // oldTovarList = list;
         editButtonVisibility = editVisibility;
         coordinatorLayout = Clayout;
         recyclerLayout = Llayout;
         drawerAdapter = adapter;
+
+        futbolkaList = new ArrayList<>();
+        maykaList = new ArrayList<>();
+        poloList = new ArrayList<>();
+        cDB = new CertusDatabase(context);
+
         setHasStableIds(true);
     }
 
@@ -141,48 +142,143 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
             public void editBtnClick(int position) {
             }
 
+            String searchID = null;
+
             @Override
             public void onImageClick(ImageView img, int position) {
-                if (clickedPos != position && tmp == 0) {
-                    recyclerLayout.animate().translationYBy(-400);
-                    panelOpened = true;
-                    tmp++;
-                    clickedPos = position;
-                    img.setEnabled(false);
-                    CertusDatabase cDB = new CertusDatabase(context);
-
-                    List<TovarData> drawerData = cDB.getGoodsFromDB(tovarList.get(position).getSectionText()), finalData = new ArrayList<>();
-                    String tempId = tovarList.get(position).getID();
-                    for (int j = 0; j < drawerData.size(); j++) {
-                        if (tempId.equals(drawerData.get(j).getID())) {
-                            finalData.add(drawerData.get(j));
-                        }
-                    }
-                    Log.v("TOVAR", "FINAL DATA SIZE == " + Integer.toString(finalData.size()));
-                    drawerAdapter.setDataBase(finalData);
-                } else if (clickedPos == position && tmp != 0) {
-                    recyclerLayout.animate().translationYBy(400);
-                    panelOpened = false;
-                    tmp--;
-                    clickedPos = -1;
-                    img.setEnabled(true);
-                    drawerAdapter.clearDatabase();
-                    drawerAdapter.notifyDataSetChanged();
+              /*  if (panelOpened) {
+                    Log.v("DATAA", "panel opened");
+                    return;
                 }
+                childItemList = new ArrayList<>();
+                clickedPos = position;
+                switch (tovarList.get(position).getType()) {
+                    case "Futbolka":
+                        if (futbolkaList.size() != 0 && tovarList.get(position).getID().equals(searchID)) {
+                            Log.v("DATAA", "fUTBOLKA NOT EMPTY");
+
+                            // search for items with ID
+                            int count = 0;
+                            while (count < futbolkaList.size()) {
+                                Log.v("DATAA", "LISt SIZE == " + Integer.toString(futbolkaList.size()));
+                                RecyclerData tmpData = futbolkaList.get(count);
+                                if (tmpData.getID().equals(searchID)) {
+                                    childItemList.add(tmpData);
+                                    futbolkaList.remove(count);
+                                } else {
+                                    count++;
+                                }
+                            }
+
+                        } else {
+                            List<RecyclerData> drawerData = cDB.getTovarFromDB(tovarList.get(position).getType());
+                            String tempId = tovarList.get(position).getID();
+                            searchID = tempId;
+                            for (int j = 0; j < drawerData.size(); j++) {
+                                if (tempId.equals(drawerData.get(j).getID())) {
+                                    childItemList.add(drawerData.get(j));
+                                }
+                            }
+
+                        }
+
+                        break;
+                    case "Mayka":
+
+                        if (maykaList.size() != 0) {
+
+                            // search for items with ID
+                            int count = 0;
+                            while (count < maykaList.size()) {
+                                Log.v("DATAA", "LISt SIZE == " + Integer.toString(maykaList.size()));
+                                RecyclerData tmpData = maykaList.get(count);
+                                if (tmpData.getID().equals(searchID)) {
+                                    childItemList.add(tmpData);
+                                    maykaList.remove(count);
+                                } else {
+                                    count++;
+                                }
+                            }
+
+                        } else {
+                            Log.v("DATAA", "LISt empty ");
+
+
+                            List<RecyclerData> drawerData = cDB.getTovarFromDB(tovarList.get(position).getType());
+                            String tempId = tovarList.get(position).getID();
+                            for (int j = 0; j < drawerData.size(); j++) {
+                                if (tempId.equals(drawerData.get(j).getID())) {
+                                    childItemList.add(drawerData.get(j));
+                                }
+                            }
+
+                        }
+
+                        break;
+                    case "Polo":
+
+                        if (poloList.size() != 0) {
+
+                            // search for items with ID
+                            int count = 0;
+                            while (count < poloList.size()) {
+                                Log.v("DATAA", "LISt SIZE == " + Integer.toString(poloList.size()));
+                                RecyclerData tmpData = poloList.get(count);
+                                if (tmpData.getID().equals(searchID)) {
+                                    childItemList.add(tmpData);
+                                    poloList.remove(count);
+                                } else {
+                                    count++;
+                                }
+                            }
+
+                        } else {
+                            Log.v("DATAA", "LISt empty ");
+
+                            List<RecyclerData> drawerData = cDB.getTovarFromDB(tovarList.get(position).getType());
+                            String tempId = tovarList.get(position).getID();
+                            for (int j = 0; j < drawerData.size(); j++) {
+                                if (tempId.equals(drawerData.get(j).getID())) {
+                                    childItemList.add(drawerData.get(j));
+                                }
+                            }
+
+                        }
+
+                        break;
+                }
+                Log.v("TOVAR", "FINAL DATA SIZE == " + Integer.toString(childItemList.size()));
+                drawerAdapter.setDataBase(childItemList);
+                recyclerLayout.animate().translationYBy(-400);
+                panelOpened = true;*/
             }
         });
     }
 
     @Override
     public void onBindViewHolder(SectionGridHolder holder, int position) {
-        TovarData current = tovarList.get(position);
-        switch (current.getType()) {
+        RecyclerData current = tovarList.get(position);
+        switch (current.getSection()) {
             case SECTION:
-                holder.sectionText.setText(current.getSectionText());
+                if (TextUtils.isEmpty(current.getType()) || current.getType() != null) {
+                    String categoryName = null;
+                    switch (current.getType()) {
+                        case "Futbolka":
+                            categoryName = "Футболки";
+                            break;
+                        case "Mayka":
+                            categoryName = "Майки";
+                            break;
+                        case "Polo":
+                            categoryName = "Поло";
+                            break;
+                    }
+                    holder.sectionText.setText(categoryName);
+                } else holder.sectionText.setText("");
                 break;
             case ITEM:
-                if (current.getFRONT() != null)
-                    Picasso.with(context).load(Uri.parse(current.getFRONT())).centerInside().resize(512, 512).into(holder.imgBtn);
+                if (current.getImageUri("front") != null)
+                    Picasso.with(context).load(Uri.parse(current.getImageUri("front"))).centerInside().resize(512, 512).into(holder.imgBtn);
                 else
                     Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(holder.imgBtn);
 
@@ -214,28 +310,77 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     }
 
 
-    public List<TovarData> getStickerList() {
+    public List<RecyclerData> getStickerList() {
         return tovarList;
     }
 
-    public List<TovarData> getOldStickerList() {
+    public List<RecyclerData> getOldStickerList() {
         return oldTovarList;
     }
 
-    private TovarData delitem, delsection;
+    private RecyclerData delitem, delsection;
     private int secpos;
 
     public void removeItem(final int position) {
+
+       /* AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        adb.setMessage("Вы дейсвтительно хотите удалить этот товар?");
+        adb.setNegativeButton("НЕТ", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (position == tovarList.size() - 1 && tovarList.get(position).getSection() == 0) {
+                    Log.v("DATAA", "posledniy ne section");
+                    delitem = tovarList.get(position);
+                    tovarList.remove(position);
+                    notifyItemRemoved(position);
+                    if (tovarList.get(position - 1).getSection() == 1) {
+                        delsection = tovarList.get(position - 1);
+                        secpos = position - 1;
+                        tovarList.remove(position - 1);
+                        notifyItemRemoved(position - 1);
+                    }
+                    databaseChangedFlag++;
+                } else {
+                    // udalyayem element v seredine
+                    Log.v("DATAA", "v seredine");
+
+                    delitem = tovarList.get(position);
+                    tovarList.remove(position);
+                    notifyItemRemoved(position);
+                    databaseChangedFlag++;
+                    if (tovarList.get(position).getSection() == 1) {
+                        Log.v("TOVAR", "Middle of list LIST");
+                        if (tovarList.get(position - 1).getSection() == 1) {
+                            delsection = tovarList.get(position - 1);
+                            secpos = position - 1;
+                            tovarList.remove(position - 1);
+                            notifyItemRemoved(position - 1);
+                            databaseChangedFlag++;
+
+                        }
+                    }
+                }
+
+            }
+        });
+        adb.create();
+        adb.show();*/
 
         Snackbar snackbar = Snackbar
                 .make(coordinatorLayout, "Товар удален", Snackbar.LENGTH_LONG);
 
         // esli udalim posledniy element kotoriy ne SECTION
-        if (position == tovarList.size() - 1 && tovarList.get(position).getType() == 0) {
+        if (position == tovarList.size() - 1 && tovarList.get(position).getSection() == 0) {
+            Log.v("DATAA", "posledniy ne section");
             delitem = tovarList.get(position);
             tovarList.remove(position);
             notifyItemRemoved(position);
-            if (tovarList.get(position - 1).getType() == 1) {
+            if (tovarList.get(position - 1).getSection() == 1) {
                 delsection = tovarList.get(position - 1);
                 secpos = position - 1;
                 tovarList.remove(position - 1);
@@ -259,13 +404,15 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
             });
         } else {
             // udalyayem element v seredine
+            Log.v("DATAA", "v seredine");
+
             delitem = tovarList.get(position);
             tovarList.remove(position);
             notifyItemRemoved(position);
             databaseChangedFlag++;
-            if (tovarList.get(position).getType() == 1) {
+            if (tovarList.get(position).getSection() == 1) {
                 Log.v("TOVAR", "Middle of list LIST");
-                if (tovarList.get(position - 1).getType() == 1) {
+                if (tovarList.get(position - 1).getSection() == 1) {
                     delsection = tovarList.get(position - 1);
                     secpos = position - 1;
                     tovarList.remove(position - 1);
@@ -286,27 +433,38 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                     }
                     tovarList.add(position, delitem);
                     notifyItemInserted(position);
+                    Log.v("DATAA", "DELETED ITEM URI + " + delitem.getImageUri("front"));
                     databaseChangedFlag--;
                 }
             });
         }
         snackbar.show();
-
-
     }
 
     public boolean isDatabaseChanged() {
         return databaseChangedFlag > 0;
     }
 
+    public List<RecyclerData> getFutbolkaList() {
+        return futbolkaList;
+    }
+
+    public List<RecyclerData> getMaykaList() {
+        return maykaList;
+    }
+
+    public List<RecyclerData> getPoloList() {
+        return poloList;
+    }
+
     @Override
     public long getItemId(int position) {
-        return tovarList.get(position).idiwka;
+        return tovarList.get(position).stableID;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return tovarList.get(position).getType();
+        return tovarList.get(position).getSection();
     }
 
     @Override
@@ -320,7 +478,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
             return;
         }
         Toast.makeText(context, "From " + Integer.toString(fromPosition) + " to " + Integer.toString(toPosition), Toast.LENGTH_SHORT).show();
-        TovarData item = tovarList.remove(fromPosition);
+        RecyclerData item = tovarList.remove(fromPosition);
         tovarList.add(toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
         databaseChangedFlag++;
@@ -343,16 +501,16 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     }
 
     private int findFirstSectionItem(int position) {
-        TovarData item = tovarList.get(position);
+        RecyclerData item = tovarList.get(position);
 
-        if (item.isSection == 1) {
+        if (item.getSection() == 1) {
             throw new IllegalStateException("section item is expected");
         }
 
         while (position > 0) {
-            TovarData prevItem = tovarList.get(position - 1);
+            RecyclerData prevItem = tovarList.get(position - 1);
 
-            if (prevItem.isSection == 1) {
+            if (prevItem.getSection() == 1) {
                 break;
             }
 
@@ -363,18 +521,18 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     }
 
     private int findLastSectionItem(int position) {
-        TovarData item = tovarList.get(position);
+        RecyclerData item = tovarList.get(position);
 
-        if (item.isSection == 1) {
+        if (item.getSection() == 1) {
             throw new IllegalStateException("section item is expected");
         }
 
         final int lastIndex = getItemCount() - 1;
 
         while (position < lastIndex) {
-            TovarData nextItem = tovarList.get(position + 1);
+            RecyclerData nextItem = tovarList.get(position + 1);
 
-            if (nextItem.isSection == 1) {
+            if (nextItem.getSection() == 1) {
                 break;
             }
 
@@ -385,11 +543,41 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     }
 
     public boolean isPanelOpen() {
+        Log.v("DATAA", "isPanelOpen == " + panelOpened);
         return panelOpened;
     }
 
-    public void setPanelOpened(boolean b) {
-        panelOpened = b;
+    public void closePanel() {
+
+        // initialized when backbutton pressed
+        if (tovarList.size() != 0) {
+            if (drawerAdapter.getDatabase().size() == 0) {
+                removeItem(clickedPos);
+                panelOpened = false;
+                return;
+            }
+
+            switch (tovarList.get(clickedPos).getType()) {
+                case "Futbolka":
+                    futbolkaList.addAll(drawerAdapter.getDatabase());
+                    break;
+                case "Mayka":
+                    maykaList.addAll(drawerAdapter.getDatabase());
+                    break;
+                case "Polo":
+                    poloList.addAll(drawerAdapter.getDatabase());
+                    break;
+            }
+        }
+
+        if (drawerAdapter.snackbar.isShownOrQueued()) {
+            drawerAdapter.snackbar.dismiss();
+        }
+        panelOpened = false;
+    }
+
+    public List<RecyclerData> getTovarList() {
+        return tovarList;
     }
 
 }

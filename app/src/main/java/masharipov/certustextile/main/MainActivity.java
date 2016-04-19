@@ -150,9 +150,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 break;
             case R.id.infobtn:
                 AlertDialog.Builder adb = new AlertDialog.Builder(this);
-                adb.setTitle("Info");
-                adb.setMessage("Certus Textile");
-                adb.setIcon(android.R.drawable.ic_dialog_info);
+                adb.setTitle("Certus Textile");
+                adb.setMessage("Программное обеспечение разработано 'Masharipov&Islomov' Ltd.");
+                adb.setIcon(R.mipmap.ic_launcher);
                 adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

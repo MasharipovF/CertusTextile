@@ -212,6 +212,7 @@ public class EditActivity extends AppCompatActivity {
                 saveDialog(contextforDialog, SAVE_BUTTON);
             }
         });
+
         findViewById(R.id.stickerBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,11 +221,22 @@ public class EditActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         findViewById(R.id.goodsBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(EditActivity.this, NakleykaActivity.class);
                 intent.putExtra("TYPE", "GOODS");
+                startActivity(intent);
+            }
+        });
+
+
+        findViewById(R.id.slidebutton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EditActivity.this, NakleykaActivity.class);
+                intent.putExtra("TYPE", "SLIDESHOW");
                 startActivity(intent);
             }
         });
@@ -293,7 +305,7 @@ public class EditActivity extends AppCompatActivity {
                         Log.v("TOVAR", "Extracted from collar " + Integer.toString(i) + ",data size " + Integer.toString(tmpList.size()));
                     }
                     CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), list);
-                    certusDatabase.saveGoodsToDB(categoryForBaza);
+                    certusDatabase.saveGoodsToDB(categoryForBaza, false);
 
                     // ochistka dannix
                     forDatabase.clear();
@@ -391,7 +403,7 @@ public class EditActivity extends AppCompatActivity {
                     }
                     Log.v("TOVAR", "LIST SIZE " + Integer.toString(list.size()));
                     CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), list);
-                    certusDatabase.saveGoodsToDB(categoryForBaza);
+                    certusDatabase.saveGoodsToDB(categoryForBaza, false);
                     finish();
                 }
             });

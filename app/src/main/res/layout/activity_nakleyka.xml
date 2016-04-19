@@ -5,6 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/backNakleyka"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.4"
+        android:src="@drawable/certuslogo" />
+
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
@@ -13,7 +20,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/gridLayout"
@@ -46,7 +54,7 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/grid_item"/>
+            tools:listitem="@layout/grid_item" />
     </android.support.v7.widget.CardView>
 </FrameLayout>
 

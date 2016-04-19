@@ -4,9 +4,11 @@ import masharipov.certustextile.R;
 
 public class RecyclerData {
     String styleUri, frontUri, sideUri, backUri, uniqueID;
-    String gender, tag, collar, size, type, addText;
+    String gender, tag, collar, size, type, typeRus, addText;
     int addID, sizePos, selectedColor, genderImageResourse;
+    int isSection, internalID;
     boolean isAddButton;
+    public int stableID;
 
     public RecyclerData() {
         styleUri = null;
@@ -21,10 +23,20 @@ public class RecyclerData {
         tag = "";
         collar = null;
         type = null;
+        typeRus = null;
         genderImageResourse = -1;
     }
 
     //SETTERS
+
+    public void setInternalID(int id) {
+        internalID = id;
+    }
+
+    public void setSection(int type) {
+        isSection = type;
+    }
+
     public void setAddID(int resID) {
         addID = resID;
     }
@@ -36,7 +48,8 @@ public class RecyclerData {
     public void setSize(String string) {
         size = string;
     }
-    public void setSizePos(int pos){
+
+    public void setSizePos(int pos) {
         sizePos = pos;
     }
 
@@ -76,6 +89,10 @@ public class RecyclerData {
         type = string;
     }
 
+    public void setTypeRus(String string) {
+        typeRus = string;
+    }
+
     public void setGender(String string) {
         gender = string;
     }
@@ -90,6 +107,10 @@ public class RecyclerData {
 
 
     //GETTERS
+    public int getSection() {
+        return isSection;
+    }
+
     public String getImageUri(String type) {
         String returnPath;
         switch (type) {
@@ -136,11 +157,23 @@ public class RecyclerData {
         return addID;
     }
 
+    public String getTypeRus() {
+        return typeRus;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public int getSelectedColor() {
         return selectedColor;
     }
 
     public int getGenderImageResourse() {
         return genderImageResourse;
+    }
+
+    public int getInternalID() {
+        return internalID;
     }
 }

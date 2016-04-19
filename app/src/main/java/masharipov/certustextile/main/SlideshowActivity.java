@@ -1,5 +1,6 @@
 package masharipov.certustextile.main;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -15,22 +16,29 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
+import java.util.List;
+
+import masharipov.certustextile.CertusDatabase;
 import masharipov.certustextile.R;
+import masharipov.certustextile.stickeradd.StickerData;
 
 public class SlideshowActivity extends AppCompatActivity {
     CarouselView carouselView;
 
     int[] sampleImages = {R.drawable.futblka, R.drawable.futblkaikki, R.drawable.futblkaorqa};
-//https://github.com/sayyam/carouselview
+    private List<StickerData> images;
+    private CertusDatabase certusDatabase;
+    private Context context;
 
     ImageListener imageListener = new ImageListener() {
         @Override
         public void setImageForPosition(int position, ImageView imageView) {
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            imageView.setPadding(0,50,0,10);
+            imageView.setPadding(0, 50, 0, 10);
             /*wotta sampledanmas listdan olasiz uri ni
             uridan bitmapga o`tkazvotganda getPath metodini iwlatin
 
@@ -38,10 +46,16 @@ public class SlideshowActivity extends AppCompatActivity {
             Bitmap bitTovar=BitmapFactory.decodeFile(getBit.getAbsolutePath());
 
             * */
-            imageView.setImageResource(sampleImages[position]);
+            StickerData current = images.get(position);
+            if (current != null)
+                Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(imageView);
+            else
+                Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(imageView);
+            //  imageView.setImageResource(sampleImages[position]);
 
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +68,22 @@ public class SlideshowActivity extends AppCompatActivity {
          */
 
         setContentView(R.layout.activity_slideshow);
+        context = this;
+
+        certusDatabase = new CertusDatabase(this);
+        images = certusDatabase.getSlideshowItemsFromDB();
+
+        ImageView backImage = (ImageView) findViewById(R.id.slideBackImg);
+        backImage.setVisibility(View.GONE);
+
+        if (images.size() == 0) {
+            Toast.makeText(context, "Пока ничего нет, пожалуйста сначала добавьте контент", Toast.LENGTH_SHORT).show();
+            backImage.setVisibility(View.VISIBLE);
+        }
+
 
         carouselView = (CarouselView) findViewById(R.id.fancyCoverFlowa);
-        carouselView.setPageCount(sampleImages.length);
+        carouselView.setPageCount(images.size());
         carouselView.setImageListener(imageListener);
         carouselView.setPageTransformer(new FadePageTransformer());
         carouselView.setPageTransformInterval(800);
@@ -64,13 +91,14 @@ public class SlideshowActivity extends AppCompatActivity {
         carouselView.setAnimateOnBoundary(false);
         carouselView.setSlideInterval(4500);
     }
+
     private static class FadePageTransformer implements ViewPager.PageTransformer {
         public void transformPage(View view, float position) {
             view.setTranslationX(view.getWidth() * -position);
 
-            if(position <= -1.0F || position >= 1.0F) {
+            if (position <= -1.0F || position >= 1.0F) {
                 view.setAlpha(0.0F);
-            } else if( position == 0.0F ) {
+            } else if (position == 0.0F) {
                 view.setAlpha(1.0F);
             } else {
                 // position is between -1.0F & 0.0F OR 0.0F & 1.0F
@@ -78,10 +106,10 @@ public class SlideshowActivity extends AppCompatActivity {
             }
         }
     }
+
     public String getPath(Uri uri) {
         // just some safety built in
         if (uri == null) {
-            // TODO perform some logging or show user feedback
             return null;
         }
         // try to retrieve the image from the media store first

@@ -2,9 +2,7 @@ package masharipov.certustextile;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.IntegerRes;
@@ -12,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,21 +18,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import masharipov.certustextile.edit.RecyclerData;
 import masharipov.certustextile.stickeradd.StickerData;
-import masharipov.certustextile.tpriew.Tview;
 
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout panelyoqa;
@@ -53,23 +44,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     ImageView tovarArrow, stickerArrow, styleArrow;
     ImageView collar1, collar2, collar3, collar4;
-    Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.vvorot, R.drawable.vorotpugi, R.drawable.shirokiyvorot};
+    Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.shirokiyvorot, R.drawable.vorotpugi, R.drawable.vvorot};
     Integer[] maykaCollar = {R.drawable.mayka_krugliy, R.drawable.mayka_lodachka, R.drawable.mayka_vobrazniy};
-    Integer[] poloCollar = {R.drawable.poloyoqa, R.drawable.poloyoqa3, R.drawable.polo_stoykayoqa};
-
-
-
-    private String UriT="uritov";
-    private String UriS="uristick";
-    private String Xi="Xosi";
-    private String Yi="Yosi";
-    private String Stat_eni="stateni";
-    private String Stat_Bland="ststaba";
-
-    private String Rotation="rotat";
-    private String Kofiet="kofis";
-    private String getScaleHeight="scale";
-
+    Integer[] poloCollar = {R.drawable.polo_stoykayoqa, R.drawable.poloyoqa, R.drawable.poloyoqa3};
 
 
     RecyclerView tovarRecycler, styleRecycler, stickerrecycler;
@@ -176,49 +153,42 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         razmer = (TextView) findViewById(R.id.razmerpolzunok);
         povorot = (TextView) findViewById(R.id.povorot);
         timerHand = new Handler();
+        oldi = new ItemFragment(R.drawable.expanat, new ItemFragment.eventZOOM() {
+            @Override
+            public void EVZ(int t) {
+                vibr.vibrate(30);
+                razmer.setText(Integer.toString(t));
+                razmerPol[current_status] = t;
+            }
 
+            @Override
+            public void EVR(int t) {
+                vibr.vibrate(30);
+                povorot.setText(Integer.toString(t));
+                povorotMas[current_status] = t;
+            }
+        });
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.frame, oldi, "OLDI")
+                .commit();
 
         findViewById(R.id.glaz).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent tview=new Intent(SecondActivity.this,Tview.class);
+                switch (current_status) {
+                    case 0:
+                        oldi.changeSticker(R.drawable.nakleka);
+                        break;
+                    case 1:
+                        yon.changeSticker(R.drawable.naka2);
 
-                /*
-                if(oldi!=null){
-                    tview.putExtra(UriS+"1",oldi.getUriS().toString());
-                    tview.putExtra(UriT+"1",oldi.getUriT().toString());
-                    tview.putExtra(Xi+"1",oldi.getXi());
-                    tview.putExtra(Yi+"1",oldi.getYi());
-                    tview.putExtra(Stat_eni+"1",oldi.getStat_eni());
-                    tview.putExtra(Stat_eni+"1",oldi.getStat_baland());
-                    tview.putExtra(Rotation+"1",oldi.getRotatt());
-                    tview.putExtra(Kofiet+"1",oldi.getKofetsent());
-                    tview.putExtra(getScaleHeight+"1",oldi.getScaleHeight());
+                        break;
+                    case 2:
+                        orqa.changeSticker(R.drawable.naka1);
+                        break;
                 }
-                if(yon!=null){
-                    tview.putExtra(UriS+"2",yon.getUriS().toString());
-                    tview.putExtra(UriT+"2",yon.getUriT().toString());
-                    tview.putExtra(Xi+"2",yon.getXi());
-                    tview.putExtra(Yi+"2",yon.getYi());
-                    tview.putExtra(Stat_eni+"2",yon.getStat_eni());
-                    tview.putExtra(Stat_eni+"2",yon.getStat_baland());
-                    tview.putExtra(Rotation+"2",yon.getRotatt());
-                    tview.putExtra(Kofiet+"2",yon.getKofetsent());
-                    tview.putExtra(getScaleHeight+"2",yon.getScaleHeight());
-                }
-                if(orqa!=null){
-                    tview.putExtra(UriS+"3",orqa.getUriS().toString());
-                    tview.putExtra(UriT+"3",orqa.getUriT().toString());
-                    tview.putExtra(Xi+"3",orqa.getXi());
-                    tview.putExtra(Yi+"3",orqa.getYi());
-                    tview.putExtra(Stat_eni+"3",orqa.getStat_eni());
-                    tview.putExtra(Stat_eni+"3",orqa.getStat_baland());
-                    tview.putExtra(Rotation+"3",orqa.getRotatt());
-                    tview.putExtra(Kofiet+"3",orqa.getKofetsent());
-                    tview.putExtra(getScaleHeight+"3",orqa.getScaleHeight());
-                }*/
 
-                startActivity(tview);
             }
         });
 
@@ -232,44 +202,74 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.burish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (current_status == 0) {
-                    if (yon!=null){
                     getSupportFragmentManager()
                             .beginTransaction().replace(R.id.frame, yon).commit();
 
                     current_status = 1;
                     razmer.setText(Integer.toString(razmerPol[current_status]));
-                    povorot.setText(Integer.toString(povorotMas[current_status]));}
-
+                    povorot.setText(Integer.toString(povorotMas[current_status]));
                 } else if (current_status == 1) {
-                    if(orqa!=null) {
-                        getSupportFragmentManager()
-                                .beginTransaction().replace(R.id.frame, orqa).commit();
-                        current_status = 2;
-                        razmer.setText(Integer.toString(razmerPol[current_status]));
-                        povorot.setText(Integer.toString(povorotMas[current_status]));
-                    }
+                    getSupportFragmentManager()
+                            .beginTransaction().replace(R.id.frame, orqa).commit();
+                    current_status = 2;
+                    razmer.setText(Integer.toString(razmerPol[current_status]));
+                    povorot.setText(Integer.toString(povorotMas[current_status]));
+
                 } else if (current_status == 2) {
-                    if(oldi!=null) {
-                        getSupportFragmentManager()
-                                .beginTransaction().replace(R.id.frame, oldi).commit();
-                        current_status = 0;
-                        razmer.setText(Integer.toString(razmerPol[current_status]));
-                        povorot.setText(Integer.toString(povorotMas[current_status]));
-                    }
+                    getSupportFragmentManager()
+                            .beginTransaction().replace(R.id.frame, oldi).commit();
+                    current_status = 0;
+                    razmer.setText(Integer.toString(razmerPol[current_status]));
+                    povorot.setText(Integer.toString(povorotMas[current_status]));
+
 
                 }
             }
         });
     }
-    boolean keyStart=true;
+
+    boolean keyStart = true;
+
     @Override
     public void onStart() {
         super.onStart();
         //bu prosto initsalizovat qivoladi
         // tovar o`zgarganda fragmentdigi changeTovar(URI) funksiyasi chaqiriladi
+        if (keyStart) {
+            yon = new ItemFragment(R.drawable.expanat, new ItemFragment.eventZOOM() {
+                @Override
+                public void EVZ(int t) {
+                    vibr.vibrate(30);
+                    razmer.setText(Integer.toString(t));
+                    razmerPol[current_status] = t;
 
+                }
+
+                @Override
+                public void EVR(int t) {
+                    vibr.vibrate(30);
+                    povorot.setText(Integer.toString(t));
+                    povorotMas[current_status] = t;
+                }
+            });
+            orqa = new ItemFragment(R.drawable.expanatorqa, new ItemFragment.eventZOOM() {
+                @Override
+                public void EVZ(int t) {
+                    vibr.vibrate(30);
+                    razmer.setText(Integer.toString(t));
+                    razmerPol[current_status] = t;
+                }
+
+                @Override
+                public void EVR(int t) {
+                    vibr.vibrate(30);
+                    povorot.setText(Integer.toString(t));
+                    povorotMas[current_status] = t;
+                }
+            });
+            keyStart = false;
+        }
 
     }
 
@@ -422,7 +422,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     ifClickedImagePositionNotChangedDoNotChangeStyleList = position;
                 }
                 panelyoqa.animate().translationX(140).start();
-                timerHand.postDelayed(backanim, 3000);
+                timerHand.postDelayed(backanim, Toast.LENGTH_SHORT);
             }
         });
         if (genderPicker.size() > 3) {
@@ -447,7 +447,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 String oldiUri = tanlanganTovar.getImageUri("front");
                 String orqaUri = tanlanganTovar.getImageUri("back");
                 String yonUri = tanlanganTovar.getImageUri("side");
-                oldi=null;
+                oldi = null;
                 oldi = new ItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
                     @Override
                     public void EVZ(int t) {
@@ -463,7 +463,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         povorotMas[current_status] = t;
                     }
                 });
-                yon=null;
+                yon = null;
                 yon = new ItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
                     @Override
                     public void EVZ(int t) {
@@ -479,7 +479,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         povorotMas[current_status] = t;
                     }
                 });
-                orqa=null;
+                orqa = null;
                 orqa = new ItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
                     @Override
                     public void EVZ(int t) {
@@ -499,11 +499,11 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 switch (current_status) {
                     case 0:
 
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.frame, oldi, "OLDI")
-                            .commit();
-                    break;
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame, oldi, "OLDI")
+                                .commit();
+                        break;
 
                     case 1:
                         getSupportFragmentManager()
@@ -673,7 +673,6 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     public void onBackPressed() {
         if (isGenderPicked) {
             isGenderPicked = false;
-            ifClickedImagePositionNotChangedDoNotChangeStyleList = -1;
             tovarRecyclerAdapter.changeList(genderPicker);
             styleRecyclerAdapter.changeStyleList(new ArrayList<RecyclerData>());
             if (genderPicker.size() > 3) {

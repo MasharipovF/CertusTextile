@@ -12,26 +12,26 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import masharipov.certustextile.CertusDatabase;
 import masharipov.certustextile.R;
+import masharipov.certustextile.edit.RecyclerData;
 
 
-public class DrawerGridAdapter extends RecyclerView.Adapter<DrawerGridAdapter.DrawerHolder> {
+public class SectionChildDraggableGridAdapter extends RecyclerView.Adapter<SectionChildDraggableGridAdapter.DrawerHolder> {
 
     private Context context;
     private List<TovarData> tovarDataList;
     private int editButtonVisibility;
     private int databaseChangedFlag = 0;
     private CardView linearLayout;
-    private List<TovarData> drawerData;
+    private List<RecyclerData> drawerData;
     private SectionDraggableGridAdapter tovarDataAdapter;
+    public Snackbar snackbar;
 
 
     public static class DrawerHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -45,7 +45,6 @@ public class DrawerGridAdapter extends RecyclerView.Adapter<DrawerGridAdapter.Dr
             listener = click;
             mContainer = (FrameLayout) v.findViewById(R.id.container);
             stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
-            editBtn = (ImageButton) v.findViewById(R.id.gridEditBtn);
             imgBtn = (ImageView) v.findViewById(R.id.gridImg);
             editBtn.setVisibility(visibility);
             stickerBtn.setOnClickListener(this);
@@ -57,9 +56,6 @@ public class DrawerGridAdapter extends RecyclerView.Adapter<DrawerGridAdapter.Dr
             switch (v.getId()) {
                 case R.id.gridDelBtn:
                     listener.delBtnClick(getAdapterPosition());
-                    break;
-                case R.id.gridEditBtn:
-                    listener.editBtnClick(getAdapterPosition());
                     break;
                 case R.id.gridImg:
                     listener.onImageClicked(getAdapterPosition());
@@ -79,13 +75,16 @@ public class DrawerGridAdapter extends RecyclerView.Adapter<DrawerGridAdapter.Dr
     }
 
 
-    public DrawerGridAdapter(Context ctx, int editVisibility, CardView layout, SectionDraggableGridAdapter adapter) {
+    public SectionChildDraggableGridAdapter(Context ctx, int editVisibility, CardView layout, SectionDraggableGridAdapter adapter) {
         context = ctx;
         tovarDataAdapter = adapter;
         drawerData = new ArrayList<>();
         editButtonVisibility = editVisibility;
         linearLayout = layout;
         setHasStableIds(true);
+
+
+        snackbar = Snackbar.make(linearLayout, "Товар удален", Snackbar.LENGTH_LONG);
     }
 
     @Override
@@ -111,18 +110,22 @@ public class DrawerGridAdapter extends RecyclerView.Adapter<DrawerGridAdapter.Dr
 
     @Override
     public void onBindViewHolder(DrawerHolder holder, int position) {
-        TovarData current = drawerData.get(position);
+        RecyclerData current = drawerData.get(position);
         // set text
-        if (current.getFRONT() != null)
-            Picasso.with(context).load(Uri.parse(current.getFRONT())).centerInside().resize(512, 512).into(holder.imgBtn);
+        if (current.getImageUri("front") != null)
+            Picasso.with(context).load(Uri.parse(current.getImageUri("front"))).centerInside().resize(512, 512).into(holder.imgBtn);
         else
             Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(holder.imgBtn);
     }
 
 
-    public void setDataBase(List<TovarData> data) {
+    public void setDataBase(List<RecyclerData> data) {
         drawerData = data;
         notifyDataSetChanged();
+    }
+
+    public List<RecyclerData> getDatabase() {
+        return drawerData;
     }
 
     public void clearDatabase() {
@@ -131,22 +134,19 @@ public class DrawerGridAdapter extends RecyclerView.Adapter<DrawerGridAdapter.Dr
     }
 
     public void removeItem(final int position) {
-        final TovarData item = drawerData.get(position);
+        final RecyclerData item = drawerData.get(position);
         drawerData.remove(position);
         notifyItemRemoved(position);
         databaseChangedFlag++;
 
-        Snackbar snackbar = Snackbar
-                .make(linearLayout, "Товар удален", Snackbar.LENGTH_LONG)
-                .setAction("Отменить", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        drawerData.add(position, item);
-                        notifyItemInserted(position);
-                        databaseChangedFlag--;
-                    }
-                });
-
+        snackbar.setAction("Отменить", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerData.add(position, item);
+                notifyItemInserted(position);
+                databaseChangedFlag--;
+            }
+        });
         snackbar.show();
     }
 

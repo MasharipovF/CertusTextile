@@ -47,7 +47,7 @@ public class CertusDatabase {
         sdb = externalDbOpenHelper.openDataBase();
     }
 
-    public void saveGoodsToDB(String tableName) {
+    public void saveGoodsToDB(String tableName, boolean clearDB) {
         String ID = "ID";
         String TAG = "TAG";
         String COLLAR = "COLLAR";
@@ -58,6 +58,12 @@ public class CertusDatabase {
         String GENDER = "GENDER";
         String SIZE = "SIZE";
         String uniqueID;
+
+        if (clearDB) {
+            sdb.delete(tableName, null, null);
+        }
+
+
         if (goods != null && goods.size() > 0) {
             uniqueID = Long.toString(System.currentTimeMillis());
             Toast.makeText(context, "Data size " + Integer.toString(goods.size()), Toast.LENGTH_SHORT).show();
@@ -83,36 +89,6 @@ public class CertusDatabase {
         }
     }
 
-
-    public List<TovarData> getGoodsFromDB(String tableName) {
-        List<TovarData> list = new ArrayList<>();
-        String ID = "ID";
-        String TAG = "TAG";
-        String COLLAR = "COLLAR";
-        String STYLEURI = "STYLEURI";
-        String FRONTURI = "FRONTURI";
-        String BACKURI = "BACKURI";
-        String SIDEURI = "SIDEURI";
-        String GENDER = "GENDER";
-        String SIZE = "SIZE";
-
-        Cursor cursor;
-        cursor = sdb.query(tableName, new String[]{ID, FRONTURI}, null, null, null, null, null);
-        cursor.moveToFirst();
-        for (int i = 0; i < cursor.getCount(); i++) {
-            TovarData item = new TovarData();
-            item.setID(cursor.getString(cursor.getColumnIndex(ID)));
-            if (cursor.getString(cursor.getColumnIndex(FRONTURI)) != null)
-                item.setFRONT(cursor.getString(cursor.getColumnIndex(FRONTURI)));
-            item.setSectionText(tableName);
-            item.setType(0);
-            list.add(item);
-            cursor.moveToNext();
-        }
-        cursor.moveToFirst();
-        cursor.close();
-        return list;
-    }
 
     public List<RecyclerData> getTovarFromDB(String tableName) {
         List<RecyclerData> list = new ArrayList<>();
@@ -201,10 +177,90 @@ public class CertusDatabase {
         return list;
     }
 
+    public void saveSlideshowItemsToDB() {
+        String ID = "ID";
+        String URI = "URI";
+        String tableName = "Slideshow";
+
+        sdb.delete(tableName, null, null);
+
+        if (stickers != null) {
+            for (int i = 0; i < stickers.size(); i++) {
+                ContentValues cv = new ContentValues();
+                cv.put(ID, stickers.get(i).getID());
+                cv.put(URI, stickers.get(i).getURI());
+                sdb.insert(tableName, null, cv);
+            }
+        } else {
+            Toast.makeText(context, "Slideshow Database is empty", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public List<StickerData> getSlideshowItemsFromDB() {
+
+        List<StickerData> list = new ArrayList<>();
+        String ID = "ID";
+        String URI = "URI";
+        String tableName = "Slideshow";
+
+        Cursor cursor;
+        cursor = sdb.query(tableName, new String[]{ID, URI}, null, null, null, null, null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            StickerData item = new StickerData();
+            item.setID(cursor.getString(cursor.getColumnIndex(ID)));
+            item.setURI(cursor.getString(cursor.getColumnIndex(URI)));
+            list.add(item);
+            cursor.moveToNext();
+        }
+        cursor.moveToFirst();
+        cursor.close();
+        return list;
+    }
+
+    public void clearDB() {
+        sdb.delete("Futbolka", null, null);
+        sdb.delete("Mayka", null, null);
+        sdb.delete("Polo", null, null);
+    }
+
     public boolean isTableEmpty(String tableName) {
 
         Cursor cursor = sdb.query(tableName, null, null, null, null, null, null);
         return cursor == null || cursor.getCount() == 0;
+    }
+
+
+
+
+    public List<TovarData> getGoodsFromDB(String tableName) {
+        List<TovarData> list = new ArrayList<>();
+        String ID = "ID";
+        String TAG = "TAG";
+        String COLLAR = "COLLAR";
+        String STYLEURI = "STYLEURI";
+        String FRONTURI = "FRONTURI";
+        String BACKURI = "BACKURI";
+        String SIDEURI = "SIDEURI";
+        String GENDER = "GENDER";
+        String SIZE = "SIZE";
+
+        Cursor cursor;
+        cursor = sdb.query(tableName, new String[]{ID, FRONTURI}, null, null, null, null, null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            TovarData item = new TovarData();
+            item.setID(cursor.getString(cursor.getColumnIndex(ID)));
+            if (cursor.getString(cursor.getColumnIndex(FRONTURI)) != null)
+                item.setFRONT(cursor.getString(cursor.getColumnIndex(FRONTURI)));
+            item.setSectionText(tableName);
+            item.setType(0);
+            list.add(item);
+            cursor.moveToNext();
+        }
+        cursor.moveToFirst();
+        cursor.close();
+        return list;
     }
 }
 

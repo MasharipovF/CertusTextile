@@ -22,7 +22,7 @@ public class SplashScreen extends AwesomeSplash {
         //Choose LOGO OR PATH; if you don't provide String value for path it's logo by default
 
         //Customize Logo
-        configSplash.setLogoSplash(R.drawable.logo); //or any other drawable
+        configSplash.setLogoSplash(R.drawable.certuslogo); //or any other drawable
         configSplash.setAnimLogoSplashDuration(2000); //int ms
         configSplash.setAnimLogoSplashTechnique(Techniques.FadeIn); //choose one form Techniques (ref: https://github.com/daimajia/AndroidViewAnimations)
 
@@ -38,10 +38,10 @@ public class SplashScreen extends AwesomeSplash {
 
 
         //Customize Title
-        configSplash.setTitleSplash("Certus Textile");
+        configSplash.setTitleSplash("");
         configSplash.setTitleTextColor(R.color.colorAccent);
-        configSplash.setTitleTextSize(30f); //float value
-        configSplash.setAnimTitleDuration(1000);
+        configSplash.setTitleTextSize(0f); //float value
+        configSplash.setAnimTitleDuration(0);
         configSplash.setAnimTitleTechnique(Techniques.FlipInX);
         configSplash.setTitleFont("fonts/slimjim.ttf"); //provide string to your font located in assets/fonts/
     }
