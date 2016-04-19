@@ -2,6 +2,8 @@ package masharipov.certustextile.main;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,7 @@ import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
+import java.io.File;
 import java.util.List;
 
 import masharipov.certustextile.CertusDatabase;
@@ -38,20 +41,24 @@ public class SlideshowActivity extends AppCompatActivity {
         @Override
         public void setImageForPosition(int position, ImageView imageView) {
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
             imageView.setPadding(0, 50, 0, 10);
             /*wotta sampledanmas listdan olasiz uri ni
             uridan bitmapga o`tkazvotganda getPath metodini iwlatin
 
-             File  getBit = new File(getPath(uriT));
-            Bitmap bitTovar=BitmapFactory.decodeFile(getBit.getAbsolutePath());
+
 
             * */
             StickerData current = images.get(position);
-            if (current != null)
-                Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(imageView);
+            File getBit = new File(getPath(Uri.parse(current.getURI())));
+            Bitmap bitTovar = BitmapFactory.decodeFile(getBit.getAbsolutePath());
+            imageView.setImageBitmap(bitTovar);
+/*            if (current != null)
+                Picasso.with(context).load(Uri.parse(current.getURI())).centerCrop().resize(1500,1500).into(imageView);
             else
                 Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(imageView);
-            //  imageView.setImageResource(sampleImages[position]);
+            //  imageView.setImageResource(sampleImages[position]);*/
 
         }
     };
