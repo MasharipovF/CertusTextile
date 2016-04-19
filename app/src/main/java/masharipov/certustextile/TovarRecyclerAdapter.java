@@ -82,6 +82,15 @@ public class TovarRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
         notifyDataSetChanged();
     }
 
+    public List<RecyclerData> getList() {
+        return tovarList;
+    }
+
+    public void clearList() {
+        tovarList.clear();
+        notifyDataSetChanged();
+    }
+
     public interface clickListener {
         void onItemClick(ImageView img, int position, List<RecyclerData> dataList);
     }

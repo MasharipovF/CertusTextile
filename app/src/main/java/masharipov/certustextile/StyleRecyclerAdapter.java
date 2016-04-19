@@ -60,14 +60,14 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
         holder.imageView.setLayoutParams(layoutParams);
         RecyclerData current = styleList.get(position);
 
-        holder.imageView.setPadding(20,16,20,10);
+        holder.imageView.setPadding(20, 16, 20, 10);
         holder.imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        if (current.getImageUri("style") != null){
+        if (current.getImageUri("style") != null) {
 
             File getBit = new File(getPath(Uri.parse(current.getImageUri("style"))));
-            Bitmap bitTovar= BitmapFactory.decodeFile(getBit.getAbsolutePath());
+            Bitmap bitTovar = BitmapFactory.decodeFile(getBit.getAbsolutePath());
             holder.imageView.setImageBitmap(bitTovar);
-          //  bitTovar.recycle();
+            //  bitTovar.recycle();
         }
         //    Picasso.with(context).load(Uri.parse(current.getImageUri("style"))).centerInside().resize(512, 512).into(holder.imageView);
         else
@@ -88,6 +88,15 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
         notifyDataSetChanged();
     }
 
+    public void clearList() {
+        styleList.clear();
+        notifyDataSetChanged();
+    }
+
+    public List<RecyclerData> getList() {
+        return styleList;
+    }
+
     public interface clickListener {
         void onItemClick(ImageView img, int position, RecyclerData tanlanganTovar);
     }
@@ -96,6 +105,7 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
         height = h;
         notifyDataSetChanged();
     }
+
     public String getPath(Uri uri) {
         // just some safety built in
         if (uri == null) {
@@ -105,7 +115,7 @@ public class StyleRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolder>
         // try to retrieve the image from the media store first
         // this will only work for images selected from gallery
         String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = ((AppCompatActivity)context).managedQuery(uri, projection, null, null, null);
+        Cursor cursor = ((AppCompatActivity) context).managedQuery(uri, projection, null, null, null);
         if (cursor != null) {
             int column_index = cursor
                     .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);

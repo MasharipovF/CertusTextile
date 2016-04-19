@@ -166,7 +166,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 adb.show();
                 break;
             case R.id.editbtn:
-                final Dialog dialog = new Dialog(this);
+
+                // TODO vremmenno, uberu posle zaversheniya projecta
+                intent = new Intent(MainActivity.this, EditActivity.class);
+                startActivity(intent);
+
+               /* final Dialog dialog = new Dialog(this);
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.setContentView(R.layout.password_prompt);
                 dialog.setTitle("Введите пароль:");
@@ -193,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                         dialog.dismiss();
                     }
                 });
-                dialog.show();
+                dialog.show();*/
 
             default:
                 break;
