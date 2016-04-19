@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-   android:orientation="vertical"
+
     android:background="#fff"
     tools:context="masharipov.certustextile.tpriew.Tview">
     <LinearLayout
@@ -11,73 +11,125 @@
         android:layout_height="0dp"
         android:orientation="horizontal"
         android:layout_weight="6">
-    <coverflow.photoview.PhotoView
-        android:id="@+id/a1"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        />
-    <ImageView
-        android:layout_width="3dp"
-        android:layout_height="match_parent"
-        android:src="@drawable/lineverticle"/>
-    <coverflow.photoview.PhotoView
-        android:id="@+id/a2"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        />
+        <FrameLayout
+            android:id="@+id/f1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            />
         <ImageView
             android:layout_width="3dp"
             android:layout_height="match_parent"
             android:src="@drawable/lineverticle"/>
-    <coverflow.photoview.PhotoView
-        android:id="@+id/a3"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        />
+        <FrameLayout
+            android:id="@+id/f2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            />
+        <ImageView
+            android:layout_width="3dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/lineverticle"/>
+        <FrameLayout
+            android:id="@+id/f3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
         android:layout_weight="1">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="ПЕРЕДНИЙ"
-            android:textSize="40dp"
-            android:paddingTop="20dp"
-            android:gravity="center_horizontal"
-            android:textColor="#292929"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="БОК"
-            android:textSize="40dp"
-            android:paddingTop="20dp"
-            android:gravity="center_horizontal"
-            android:textColor="#292929"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="ЗАДНИЙ"
-            android:textSize="40dp"
-            android:paddingTop="20dp"
-            android:gravity="center_horizontal"
-            android:textColor="#292929"/>
 
     </LinearLayout>
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#fff">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="6">
+            <coverflow.photoview.PhotoView
+                android:id="@+id/a1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                />
+            <ImageView
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/lineverticle"/>
+            <coverflow.photoview.PhotoView
+                android:id="@+id/a2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                />
+            <ImageView
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/lineverticle"/>
+            <coverflow.photoview.PhotoView
+                android:id="@+id/a3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="ПЕРЕДНИЙ"
+                android:textSize="40dp"
+                android:paddingTop="20dp"
+                android:gravity="center_horizontal"
+                android:textColor="#292929"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="БОК"
+                android:textSize="40dp"
+                android:paddingTop="20dp"
+                android:gravity="center_horizontal"
+                android:textColor="#292929"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="ЗАДНИЙ"
+                android:textSize="40dp"
+                android:paddingTop="20dp"
+                android:gravity="center_horizontal"
+                android:textColor="#292929"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

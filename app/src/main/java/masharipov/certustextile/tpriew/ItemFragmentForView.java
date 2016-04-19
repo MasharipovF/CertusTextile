@@ -1,4 +1,4 @@
-package masharipov.certustextile;
+package masharipov.certustextile.tpriew;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -9,15 +9,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.ParcelUuid;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,8 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -34,16 +29,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
-import java.util.Random;
+
+import masharipov.certustextile.R;
 
 /**
  * Created by developer on 01.04.2016.
  */
-@SuppressWarnings("serial")
-public class ItemFragment extends Fragment  {
+public class ItemFragmentForView extends Fragment {
     ImageView tovar;
     Context This;
 
@@ -116,11 +109,11 @@ public class ItemFragment extends Fragment  {
 
     eventZOOM peredacha;
 
-    public ItemFragment() {
+    public ItemFragmentForView() {
 
     }
 
-    public ItemFragment(int res, eventZOOM eve) {
+    public ItemFragmentForView(int res, eventZOOM eve) {
         voqtinchali_resurs = res;
         This = getActivity();
         peredacha = eve;
@@ -128,7 +121,7 @@ public class ItemFragment extends Fragment  {
     }
 
 
-    public ItemFragment(Uri pathFile, eventZOOM eve) {
+    public ItemFragmentForView(Uri pathFile, eventZOOM eve) {
         uriT = pathFile;
         This = getActivity();
         peredacha = eve;

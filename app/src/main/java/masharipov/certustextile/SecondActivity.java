@@ -2,7 +2,9 @@ package masharipov.certustextile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.IntegerRes;
@@ -18,6 +20,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +56,19 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     Integer[] futbolkaCollar = {R.drawable.kruglivorot, R.drawable.vvorot, R.drawable.vorotpugi, R.drawable.shirokiyvorot};
     Integer[] maykaCollar = {R.drawable.mayka_krugliy, R.drawable.mayka_lodachka, R.drawable.mayka_vobrazniy};
     Integer[] poloCollar = {R.drawable.poloyoqa, R.drawable.poloyoqa3, R.drawable.polo_stoykayoqa};
+
+
+
+    private String UriT="uritov";
+    private String UriS="uristick";
+    private String Xi="Xosi";
+    private String Yi="Yosi";
+    private String Stat_eni="stateni";
+    private String Stat_Bland="ststaba";
+
+    private String Rotation="rotat";
+    private String Kofiet="kofis";
+    private String getScaleHeight="scale";
 
 
 
@@ -159,6 +182,42 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onClick(View v) {
                 Intent tview=new Intent(SecondActivity.this,Tview.class);
+
+                /*
+                if(oldi!=null){
+                    tview.putExtra(UriS+"1",oldi.getUriS().toString());
+                    tview.putExtra(UriT+"1",oldi.getUriT().toString());
+                    tview.putExtra(Xi+"1",oldi.getXi());
+                    tview.putExtra(Yi+"1",oldi.getYi());
+                    tview.putExtra(Stat_eni+"1",oldi.getStat_eni());
+                    tview.putExtra(Stat_eni+"1",oldi.getStat_baland());
+                    tview.putExtra(Rotation+"1",oldi.getRotatt());
+                    tview.putExtra(Kofiet+"1",oldi.getKofetsent());
+                    tview.putExtra(getScaleHeight+"1",oldi.getScaleHeight());
+                }
+                if(yon!=null){
+                    tview.putExtra(UriS+"2",yon.getUriS().toString());
+                    tview.putExtra(UriT+"2",yon.getUriT().toString());
+                    tview.putExtra(Xi+"2",yon.getXi());
+                    tview.putExtra(Yi+"2",yon.getYi());
+                    tview.putExtra(Stat_eni+"2",yon.getStat_eni());
+                    tview.putExtra(Stat_eni+"2",yon.getStat_baland());
+                    tview.putExtra(Rotation+"2",yon.getRotatt());
+                    tview.putExtra(Kofiet+"2",yon.getKofetsent());
+                    tview.putExtra(getScaleHeight+"2",yon.getScaleHeight());
+                }
+                if(orqa!=null){
+                    tview.putExtra(UriS+"3",orqa.getUriS().toString());
+                    tview.putExtra(UriT+"3",orqa.getUriT().toString());
+                    tview.putExtra(Xi+"3",orqa.getXi());
+                    tview.putExtra(Yi+"3",orqa.getYi());
+                    tview.putExtra(Stat_eni+"3",orqa.getStat_eni());
+                    tview.putExtra(Stat_eni+"3",orqa.getStat_baland());
+                    tview.putExtra(Rotation+"3",orqa.getRotatt());
+                    tview.putExtra(Kofiet+"3",orqa.getKofetsent());
+                    tview.putExtra(getScaleHeight+"3",orqa.getScaleHeight());
+                }*/
+
                 startActivity(tview);
             }
         });
@@ -173,27 +232,32 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.burish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (current_status == 0) {
+                    if (yon!=null){
                     getSupportFragmentManager()
                             .beginTransaction().replace(R.id.frame, yon).commit();
 
                     current_status = 1;
                     razmer.setText(Integer.toString(razmerPol[current_status]));
-                    povorot.setText(Integer.toString(povorotMas[current_status]));
+                    povorot.setText(Integer.toString(povorotMas[current_status]));}
+
                 } else if (current_status == 1) {
-                    getSupportFragmentManager()
-                            .beginTransaction().replace(R.id.frame, orqa).commit();
-                    current_status = 2;
-                    razmer.setText(Integer.toString(razmerPol[current_status]));
-                    povorot.setText(Integer.toString(povorotMas[current_status]));
-
+                    if(orqa!=null) {
+                        getSupportFragmentManager()
+                                .beginTransaction().replace(R.id.frame, orqa).commit();
+                        current_status = 2;
+                        razmer.setText(Integer.toString(razmerPol[current_status]));
+                        povorot.setText(Integer.toString(povorotMas[current_status]));
+                    }
                 } else if (current_status == 2) {
-                    getSupportFragmentManager()
-                            .beginTransaction().replace(R.id.frame, oldi).commit();
-                    current_status = 0;
-                    razmer.setText(Integer.toString(razmerPol[current_status]));
-                    povorot.setText(Integer.toString(povorotMas[current_status]));
-
+                    if(oldi!=null) {
+                        getSupportFragmentManager()
+                                .beginTransaction().replace(R.id.frame, oldi).commit();
+                        current_status = 0;
+                        razmer.setText(Integer.toString(razmerPol[current_status]));
+                        povorot.setText(Integer.toString(povorotMas[current_status]));
+                    }
 
                 }
             }

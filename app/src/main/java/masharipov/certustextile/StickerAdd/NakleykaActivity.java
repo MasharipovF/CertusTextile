@@ -46,7 +46,7 @@ public class NakleykaActivity extends AppCompatActivity {
     private List<StickerData> stickerList;
     private List<TovarData> tovarList;
     private List<List<RecyclerData>> goodsList;
-    private int numOfItemsInRow = 3;
+    private int numOfItemsInRow = 6;
     private String extras;
     private CardView bottomLayout;
 
