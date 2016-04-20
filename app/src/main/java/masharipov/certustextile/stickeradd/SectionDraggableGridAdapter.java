@@ -42,7 +42,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     private List<RecyclerData> futbolkaList, maykaList, poloList;
     private List<RecyclerData> childItemList;
     private Intent imagePickerIntent;
-    private int SELECT_PICTURE = 1, editButtonVisibility;
+    private int SELECT_PICTURE = 1, visibility;
     private SectionChildDraggableGridAdapter drawerAdapter;
     final int SECTION = 1, ITEM = 0;
 
@@ -56,12 +56,12 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
 
     public static class SectionGridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
         public FrameLayout mContainer;
-        public ImageView imgBtn, stickerBtn;
+        public ImageView imgBtn, delBtn;
         private onItemClick listener;
-        private TextView sectionText;
+        private TextView sectionText, tagTxt;
 
         // VIEWHOLDER
-        public SectionGridHolder(View v, int viewType, onItemClick click) {
+        public SectionGridHolder(View v, int viewType, int visibility, onItemClick click) {
             super(v);
             switch (viewType) {
                 case 1:
@@ -70,9 +70,11 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                 case 0:
                     listener = click;
                     mContainer = (FrameLayout) v.findViewById(R.id.container);
-                    stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
+                    delBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
                     imgBtn = (ImageView) v.findViewById(R.id.gridImg);
-                    stickerBtn.setOnClickListener(this);
+                    tagTxt = (TextView) v.findViewById(R.id.gridItemTag);
+                    tagTxt.setVisibility(visibility);
+                    delBtn.setOnClickListener(this);
                     imgBtn.setOnClickListener(this);
                     break;
 
@@ -86,7 +88,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                     listener.delBtnClick(getAdapterPosition());
                     break;
                 case R.id.gridImg:
-                    listener.onImageClick(stickerBtn, getAdapterPosition());
+                    listener.onImageClick(delBtn, getAdapterPosition());
             }
         }
     }
@@ -101,11 +103,11 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     }
 
 
-    public SectionDraggableGridAdapter(List<RecyclerData> list, Context ctx, int editVisibility, CoordinatorLayout Clayout, CardView Llayout, SectionChildDraggableGridAdapter adapter) {
+    public SectionDraggableGridAdapter(List<RecyclerData> list, Context ctx, int vis, CoordinatorLayout Clayout, CardView Llayout, SectionChildDraggableGridAdapter adapter) {
         context = ctx;
         tovarList = list;
         // oldTovarList = list;
-        editButtonVisibility = editVisibility;
+        visibility = vis;
         coordinatorLayout = Clayout;
         recyclerLayout = Llayout;
         drawerAdapter = adapter;
@@ -132,7 +134,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
             default:
                 throw new IllegalStateException("Unexpected viewType (= " + viewType + ")");
         }
-        return new SectionGridHolder(v, viewType, new onItemClick() {
+        return new SectionGridHolder(v, viewType, visibility, new onItemClick() {
             @Override
             public void delBtnClick(final int position) {
                 removeItem(position);
@@ -277,6 +279,10 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                 } else holder.sectionText.setText("");
                 break;
             case ITEM:
+                if (!TextUtils.isEmpty(current.getID()) && current.getID() != null) {
+                    holder.tagTxt.setText(current.getID() + " " + current.getGender());
+                } else holder.tagTxt.setText("NO ID");
+
                 if (current.getImageUri("front") != null)
                     Picasso.with(context).load(Uri.parse(current.getImageUri("front"))).centerInside().resize(512, 512).into(holder.imgBtn);
                 else

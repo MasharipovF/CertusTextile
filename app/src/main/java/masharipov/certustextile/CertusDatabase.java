@@ -63,13 +63,11 @@ public class CertusDatabase {
             sdb.delete(tableName, null, null);
         }
 
-
         if (goods != null && goods.size() > 0) {
-            uniqueID = Long.toString(System.currentTimeMillis());
             for (int i = 0; i < goods.size(); i++) {
                 RecyclerData recyclerData = goods.get(i);
                 ContentValues content = new ContentValues();
-                content.put(ID, uniqueID);
+                content.put(ID, recyclerData.getID());
                 content.put(TAG, recyclerData.getTag());
                 content.put(COLLAR, recyclerData.getCollar());
                 if (recyclerData.getImageUri("style") != null)
@@ -226,8 +224,6 @@ public class CertusDatabase {
         Cursor cursor = sdb.query(tableName, null, null, null, null, null, null);
         return cursor == null || cursor.getCount() == 0;
     }
-
-
 
 
     public List<TovarData> getGoodsFromDB(String tableName) {

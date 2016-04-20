@@ -411,7 +411,8 @@ public class NakleykaActivity extends AppCompatActivity {
         });
 
         // childAdapter
-        bottomLayout.setVisibility(View.VISIBLE);
+        // TODO bottom layout
+        bottomLayout.setVisibility(View.GONE);
         RecyclerView drawerRecycler = (RecyclerView) findViewById(R.id.list);
         GridLayoutManager drawerLayoutManager = new GridLayoutManager(this, numOfItemsInRow);
         drawerRecycler.setLayoutManager(drawerLayoutManager);
@@ -429,7 +430,7 @@ public class NakleykaActivity extends AppCompatActivity {
 
     private boolean initStickerAdapter() {
         stickerList = cDB.getStickersFromDB();
-        stickerAdapter = new DraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
+        stickerAdapter = new DraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.VISIBLE);
         mAdapter = stickerAdapter;
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(stickerAdapter);
         fab.setVisibility(View.VISIBLE);
@@ -441,7 +442,7 @@ public class NakleykaActivity extends AppCompatActivity {
     private boolean initSlideshowAdapter() {
         slideshowList = cDB.getSlideshowItemsFromDB();
         Log.v("DATAA", "SLIDESHOW SIZE == " + Integer.toString(slideshowList.size()));
-        slideshowAdapter = new DraggableGridAdapter(slideshowList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
+        slideshowAdapter = new DraggableGridAdapter(slideshowList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.GONE);
         mWrappedAdapter = slideshowAdapter;
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(slideshowAdapter);
         fab.setVisibility(View.VISIBLE);

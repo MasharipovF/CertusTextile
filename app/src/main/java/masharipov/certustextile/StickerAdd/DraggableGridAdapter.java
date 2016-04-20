@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
@@ -37,24 +38,36 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     private Context context;
     private List<StickerData> stickerList, oldStickerList;
     private Intent imagePickerIntent;
-    private int SELECT_PICTURE = 1, editButtonVisibility, delButtonVisibility;
+    private int SELECT_PICTURE = 1, visibility, delButtonVisibility;
     private int databaseChangedFlag = 0;
     private CoordinatorLayout coordinatorLayout;
     public static boolean disableDrag = false;
 
+    public DraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout, int vis) {
+        context = ctx;
+        stickerList = list;
+        oldStickerList = list;
+        coordinatorLayout = layout;
+        visibility = vis;
+        setHasStableIds(true);
+    }
 
     public static class GridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
         public FrameLayout mContainer;
-        public ImageView imgBtn, stickerBtn, editBtn;
+        public ImageView imgBtn, stickerBtn;
+        TextView tagTxt;
         private onItemClick listener;
 
+
         // VIEWHOLDER
-        public GridHolder(View v, onItemClick click) {
+        public GridHolder(View v, int visibility, onItemClick click) {
             super(v);
             listener = click;
             mContainer = (FrameLayout) v.findViewById(R.id.container);
             stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
             imgBtn = (ImageView) v.findViewById(R.id.gridImg);
+            tagTxt = (TextView) v.findViewById(R.id.gridItemTag);
+            tagTxt.setVisibility(visibility);
             stickerBtn.setOnClickListener(this);
             imgBtn.setOnClickListener(this);
         }
@@ -79,19 +92,11 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     }
 
 
-    public DraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout) {
-        context = ctx;
-        stickerList = list;
-        oldStickerList = list;
-        coordinatorLayout = layout;
-        setHasStableIds(true);
-    }
-
     @Override
     public GridHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         final View v = inflater.inflate(R.layout.grid_item, parent, false);
-        return new GridHolder(v, new onItemClick() {
+        return new GridHolder(v, visibility, new onItemClick() {
             @Override
             public void delBtnClick(final int position) {
                 removeItem(position);
@@ -143,7 +148,13 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     public void insertItem(String path) {
         String uniqueID = Long.toString(System.currentTimeMillis());
         StickerData item = new StickerData();
-        if (stickerList.size() == 0) {
+        item.setID(uniqueID);
+        item.setURI(path);
+        stickerList.add(0,item);
+        notifyItemInserted(0);
+        databaseChangedFlag++;
+
+        /*if (stickerList.size() == 0) {
             item.setID(uniqueID);
             item.setURI(path);
             stickerList.add(item);
@@ -155,7 +166,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
             stickerList.add(item);
             notifyItemInserted(stickerList.size() - 1);
             databaseChangedFlag++;
-        }
+        }*/
     }
 
 

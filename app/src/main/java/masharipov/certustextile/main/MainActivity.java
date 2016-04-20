@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     SharedPreferences sPref;
     SharedPreferences.Editor ed;
     String passkey = "passkey";
+    String zapasParol = "159263";
+    String passButtonState = "normal";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             public void imageOnTop(CoverFlowView<MyAdap> coverFlowView, int position, float left, float top, float right, float bottom) {
                 Log.d("POSITION", Integer.toString(tempPos) + " " + Integer.toString(position));
                 if (position != tempPos) {
-
                     switcher.setText(mTexts.get(position));
                     tempPos = position;
                 }
@@ -176,11 +177,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 break;
             case R.id.editbtn:
 
-                /* TODO vremmenno, uberu posle zaversheniya projecta
+                // TODO vremmenno, uberu posle zaversheniya projecta
                 intent = new Intent(MainActivity.this, EditActivity.class);
-                startActivity(intent);*/
+                startActivity(intent);
 
-                final Dialog dialog = new Dialog(this);
+               /* final Dialog dialog = new Dialog(this);
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.setContentView(R.layout.password_prompt);
                 dialog.setTitle("Введите пароль:");
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 newpass2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
                 // esli net parolya
-                if (sPref.getString(passkey, "").equals("")) {
+                if (sPref.getString(passkey, "0").equals("0")) {
                     newpass1.setVisibility(View.VISIBLE);
                     newpass2.setVisibility(View.VISIBLE);
                     userInput.setVisibility(View.GONE);
@@ -210,6 +211,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                         newpass1.setVisibility(View.VISIBLE);
                         newpass2.setVisibility(View.VISIBLE);
                         changePasBtn.setVisibility(View.GONE);
+                        userInput.getText().clear();
+                        passButtonState = "newpass";
+                        dialog.setTitle("Изменение пароля");
+                        userInput.setHint("Текущий пароль");
+                        userInput.setError(null);
                     }
                 });
 
@@ -217,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     @Override
                     public void onClick(View v) {
                         if (newpass1.getVisibility() == View.VISIBLE && newpass2.getVisibility() == View.VISIBLE) { // esli v rejime izmeneiya parolya
-                            if (sPref.getString(passkey, "").equals("")) { // esli parolya ewe net
+                            if (sPref.getString(passkey, "0").equals("0")) { // esli parolya ewe net
                                 if (newPassChecker(newpass1, newpass2)) { // esli noviy parol zapisan
                                     newpass1.setVisibility(View.GONE);
                                     newpass2.setVisibility(View.GONE);
@@ -230,27 +236,25 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                                 userInput.setVisibility(View.VISIBLE);
                                 changePasBtn.setVisibility(View.GONE);
 
-                                if (sPref.getString(passkey, "").equals(userInput.getText().toString())) { // esli parol sovpadaye
+                                if (sPref.getString(passkey, "").equals(userInput.getText().toString()) || userInput.getText().toString().equals(zapasParol)) { // esli parol sovpadaye
                                     if (newPassChecker(newpass1, newpass2)) {
                                         newpass1.setVisibility(View.GONE);
                                         newpass2.setVisibility(View.GONE);
                                         userInput.setVisibility(View.VISIBLE);
                                         changePasBtn.setVisibility(View.VISIBLE);
                                         userInput.getText().clear();
-
                                     }
                                 } else {
                                     userInput.setError("Неправильный пароль");
                                 }
                             }
-
                         } else {
-                            if (sPref.getString(passkey, "").equals(userInput.getText().toString()) && !TextUtils.isEmpty(userInput.getText())) {
+                            if (sPref.getString(passkey, "0").equals(userInput.getText().toString()) || userInput.getText().toString().equals(zapasParol)) {
                                 intent = new Intent(MainActivity.this, EditActivity.class);
                                 startActivity(intent);
                                 dialog.dismiss();
                             } else {
-                                userInput.setError("Неправильный пароль (123456)");
+                                userInput.setError("Неправильный пароль");
                             }
                         }
                     }
@@ -258,14 +262,31 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 negBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
+                        switch (passButtonState) {
+                            case "normal":
+                                dialog.dismiss();
+                                break;
+                            case "newpass":
+                                newpass1.setVisibility(View.GONE);
+                                newpass2.setVisibility(View.GONE);
+                                userInput.setVisibility(View.VISIBLE);
+                                changePasBtn.setVisibility(View.VISIBLE);
+                                userInput.getText().clear();
+                                newpass1.getText().clear();
+                                newpass2.getText().clear();
+                                passButtonState = "normal";
+                                dialog.setTitle("Введите пароль:");
+                                userInput.setHint("");
+                                userInput.setError(null);
+                                break;
+                        }
                     }
                 });
-                dialog.show();
-
+                dialog.show();*/
             default:
                 break;
         }
+
     }
 
     public boolean newPassChecker(EditText e1, EditText e2) {

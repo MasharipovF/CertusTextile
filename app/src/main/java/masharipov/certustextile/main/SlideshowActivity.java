@@ -85,7 +85,7 @@ public class SlideshowActivity extends AppCompatActivity {
 
         if (images.size() == 0) {
             Toast.makeText(context, "Пока ничего нет, пожалуйста сначала добавьте контент", Toast.LENGTH_SHORT).show();
-            backImage.setVisibility(View.VISIBLE);
+            backImage.setVisibility(View.GONE);
         }
 
 

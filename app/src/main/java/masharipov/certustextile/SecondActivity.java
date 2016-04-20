@@ -173,6 +173,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         styleArrow = (ImageView) findViewById(R.id.stylePastStrelka);
         stickerArrow = (ImageView) findViewById(R.id.stickerPastStrelka);
 
+
         tovarArrow.setOnClickListener(this);
         styleArrow.setOnClickListener(this);
         stickerArrow.setOnClickListener(this);
@@ -486,8 +487,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     private int currentGender;
 
     private void initTovarRecycler() {
-        tovarData = genderList;
+        tovarArrow.setVisibility(View.GONE);
 
+        tovarData = genderList;
         tovarRecyclerAdapter = new TovarRecyclerAdapter(this, genderList, tovarBoyi, new TovarRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position, List<RecyclerData> dataList) {
@@ -523,16 +525,12 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 panelyoqa.animate().translationX(140).start();
                 timerHand.postDelayed(backanim, 3000);
+                current_status = 0;
             }
         });
 
-        if (genderList.size() > 3) {
-            tovarArrow.setVisibility(View.VISIBLE);
-            tovarRecyclerAdapter.setImageParams(tovarBoyi);
-        } else {
-            tovarArrow.setVisibility(View.GONE);
-            tovarRecyclerAdapter.setImageParams(tovarBoyi + strelkaBoyi);
-        }
+        setVisibilityOfTovarArrow(genderList);
+
 
         tovarLayoutManager = new LinearLayoutManager(getApplicationContext());
         tovarRecycler.setLayoutManager(tovarLayoutManager);
@@ -545,6 +543,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initStyleRecycler() {
         styleArrow.setVisibility(View.GONE);
+
         List<RecyclerData> data = new ArrayList<>();
         styleRecyclerAdapter = new StyleRecyclerAdapter(this, data, styleBoyi, new StyleRecyclerAdapter.clickListener() {
             @Override
@@ -559,10 +558,11 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initStickerRecycler() {
+        stickerArrow.setVisibility(View.GONE);
         List<StickerData> list = new ArrayList<>();
         list = cDB.getStickersFromDB();
         stickerData = list;
-        Log.v("SECONDACTIVITY", "SIZE OF STICKER ITEMS == " + list.size());
+        Log.v("DATAA", "SIZE OF STICKER ITEMS == " + list.size());
         stickerRecyclerAdapter = new StickerRecyclerAdapter(this, list, stickerBoyi, new StickerRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position, String str) {
@@ -583,13 +583,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
-        if (list.size() > 3) {
-            stickerArrow.setVisibility(View.VISIBLE);
-            stickerRecyclerAdapter.setImageParams(stickerBoyi);
-        } else {
-            stickerArrow.setVisibility(View.GONE);
-            stickerRecyclerAdapter.setImageParams(stickerBoyi + strelkaBoyi);
-        }
+        setVisibilityOfStickerArrow(list);
         stickerLayoutManager = new LinearLayoutManager(getApplicationContext());
         stickerrecycler.setLayoutManager(stickerLayoutManager);
         stickerrecycler.setAdapter(stickerRecyclerAdapter);
@@ -599,13 +593,70 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     public List<RecyclerData> getTovarData(List<RecyclerData> list) {
         List<RecyclerData> finalData = new ArrayList<>();
-        String tmpID = null;
-        for (RecyclerData mItem : list) {
+        String tmpID;
+        int isPicked = 0;
+        List<String> pickedIDs = new ArrayList<>();
+
+        // TODO bazadan oliwi togirlaw kere
+        for (int i = 0; i < list.size(); i++) {
+            RecyclerData mItem = list.get(i);
+            tmpID = mItem.getID();
+            Log.v("DATAA", "TMPID  = " + mItem.getID());
+            if (pickedIDs.size() == 0) {
+                if (tmpID.equals(mItem.getID())) {
+                    finalData.add(mItem);
+                    pickedIDs.add(tmpID);
+                }
+            } else {
+                for (int j = 0; j < pickedIDs.size(); j++) {
+                    if (!tmpID.equals(pickedIDs.get(j)))
+                        isPicked++;
+                }
+                if (isPicked == pickedIDs.size()) {
+                    isPicked = 0;
+                    finalData.add(mItem);
+                    pickedIDs.add(tmpID);
+                }
+            }
+        }
+        tmpID = list.get(list.size()-1).getID();
+        for (int j = 0; j < pickedIDs.size(); j++) {
+            if (!tmpID.equals(pickedIDs.get(j)))
+                isPicked++;
+        }
+        if (isPicked == pickedIDs.size()) {
+            isPicked = 0;
+            finalData.add(list.get(list.size()-1));
+            pickedIDs.add(tmpID);
+        }
+
+
+        /*while (counter < list.size()) {
+            tmpID = list.get(counter).getID();
+            for (int j = 0; j < list.size(); j++) {
+                RecyclerData mItem = list.get(j);
+                if (tmpID.equals(mItem.getID())) {
+                    if (!isPicked)
+                        finalData.add(mItem);
+                    isPicked = true;
+                    list.remove(j);
+                } else {
+                    counter++;
+                    isPicked = false;
+                }
+            }
+        }*/
+
+        /*for (RecyclerData mItem : list) {
             if (!mItem.getID().equals(tmpID)) {
                 tmpID = mItem.getID();
                 finalData.add(mItem);
             }
-        }
+        }*/
+        Log.v("DATAA", "TOVAR FINAL DATA SIZE = " + Integer.toString(finalData.size()));
+        Log.v("DATAA", "LISTSIZE = " + Integer.toString(list.size()));
+        tovarData = finalData;
+        setVisibilityOfTovarArrow(finalData);
         return finalData;
     }
 
@@ -615,6 +666,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         for (j = 0; j < fromList.size(); j++) {
             if (searchID.equals(fromList.get(j).getID())) finalData.add(fromList.get(j));
         }
+        styleData = finalData;
+        setVisivilityOfStyleArrow(finalData);
         return finalData;
     }
 
@@ -634,13 +687,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
         Log.v("SECONDACTIVITY", "SIZE OF STYLE ITEMS == " + finalData.size());
-        if (finalData.size() > 3) {
-            styleArrow.setVisibility(View.VISIBLE);
-            styleRecyclerAdapter.setImageParams(styleBoyi);
-        } else {
-            styleArrow.setVisibility(View.GONE);
-            styleRecyclerAdapter.setImageParams(styleBoyi + strelkaBoyi);
-        }
+        setVisivilityOfStyleArrow(finalData);
         styleData = finalData;
         return finalData;
     }
@@ -669,14 +716,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
-        if (finalData.size() > 3) {
-            tovarArrow.setVisibility(View.VISIBLE);
-            tovarRecyclerAdapter.setImageParams(tovarBoyi);
-
-        } else {
-            tovarArrow.setVisibility(View.GONE);
-            tovarRecyclerAdapter.setImageParams(tovarBoyi + strelkaBoyi);
-        }
+        setVisibilityOfTovarArrow(finalData);
         Log.v("DATAA", "tovat boyi after gender choose = " + Integer.toString(tovarBoyi));
 
         tovarData = finalData;
@@ -732,15 +772,43 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             isGenderPicked = false;
             tovarRecyclerAdapter.changeList(genderList);
             styleRecyclerAdapter.clearList();
-            if (genderList.size() > 3) {
-                tovarArrow.setVisibility(View.VISIBLE);
-                tovarRecyclerAdapter.setImageParams(tovarBoyi);
-            } else {
-                tovarArrow.setVisibility(View.GONE);
-                tovarRecyclerAdapter.setImageParams(tovarBoyi + strelkaBoyi);
-            }
+            setVisibilityOfTovarArrow(genderList);
         } else
             super.onBackPressed();
+    }
+
+    public void setVisibilityOfTovarArrow(List<RecyclerData> list) {
+        if (list.size() > 3) {
+            tovarArrow.setVisibility(View.VISIBLE);
+            tovarRecyclerAdapter.setImageParams(tovarBoyi);
+        } else {
+            tovarArrow.setVisibility(View.GONE);
+            tovarRecyclerAdapter.setImageParams(tovarBoyi + strelkaBoyi);
+        }
+    }
+
+    public void setVisivilityOfStyleArrow(List<RecyclerData> list) {
+        if (list.size() > 3) {
+            styleArrow.setVisibility(View.VISIBLE);
+            styleRecyclerAdapter.setImageParams(styleBoyi);
+        } else {
+            styleArrow.setVisibility(View.GONE);
+            styleRecyclerAdapter.setImageParams(styleBoyi + strelkaBoyi);
+        }
+    }
+
+    public void setVisibilityOfStickerArrow(List<StickerData> list) {
+        int height;
+        if (list.size() > 3) {
+            stickerArrow.setVisibility(View.VISIBLE);
+            height = stickerBoyi;
+        } else {
+            stickerArrow.setVisibility(View.GONE);
+            height = stickerBoyi + strelkaBoyi;
+        }
+        stickerRecyclerAdapter.setImageParams(height);
+        Log.v("DATAA", "total height = " + Integer.toString(height) + ";  height of strelka arrow = " + Integer.toString(strelkaBoyi) + ";  height of sticker item = " + Integer.toString(stickerBoyi));
+
     }
 
     public void setItemtoFragment(RecyclerData data) {
