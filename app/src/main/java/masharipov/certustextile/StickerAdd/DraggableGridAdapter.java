@@ -1,6 +1,7 @@
 package masharipov.certustextile.stickeradd;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,9 +12,13 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,8 +31,11 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import masharipov.certustextile.CertusDatabase;
+import masharipov.certustextile.edit.RecyclerData;
 import masharipov.certustextile.stickeradd.DraggableGridAdapter.GridHolder;
 import masharipov.certustextile.R;
 
@@ -42,6 +50,8 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     private int databaseChangedFlag = 0;
     private CoordinatorLayout coordinatorLayout;
     public static boolean disableDrag = false;
+    private onFabVisibilityChange fabChanded;
+    public boolean isAlbum = true;
 
     public DraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout, int vis) {
         context = ctx;
@@ -49,6 +59,16 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         oldStickerList = list;
         coordinatorLayout = layout;
         visibility = vis;
+        setHasStableIds(true);
+    }
+
+    public DraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout, int vis, onFabVisibilityChange fabVisibilityChange) {
+        context = ctx;
+        stickerList = list;
+        oldStickerList = list;
+        coordinatorLayout = layout;
+        visibility = vis;
+        fabChanded = fabVisibilityChange;
         setHasStableIds(true);
     }
 
@@ -78,6 +98,9 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
                 case R.id.gridDelBtn:
                     listener.delBtnClick(getAdapterPosition());
                     break;
+                case R.id.gridImg:
+                    listener.imgClick(getAdapterPosition(), tagTxt);
+                    break;
 
             }
         }
@@ -88,7 +111,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
         void editBtnClick(int position);
 
-        // void imgClick(int position, ImageButton img);
+        void imgClick(int position, TextView tag);
     }
 
 
@@ -105,6 +128,53 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
             @Override
             public void editBtnClick(int position) {
             }
+
+            @Override
+            public void imgClick(final int position, final TextView tag) {
+                if (isAlbum && position == stickerList.size() - 1) {
+                    final Dialog dialog = new Dialog(context);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.password_prompt);
+                    dialog.setCancelable(true);
+
+                    final EditText albumName = (EditText) dialog.findViewById(R.id.editTextDialogUserInput);
+                    Button okBtn = (Button) dialog.findViewById(R.id.dialogPos);
+                    Button cancelBtn = (Button) dialog.findViewById(R.id.dialogNeg);
+                    dialog.findViewById(R.id.changepass).setVisibility(View.GONE);
+                    okBtn.setText("ДОБАВИТЬ");
+                    // albumName.set
+                    okBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (TextUtils.isEmpty(albumName.getText().toString())) {
+                                albumName.setError("Название альбома не может быть пустым!");
+                            } else {
+                                tag.setText(albumName.getText().toString());
+                                stickerList.get(position).setTAG(tag.getText().toString());
+                                stickerList.get(position).setURI("fff"); // TODO URIni tanlash kerak, hozi test uchun prosto
+                                notifyItemChanged(position);
+                                StickerData mItem = new StickerData();
+                                mItem.setTAG("Новый альбом");
+                                mItem.setID(Long.toString(System.currentTimeMillis()));
+                                stickerList.add(position + 1, mItem);
+                                notifyItemInserted(position + 1);
+                                // dlya perexoda v spisok stickerov v albome  showItemsOfAlbum();
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                    cancelBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            isAlbum = true;
+                        }
+                    });
+                    dialog.show();
+                    //isAlbum = false; //TODO AGAR albom qowilsa unga item qowiw kere
+                }
+            }
         });
     }
 
@@ -112,10 +182,19 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     public void onBindViewHolder(GridHolder holder, int position) {
         StickerData current = stickerList.get(position);
         // set text
-        if (current.getURI() != null)
+        if (current.getURI() != null) {
+            holder.stickerBtn.setVisibility(View.VISIBLE);
             Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imgBtn);
-        else
-            Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(holder.imgBtn);
+        } else {
+            holder.stickerBtn.setVisibility(View.GONE);
+            Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.imgBtn);
+        }
+
+        if (current.getTAG() != null) {
+            holder.tagTxt.setText(current.getTAG());
+        } else {
+            holder.tagTxt.setText("lalala");
+        }
 
         // set background resource (target view ID: container)
         final int dragState = holder.getDragStateFlags();
@@ -145,12 +224,21 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         return oldStickerList;
     }
 
+    public boolean isAlbumShown() {
+        return isAlbum;
+    }
+
+
+    public void showItemsOfAlbum() {
+        fabChanded.setFABVisibility(View.VISIBLE);
+    }
+
     public void insertItem(String path) {
         String uniqueID = Long.toString(System.currentTimeMillis());
         StickerData item = new StickerData();
         item.setID(uniqueID);
         item.setURI(path);
-        stickerList.add(0,item);
+        stickerList.add(0, item);
         notifyItemInserted(0);
         databaseChangedFlag++;
 
@@ -229,6 +317,10 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         return databaseChangedFlag > 0;
     }
 
+    public interface onFabVisibilityChange {
+        void setFABVisibility(int visibility);
+    }
+
     @Override
     public long getItemId(int position) {
         return Long.parseLong(stickerList.get(position).getID());
@@ -258,13 +350,21 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
     @Override
     public boolean onCheckCanStartDrag(GridHolder holder, int position, int x, int y) {
-        return !disableDrag;
+        if (!isAlbum)
+            return !disableDrag;
+        else {
+            return position != stickerList.size() - 1;
+        }
     }
 
     @Override
     public ItemDraggableRange onGetItemDraggableRange(GridHolder holder, int position) {
         // no drag-sortable range specified
-        return null;
+        if (!isAlbum)
+            return null;
+        else {
+            return new ItemDraggableRange(0, stickerList.size() - 2);
+        }
     }
 
 

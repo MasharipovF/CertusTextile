@@ -460,6 +460,7 @@ public class NakleykaActivity extends AppCompatActivity {
         slideshowList = cDB.getSlideshowItemsFromDB();
         Log.v("DATAA", "SLIDESHOW SIZE == " + Integer.toString(slideshowList.size()));
         slideshowAdapter = new DraggableGridAdapter(slideshowList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.GONE);
+        slideshowAdapter.isAlbum = false;
         mWrappedAdapter = slideshowAdapter;
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(slideshowAdapter);
         fab.setVisibility(View.VISIBLE);
