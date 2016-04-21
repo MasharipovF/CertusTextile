@@ -5,11 +5,16 @@ package masharipov.certustextile.stickeradd;
  */
 public class StickerData {
     String TAG, URI, ID;
+    int placeHolder;
 
     public StickerData() {
         URI = null;
         TAG = null;
         ID = null;
+    }
+
+    public void setPlaceHolder(int resID) {
+        placeHolder = resID;
     }
 
     public void setID(String id) {
@@ -34,5 +39,9 @@ public class StickerData {
 
     public String getID() {
         return ID;
+    }
+
+    public int getPlaceHolder() {
+        return placeHolder;
     }
 }

@@ -188,6 +188,12 @@ public class NakleykaActivity extends AppCompatActivity {
         switch (extras) {
             ///////////////////////////////////////////////////////////////////
             case "STICKER":
+                if (!stickerAdapter.isAlbum) {
+                    Toast.makeText(this, "Ne album", Toast.LENGTH_SHORT).show();
+                    stickerAdapter.isAlbum = true;
+                    fab.setVisibility(View.GONE);
+                    return;
+                }
                 if (!stickerAdapter.isDatabaseChanged()) {
                     super.onBackPressed();
                     CertusDatabase certusDatabase = new CertusDatabase(stickerAdapter.getStickerList(), getApplicationContext());
@@ -197,7 +203,9 @@ public class NakleykaActivity extends AppCompatActivity {
                 adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CertusDatabase certusDatabase = new CertusDatabase(stickerAdapter.getStickerList(), getApplicationContext());
+                        List<StickerData> finalList = stickerAdapter.getStickerList();
+                        finalList.remove(finalList.size() - 1);
+                        CertusDatabase certusDatabase = new CertusDatabase(finalList, getApplicationContext());
                         certusDatabase.saveStickersToDB();
                         finish();
                     }
@@ -429,13 +437,22 @@ public class NakleykaActivity extends AppCompatActivity {
     }
 
     private boolean initStickerAdapter() {
+        fab.setVisibility(View.GONE);
+
         stickerList = cDB.getStickersFromDB();
-        stickerAdapter = new DraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.VISIBLE);
+        StickerData mItem = new StickerData();
+        mItem.setTAG("Новый альбом");
+        mItem.setID(Long.toString(System.currentTimeMillis()));
+        stickerList.add(mItem);
+        stickerAdapter = new DraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.VISIBLE, new DraggableGridAdapter.onFabVisibilityChange() {
+            @Override
+            public void setFABVisibility(int visibility) {
+                fab.setVisibility(visibility);
+            }
+        });
         mAdapter = stickerAdapter;
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(stickerAdapter);
-        fab.setVisibility(View.VISIBLE);
         bottomLayout.setVisibility(View.GONE);
-
         return stickerList.size() > 0;
     }
 
