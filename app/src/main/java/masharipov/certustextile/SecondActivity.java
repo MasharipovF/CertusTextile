@@ -55,7 +55,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     TovarRecyclerAdapter tovarRecyclerAdapter;
     StyleRecyclerAdapter styleRecyclerAdapter;
     StickerRecyclerAdapter stickerRecyclerAdapter;
-    List<RecyclerData> genderList, tovarData, styleData;
+    List<RecyclerData> genderPickerList, tovarData, styleData;
     List<RecyclerData> maleList = null, femaleList = null, boyList = null, girlList = null;
     List<List<RecyclerData>> wholeList;
     LinearLayoutManager tovarLayoutManager, styleLayoutManager, stickerLayoutManager;
@@ -71,6 +71,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     int ifClickedImagePositionNotChangedDoNotChangeStyleList = -1, ifStickerPositionIsTheSameDoNotChange = -1;
     List<RecyclerData> initialData; // polnaya baza po vibrannoy categorii tovara
     List<RecyclerData> tmpTovarList, tmpStyleList;
+    String selectedTovarID;
+    List<RecyclerData> selectedGenderList;
 
     RecyclerData initData;
     // yoqa panel
@@ -126,41 +128,41 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
 
-        genderList = new ArrayList<>();
+        genderPickerList = new ArrayList<>();
         if (maleList != null && maleList.size() != 0) {
             Log.v("DATAA", "MALE  = " + Integer.toString(maleList.size()));
             RecyclerData gData = new RecyclerData();
             gData.setGenderImageResourse(gArray[0]);
-            genderList.add(gData);
+            genderPickerList.add(gData);
             wholeList.add(maleList);
         }
         if (femaleList != null && femaleList.size() != 0) {
             Log.v("DATAA", "FEMALE  = " + Integer.toString(femaleList.size()));
             RecyclerData gData = new RecyclerData();
             gData.setGenderImageResourse(gArray[1]);
-            genderList.add(gData);
+            genderPickerList.add(gData);
             wholeList.add(femaleList);
         }
         if (boyList != null && boyList.size() != 0) {
             Log.v("DATAA", "BOY  = " + Integer.toString(boyList.size()));
             RecyclerData gData = new RecyclerData();
             gData.setGenderImageResourse(gArray[2]);
-            genderList.add(gData);
+            genderPickerList.add(gData);
             wholeList.add(boyList);
         }
         if (girlList != null && girlList.size() != 0) {
             Log.v("DATAA", "GIRL  = " + Integer.toString(girlList.size()));
             RecyclerData gData = new RecyclerData();
             gData.setGenderImageResourse(gArray[3]);
-            genderList.add(gData);
+            genderPickerList.add(gData);
             wholeList.add(girlList);
         }
 
         // nacalnie znacheniya
-        if (initialData != null && initialData.size() != 0) {
+       /* if (initialData != null && initialData.size() != 0) {
             selectedItemID = initialData.get(0).getID();
             selectedItemCollar = initialData.get(0).getCollar();
-        }
+        }*/
 
         //snachala nujno vibrat pol, poetomu v recycler gruzim pol
 
@@ -489,15 +491,18 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     private void initTovarRecycler() {
         tovarArrow.setVisibility(View.GONE);
 
-        tovarData = genderList;
-        tovarRecyclerAdapter = new TovarRecyclerAdapter(this, genderList, tovarBoyi, new TovarRecyclerAdapter.clickListener() {
+        tovarData = genderPickerList;
+        tovarRecyclerAdapter = new TovarRecyclerAdapter(this, genderPickerList, tovarBoyi, new TovarRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position, List<RecyclerData> dataList) {
                 if (!isGenderPicked) {
                     isGenderPicked = true;
                     currentGender = position;
-                    tmpTovarList = getTovarData(wholeList.get(position));
-                    tmpStyleList = getStyleData(wholeList.get(position), tmpTovarList.get(0).getID());
+                    selectedGenderList = wholeList.get(position);
+                    tmpTovarList = getTovarData(selectedGenderList);
+                    selectedTovarID = tmpTovarList.get(0).getID();
+                    //tmpStyleList = getStyleData(selectedGenderList, selectedTovarID, null);
+                    tmpStyleList = getSyledataWithfirstCollar(selectedGenderList, selectedTovarID);
 
                     tovarRecyclerAdapter.changeList(tmpTovarList);
                     styleRecyclerAdapter.changeStyleList(tmpStyleList);
@@ -510,18 +515,20 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar, selectedGender));
                     if (initData != null)
                         setItemtoFrsgment(initData);*/
-                    return;
-                }
-                if (position != ifClickedImagePositionNotChangedDoNotChangeStyleList) {
-                    ifClickedImagePositionNotChangedDoNotChangeStyleList = position;
-                    tmpStyleList = getStyleData(wholeList.get(currentGender), tmpTovarList.get(position).getID());
-                    styleRecyclerAdapter.changeStyleList(tmpStyleList);
-                    setItemtoFragment(styleRecyclerAdapter.getList().get(0));
+                } else {
+                    if (position != ifClickedImagePositionNotChangedDoNotChangeStyleList) {
+                        ifClickedImagePositionNotChangedDoNotChangeStyleList = position;
+                        // tmpStyleList = getStyleData(wholeList.get(currentGender), tmpTovarList.get(position).getID(), null);
+                        selectedTovarID = tmpTovarList.get(position).getID();
+                        tmpStyleList = getSyledataWithfirstCollar(selectedGenderList, selectedTovarID);
+                        styleRecyclerAdapter.changeStyleList(tmpStyleList);
+                        setItemtoFragment(styleRecyclerAdapter.getList().get(0));
 
                    /* selectedItemID = dataList.get(position).getID();
                     styleRecyclerAdapter.changeStyleList(getStyleData(selectedItemID, selectedItemCollar, selectedGender));
                     if (getStyleData(selectedItemID, selectedItemCollar, selectedGender).get(0) != null)
                         setItemtoFrsgment(getStyleData(selectedItemID, selectedItemCollar, selectedGender).get(0));*/
+                    }
                 }
                 panelyoqa.animate().translationX(140).start();
                 timerHand.postDelayed(backanim, 3000);
@@ -529,7 +536,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
-        setVisibilityOfTovarArrow(genderList);
+        setVisibilityOfTovarArrow(genderPickerList);
 
 
         tovarLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -594,40 +601,26 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     public List<RecyclerData> getTovarData(List<RecyclerData> list) {
         List<RecyclerData> finalData = new ArrayList<>();
         String tmpID;
-        int isPicked = 0;
-        List<String> pickedIDs = new ArrayList<>();
-
+        int counter, i, k;
         // TODO bazadan oliwi togirlaw kere
-        for (int i = 0; i < list.size(); i++) {
+        for (i = 0; i < list.size(); i++) {
             RecyclerData mItem = list.get(i);
             tmpID = mItem.getID();
-            Log.v("DATAA", "TMPID  = " + mItem.getID());
-            if (pickedIDs.size() == 0) {
-                if (tmpID.equals(mItem.getID())) {
-                    finalData.add(mItem);
-                    pickedIDs.add(tmpID);
-                }
+            if (finalData.isEmpty()) {
+                finalData.add(mItem);
             } else {
-                for (int j = 0; j < pickedIDs.size(); j++) {
-                    if (!tmpID.equals(pickedIDs.get(j)))
-                        isPicked++;
+                counter = 0;
+                for (k = 0; k < finalData.size(); k++) {
+                    RecyclerData fItem = finalData.get(k);
+                    if (!fItem.getID().equals(tmpID)) {
+                        counter++;
+                    }
                 }
-                if (isPicked == pickedIDs.size()) {
-                    isPicked = 0;
+                if (counter == finalData.size()) {
                     finalData.add(mItem);
-                    pickedIDs.add(tmpID);
+                    counter = 0;
                 }
             }
-        }
-        tmpID = list.get(list.size()-1).getID();
-        for (int j = 0; j < pickedIDs.size(); j++) {
-            if (!tmpID.equals(pickedIDs.get(j)))
-                isPicked++;
-        }
-        if (isPicked == pickedIDs.size()) {
-            isPicked = 0;
-            finalData.add(list.get(list.size()-1));
-            pickedIDs.add(tmpID);
         }
 
 
@@ -660,18 +653,87 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         return finalData;
     }
 
-    public List<RecyclerData> getStyleData(List<RecyclerData> fromList, String searchID) {
+    public List<RecyclerData> getStyleDataWithChosenCollar(List<RecyclerData> fromList, String searchID, String collarType) {
         List<RecyclerData> finalData = new ArrayList<>();
         int j;
         for (j = 0; j < fromList.size(); j++) {
-            if (searchID.equals(fromList.get(j).getID())) finalData.add(fromList.get(j));
+            if (searchID.equals(fromList.get(j).getID()) && collarType.equals(fromList.get(j).getCollar()))
+                finalData.add(fromList.get(j));
+        }
+        styleData = finalData;
+        setVisivilityOfStyleArrow(finalData);
+
+        styleRecyclerAdapter.changeStyleList(finalData);
+        setItemtoFragment(styleRecyclerAdapter.getList().get(0));
+        return finalData;
+    }
+
+    public List<RecyclerData> getSyledataWithfirstCollar(List<RecyclerData> fromList, String searchID) {
+        String collar = null;
+
+        List<RecyclerData> finalData = new ArrayList<>();
+        List<RecyclerData> tmpData = new ArrayList<>();
+        int j;
+        for (j = 0; j < fromList.size(); j++) {
+            if (searchID.equals(fromList.get(j).getID()))
+                tmpData.add(fromList.get(j));
+        }
+
+        // skrivaem vorotniki kotorix net
+        int c1 = 1, c2 = 1, c3 = 1, c4 = 1;
+        for (int i = 0; i < tmpData.size(); i++) {
+            RecyclerData mItem = tmpData.get(i);
+            switch (mItem.getCollar()) {
+                case "collar1":
+                    if (collar == null) collar = "collar1";
+                    c1 = 0;
+                    break;
+                case "collar2":
+                    if (collar == null) collar = "collar2";
+                    c2 = 0;
+                    break;
+                case "collar3":
+                    if (collar == null) collar = "collar3";
+                    c3 = 0;
+                    break;
+                case "collar4":
+                    if (collar == null) collar = "collar4";
+                    c4 = 0;
+                    break;
+                default:
+                    break;
+            }
+        }
+        hideCollars(c1, c2, c3, c4);
+        /////////////////////////////////////
+        for (j = 0; j < tmpData.size(); j++) {
+            if (searchID.equals(tmpData.get(j).getID()) && collar.equals(tmpData.get(j).getCollar()))
+                finalData.add(tmpData.get(j));
         }
         styleData = finalData;
         setVisivilityOfStyleArrow(finalData);
         return finalData;
     }
 
-    public List<RecyclerData> getStyleData(String id, String collar, String gender) {
+    public void hideCollars(int cl, int c2, int c3, int c4) {
+        if (cl == 1)
+            collar1.setVisibility(View.GONE);
+        else collar1.setVisibility(View.VISIBLE);
+
+        if (c2 == 1)
+            collar2.setVisibility(View.GONE);
+        else collar2.setVisibility(View.VISIBLE);
+
+        if (c3 == 1)
+            collar3.setVisibility(View.GONE);
+        else collar3.setVisibility(View.VISIBLE);
+
+        if (c4 == 1)
+            collar4.setVisibility(View.GONE);
+        else collar4.setVisibility(View.VISIBLE);
+    }
+
+    /*public List<RecyclerData> getStyleData(String id, String collar, String gender) {
         List<RecyclerData> finalData = new ArrayList<>();
         String tmpURI = null; // chtobi brat po odnomu tovaru iz odinakovix stiley (esli sprosyat sdelaem) poka ne rabotaet
         if (initialData.size() != 0) {
@@ -721,7 +783,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
         tovarData = finalData;
         return finalData;
-    }
+    }*/
 
 
     public void setCollarImages(Integer[] images) {
@@ -736,16 +798,16 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.yoqa1:
-                selectedItemCollar = "collar1";
+                getStyleDataWithChosenCollar(selectedGenderList, selectedTovarID, "collar1");
                 break;
             case R.id.yoqa2:
-                selectedItemCollar = "collar2";
+                getStyleDataWithChosenCollar(selectedGenderList, selectedTovarID, "collar2");
                 break;
             case R.id.yoqa3:
-                selectedItemCollar = "collar3";
+                getStyleDataWithChosenCollar(selectedGenderList, selectedTovarID, "collar3");
                 break;
             case R.id.yoqa4:
-                selectedItemCollar = "collar4";
+                getStyleDataWithChosenCollar(selectedGenderList, selectedTovarID, "collar4");
                 break;
             case R.id.tovarPastStrelka:
                 if (tovarLayoutManager.findLastCompletelyVisibleItemPosition() != tovarData.size() - 1) {
@@ -770,9 +832,12 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     public void onBackPressed() {
         if (isGenderPicked) {
             isGenderPicked = false;
-            tovarRecyclerAdapter.changeList(genderList);
+            tovarRecyclerAdapter.changeList(genderPickerList);
             styleRecyclerAdapter.clearList();
-            setVisibilityOfTovarArrow(genderList);
+            setVisibilityOfTovarArrow(genderPickerList);
+            selectedGenderList = null;
+            selectedTovarID = null;
+            hideCollars(0, 0, 0, 0);
         } else
             super.onBackPressed();
     }

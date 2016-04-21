@@ -474,14 +474,14 @@ public class EditActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         List<RecyclerData> list = new ArrayList<>();
-                        String uniqueID;
+                        String uniqueID = Long.toString(System.currentTimeMillis());
+
                         for (int i = 0; i < forDatabase.size(); i++) {
                             List<RecyclerData> tmpList = forDatabase.get(i);
                             if (tmpList == null || tmpList.size() == 0) continue;
                             tmpList.remove(tmpList.size() - 1);
                             if (tmpList.size() != 0) {
                                 for (int j = 0; j < tmpList.size(); j++) {
-                                    uniqueID = Long.toString(System.currentTimeMillis());
                                     RecyclerData mItem = tmpList.get(j);
                                     mItem.setGender(gender);
                                     mItem.setID(uniqueID);
@@ -512,14 +512,13 @@ public class EditActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         List<RecyclerData> list = new ArrayList<>();
-                        String uniqueID;
+                        String uniqueID = Long.toString(System.currentTimeMillis());
                         for (int i = 0; i < forDatabase.size(); i++) {
                             List<RecyclerData> tmpList = forDatabase.get(i);
                             if (tmpList == null || tmpList.size() == 0) continue;
                             tmpList.remove(tmpList.size() - 1);
                             if (tmpList.size() != 0) {
                                 for (int j = 0; j < tmpList.size(); j++) {
-                                    uniqueID = Long.toString(System.currentTimeMillis());
                                     RecyclerData mItem = tmpList.get(j);
                                     mItem.setGender(gender);
                                     mItem.setID(uniqueID);
@@ -552,7 +551,7 @@ public class EditActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void clearDataBase(){
+    public void clearDataBase() {
         forDatabase.clear();
         adapter.clearDatabase();
         int j = 0;
