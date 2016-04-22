@@ -4,13 +4,15 @@ package masharipov.certustextile.stickeradd;
  * Created by Farrukh on 06.04.2016.
  */
 public class StickerData {
-    String TAG, URI, ID;
-    int placeHolder;
+    private String TAG, URI, ID;
+    private int placeHolder;
+    private int isAlbum;
 
     public StickerData() {
         URI = null;
         TAG = null;
         ID = null;
+        isAlbum = 0;
     }
 
     public void setPlaceHolder(int resID) {
@@ -27,6 +29,14 @@ public class StickerData {
 
     public void setURI(String uri) {
         URI = uri;
+    }
+
+    public void setAlbum(int f) {
+        isAlbum = f;
+    }
+
+    public int isAlbum() {
+        return isAlbum;
     }
 
     public String getURI() {

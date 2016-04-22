@@ -133,6 +133,7 @@ public class CertusDatabase {
         String ID = "ID";
         String TAG = "TAG";
         String URI = "URI";
+        String ISALBUM = "ISALBUM";
         String tableName = "Sticker";
 
         sdb.delete(tableName, null, null);
@@ -143,6 +144,8 @@ public class CertusDatabase {
                 cv.put(ID, stickers.get(i).getID());
                 cv.put(TAG, stickers.get(i).getTAG());
                 cv.put(URI, stickers.get(i).getURI());
+                cv.put(ISALBUM, stickers.get(i).isAlbum());
+                Log.v("DATAA", "ID = " + cv.getAsString(ID) + ", TAG = " + cv.getAsString(TAG) + ", URI = " + cv.getAsString(URI) + ", ISALBUM = " + cv.getAsString(ISALBUM));
                 sdb.insert(tableName, null, cv);
             }
         } else {
@@ -154,17 +157,18 @@ public class CertusDatabase {
         String ID = "ID";
         String TAG = "TAG";
         String URI = "URI";
+        String ISALBUM = "ISALBUM";
         String tableName = "Sticker";
 
         Cursor cursor;
-        cursor = sdb.query(tableName, new String[]{ID, TAG, URI}, null, null, null, null, null);
+        cursor = sdb.query(tableName, new String[]{ID, TAG, URI, ISALBUM}, null, null, null, null, null);
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++) {
             StickerData item = new StickerData();
             item.setID(cursor.getString(cursor.getColumnIndex(ID)));
-            if (cursor.getString(cursor.getColumnIndex(TAG)) != null)
-                item.setTAG(cursor.getString(cursor.getColumnIndex(TAG)));
+            item.setTAG(cursor.getString(cursor.getColumnIndex(TAG)));
             item.setURI(cursor.getString(cursor.getColumnIndex(URI)));
+            item.setAlbum(cursor.getInt(cursor.getColumnIndex(ISALBUM)));
             list.add(item);
             cursor.moveToNext();
         }

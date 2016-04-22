@@ -1,9 +1,7 @@
 package masharipov.certustextile.stickeradd;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
@@ -39,7 +37,8 @@ public class NakleykaActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
-    private DraggableGridAdapter stickerAdapter, slideshowAdapter;
+    private StickerDraggableGridAdapter stickerAdapter;
+    private SlideShowAdapter slideshowAdapter;
     private SectionDraggableGridAdapter tovarAdapter;
     private RecyclerView.Adapter mWrappedAdapter, mAdapter;
     private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
@@ -189,22 +188,19 @@ public class NakleykaActivity extends AppCompatActivity {
             ///////////////////////////////////////////////////////////////////
             case "STICKER":
                 if (!stickerAdapter.isAlbum) {
-                    Toast.makeText(this, "Ne album", Toast.LENGTH_SHORT).show();
                     stickerAdapter.isAlbum = true;
+                    stickerAdapter.setAlbumData();
                     fab.setVisibility(View.GONE);
                     return;
                 }
                 if (!stickerAdapter.isDatabaseChanged()) {
                     super.onBackPressed();
-                    CertusDatabase certusDatabase = new CertusDatabase(stickerAdapter.getStickerList(), getApplicationContext());
-                    certusDatabase.saveStickersToDB();
                     return;
                 }
                 adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        List<StickerData> finalList = stickerAdapter.getStickerList();
-                        finalList.remove(finalList.size() - 1);
+                        List<StickerData> finalList = stickerAdapter.getListForDB();
                         CertusDatabase certusDatabase = new CertusDatabase(finalList, getApplicationContext());
                         certusDatabase.saveStickersToDB();
                         finish();
@@ -213,6 +209,11 @@ public class NakleykaActivity extends AppCompatActivity {
                 adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        CertusDatabase certusDatabase = new CertusDatabase(new ArrayList<StickerData>(), getApplicationContext());
+                        certusDatabase.saveStickersToDB();
+                        Log.v("DATAA", "OTMENA PRESSED");
+                        finish();
+                        dialog.dismiss();
                     }
                 });
                 adb.setIcon(android.R.drawable.ic_dialog_info);
@@ -228,7 +229,6 @@ public class NakleykaActivity extends AppCompatActivity {
                     certusDatabase.saveSlideshowItemsToDB();
                     return;
                 }
-
 
                 adb.setPositiveButton("ДА", new DialogInterface.OnClickListener() {
                     @Override
@@ -443,8 +443,9 @@ public class NakleykaActivity extends AppCompatActivity {
         StickerData mItem = new StickerData();
         mItem.setTAG("Новый альбом");
         mItem.setID(Long.toString(System.currentTimeMillis()));
+        mItem.setAlbum(1);
         stickerList.add(mItem);
-        stickerAdapter = new DraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.VISIBLE, new DraggableGridAdapter.onFabVisibilityChange() {
+        stickerAdapter = new StickerDraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.VISIBLE, new StickerDraggableGridAdapter.onFabVisibilityChange() {
             @Override
             public void setFABVisibility(int visibility) {
                 fab.setVisibility(visibility);
@@ -459,8 +460,7 @@ public class NakleykaActivity extends AppCompatActivity {
     private boolean initSlideshowAdapter() {
         slideshowList = cDB.getSlideshowItemsFromDB();
         Log.v("DATAA", "SLIDESHOW SIZE == " + Integer.toString(slideshowList.size()));
-        slideshowAdapter = new DraggableGridAdapter(slideshowList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.GONE);
-        slideshowAdapter.isAlbum = false;
+        slideshowAdapter = new SlideShowAdapter(slideshowList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.GONE);
         mWrappedAdapter = slideshowAdapter;
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(slideshowAdapter);
         fab.setVisibility(View.VISIBLE);

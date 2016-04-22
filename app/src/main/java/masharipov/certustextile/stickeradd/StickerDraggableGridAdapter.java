@@ -3,16 +3,15 @@ package masharipov.certustextile.stickeradd;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,17 +33,16 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import masharipov.certustextile.CertusDatabase;
 import masharipov.certustextile.edit.RecyclerData;
-import masharipov.certustextile.stickeradd.DraggableGridAdapter.GridHolder;
+import masharipov.certustextile.stickeradd.StickerDraggableGridAdapter.GridHolder;
 import masharipov.certustextile.R;
 
 
-public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
+public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         implements DraggableItemAdapter<GridHolder> {
 
     private Context context;
-    private List<StickerData> stickerList, oldStickerList;
+    private List<StickerData> loadingList, albumList, stickerList, oldStickerList;
     private Intent imagePickerIntent;
     private int SELECT_PICTURE = 1, visibility, delButtonVisibility;
     private int databaseChangedFlag = 0;
@@ -52,29 +50,38 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     public static boolean disableDrag = false;
     private onFabVisibilityChange fabChanded;
     public boolean isAlbum = true;
+    public String currentAlbumTag;
 
-    public DraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout, int vis) {
+   /* public StickerDraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout, int vis) {
         context = ctx;
         stickerList = list;
         oldStickerList = list;
         coordinatorLayout = layout;
         visibility = vis;
         setHasStableIds(true);
-    }
+    }*/
 
-    public DraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout, int vis, onFabVisibilityChange fabVisibilityChange) {
+    public StickerDraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout, int tagVisibility, onFabVisibilityChange fabVisibilityChange) {
         context = ctx;
-        stickerList = list;
         oldStickerList = list;
         coordinatorLayout = layout;
-        visibility = vis;
+        visibility = tagVisibility;
         fabChanded = fabVisibilityChange;
         setHasStableIds(true);
+
+        Log.v("DATAA", "TOTAL DATA SIZE === " + Integer.toString(list.size()));
+        albumList = new ArrayList<>();
+        stickerList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).isAlbum() == 1) albumList.add(list.get(i));
+            else stickerList.add(list.get(i));
+        }
+        loadingList = albumList;
     }
 
     public static class GridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
         public FrameLayout mContainer;
-        public ImageView imgBtn, stickerBtn;
+        public ImageView imgBtn, delBtn;
         TextView tagTxt;
         private onItemClick listener;
 
@@ -84,11 +91,11 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
             super(v);
             listener = click;
             mContainer = (FrameLayout) v.findViewById(R.id.container);
-            stickerBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
+            delBtn = (ImageButton) v.findViewById(R.id.gridDelBtn);
             imgBtn = (ImageView) v.findViewById(R.id.gridImg);
             tagTxt = (TextView) v.findViewById(R.id.gridItemTag);
             tagTxt.setVisibility(visibility);
-            stickerBtn.setOnClickListener(this);
+            delBtn.setOnClickListener(this);
             imgBtn.setOnClickListener(this);
         }
 
@@ -131,7 +138,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
             @Override
             public void imgClick(final int position, final TextView tag) {
-                if (isAlbum && position == stickerList.size() - 1) {
+                if (isAlbum && position == loadingList.size() - 1) {
                     final Dialog dialog = new Dialog(context);
                     dialog.setCanceledOnTouchOutside(false);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -143,22 +150,32 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
                     Button cancelBtn = (Button) dialog.findViewById(R.id.dialogNeg);
                     dialog.findViewById(R.id.changepass).setVisibility(View.GONE);
                     okBtn.setText("ДОБАВИТЬ");
-                    // albumName.set
                     okBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (TextUtils.isEmpty(albumName.getText().toString())) {
                                 albumName.setError("Название альбома не может быть пустым!");
                             } else {
-                                tag.setText(albumName.getText().toString());
-                                stickerList.get(position).setTAG(tag.getText().toString());
-                                stickerList.get(position).setURI("fff"); // TODO URIni tanlash kerak, hozi test uchun prosto
+                                String TAG = albumName.getText().toString();
+                                for (StickerData mItem : loadingList) {
+                                    if (mItem.getTAG().equals(TAG)) {
+                                        albumName.setError("Альбом с таким названием уже существует, пожалуйста введите другое название!");
+                                        return;
+                                    }
+                                }
+
+                                tag.setText(TAG);
+                                loadingList.get(position).setTAG(tag.getText().toString());// TODO URIni tanlash kerak, hozi test uchun prosto
+                                loadingList.get(position).setAlbum(1);
                                 notifyItemChanged(position);
+
+                                //dobavlenie novogo alboma
                                 StickerData mItem = new StickerData();
                                 mItem.setTAG("Новый альбом");
                                 mItem.setID(Long.toString(System.currentTimeMillis()));
-                                stickerList.add(position + 1, mItem);
+                                loadingList.add(position + 1, mItem);
                                 notifyItemInserted(position + 1);
+                                databaseChangedFlag++;
                                 // dlya perexoda v spisok stickerov v albome  showItemsOfAlbum();
                                 dialog.dismiss();
                             }
@@ -173,28 +190,48 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
                     });
                     dialog.show();
                     //isAlbum = false; //TODO AGAR albom qowilsa unga item qowiw kere
+                } else if (isAlbum && position != loadingList.size() - 1) {
+                    currentAlbumTag = loadingList.get(position).getTAG();
+                    Toast.makeText(context, loadingList.get(position).getID() + "TAG = " + currentAlbumTag, Toast.LENGTH_SHORT).show();
+                    setStickerData(stickerList, currentAlbumTag);
+                    isAlbum = false;
+                    showItemsOfAlbum();
                 }
+
             }
         });
     }
 
     @Override
     public void onBindViewHolder(GridHolder holder, int position) {
-        StickerData current = stickerList.get(position);
+        StickerData current = loadingList.get(position);
         // set text
-        if (current.getURI() != null) {
-            holder.stickerBtn.setVisibility(View.VISIBLE);
-            Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imgBtn);
-        } else {
-            holder.stickerBtn.setVisibility(View.GONE);
+        if (isAlbum && position == loadingList.size() - 1) {
+            holder.delBtn.setVisibility(View.GONE);
             Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.imgBtn);
+
+        } else if (isAlbum && position != loadingList.size() - 1) {
+            holder.delBtn.setVisibility(View.VISIBLE);
+            if (current.getURI() == null)
+                Picasso.with(context).load(R.drawable.albumcover).into(holder.imgBtn);
         }
 
-        if (current.getTAG() != null) {
-            holder.tagTxt.setText(current.getTAG());
+        if (isAlbum) {
+            holder.tagTxt.setVisibility(View.VISIBLE);
+            if (current.getTAG() != null) {
+                holder.tagTxt.setText(current.getTAG());
+            } else {
+                holder.tagTxt.setText("lalala");
+            }
         } else {
-            holder.tagTxt.setText("lalala");
+            holder.delBtn.setVisibility(View.VISIBLE);
+            holder.tagTxt.setVisibility(View.GONE);
         }
+
+        if (current.getURI() != null) {
+            Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imgBtn);
+        }
+
 
         // set background resource (target view ID: container)
         final int dragState = holder.getDragStateFlags();
@@ -217,7 +254,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
     }
 
     public List<StickerData> getStickerList() {
-        return stickerList;
+        return loadingList;
     }
 
     public List<StickerData> getOldStickerList() {
@@ -226,6 +263,29 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
     public boolean isAlbumShown() {
         return isAlbum;
+    }
+
+    public void setStickerData(List<StickerData> list, String sortTag) {
+        List<StickerData> finalData = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getTAG().equals(sortTag)) finalData.add(list.get(i));
+        }
+
+        loadingList = finalData;
+        notifyDataSetChanged();
+    }
+
+    public void setAlbumData() {
+        loadingList = albumList;
+        notifyDataSetChanged();
+    }
+
+    public List<StickerData> getListForDB() {
+        List<StickerData> finalList = new ArrayList<>();
+        albumList.remove(albumList.size() - 1);
+        finalList.addAll(albumList);
+        finalList.addAll(stickerList);
+        return finalList;
     }
 
 
@@ -238,9 +298,18 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         StickerData item = new StickerData();
         item.setID(uniqueID);
         item.setURI(path);
+        item.setTAG(currentAlbumTag);
+        if (!isAlbum)
+            item.setAlbum(0);
+        else item.setAlbum(1);
+        loadingList.add(0, item);
         stickerList.add(0, item);
         notifyItemInserted(0);
         databaseChangedFlag++;
+
+        // postavim pervuyu ikonku na fon albuma
+        changeAlbumCover();
+
 
         /*if (stickerList.size() == 0) {
             item.setID(uniqueID);
@@ -259,18 +328,45 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
 
     public void removeItem(final int position) {
-        final StickerData item = stickerList.get(position);
-        stickerList.remove(position);
+        final StickerData item = loadingList.remove(position);
+        //loadingList.remove(position);
         notifyItemRemoved(position);
         databaseChangedFlag++;
+
+        StickerData sItem;
+        for (int i = 0; i < stickerList.size(); i++) {
+            sItem = stickerList.get(i);
+            if (item.getTAG().equals(sItem.getTAG()) && item.getURI().equals(sItem.getURI())) {
+                stickerList.remove(i);
+                break;
+            }
+        }
+
+        // TODO agar oxirgi sticker ochirilsa to albom cover ozgarsin
+        if (loadingList.size() == 0) {
+            for (int i = 0; i < albumList.size(); i++) {
+                if (currentAlbumTag.equals(albumList.get(i).getTAG())) {
+                    albumList.get(i).setURI(null);
+                    break;
+                }
+            }
+        }
+
+        if (position == 0 && loadingList.size()!=0) {
+            changeAlbumCover();
+        }
+
 
         Snackbar snackbar = Snackbar
                 .make(coordinatorLayout, "Удалено", Snackbar.LENGTH_LONG)
                 .setAction("Отменить", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        stickerList.add(position, item);
+                        loadingList.add(position, item);
                         notifyItemInserted(position);
+                        if (position == 0) {
+                            changeAlbumCover();
+                        }
                         databaseChangedFlag--;
                     }
                 });
@@ -323,7 +419,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
     @Override
     public long getItemId(int position) {
-        return Long.parseLong(stickerList.get(position).getID());
+        return Long.parseLong(loadingList.get(position).getID());
     }
 
     @Override
@@ -333,7 +429,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
 
     @Override
     public int getItemCount() {
-        return stickerList.size();
+        return loadingList.size();
     }
 
     @Override
@@ -342,10 +438,39 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
             return;
         }
         Toast.makeText(context, "From " + Integer.toString(fromPosition) + " to " + Integer.toString(toPosition), Toast.LENGTH_SHORT).show();
-        StickerData item = stickerList.remove(fromPosition);
-        stickerList.add(toPosition, item);
+        StickerData item = loadingList.remove(fromPosition);
+        loadingList.add(toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
+
+        if (toPosition == 0) {
+            changeAlbumCover();
+        }
+
+
+        StickerData sItem = new StickerData();
+        if (!isAlbum) {
+            for (int i = 0; i < stickerList.size(); i++) {
+                sItem = stickerList.get(i);
+                if (item.getTAG().equals(sItem.getTAG()) && item.getURI().equals(sItem.getURI())) {
+                    stickerList.remove(i);
+                    break;
+                }
+            }
+            stickerList.add(0, sItem);
+        }
         databaseChangedFlag++;
+    }
+
+
+    public void changeAlbumCover() {
+        for (int i = 0; i < albumList.size(); i++) {
+            StickerData mItem = albumList.get(i);
+            if (currentAlbumTag.equals(mItem.getTAG())) {
+                mItem.setURI(loadingList.get(0).getURI());
+                break;
+            }
+        }
+
     }
 
     @Override
@@ -353,7 +478,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         if (!isAlbum)
             return !disableDrag;
         else {
-            return position != stickerList.size() - 1;
+            return position != loadingList.size() - 1;
         }
     }
 
@@ -363,7 +488,7 @@ public class DraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
         if (!isAlbum)
             return null;
         else {
-            return new ItemDraggableRange(0, stickerList.size() - 2);
+            return new ItemDraggableRange(0, loadingList.size() - 2);
         }
     }
 

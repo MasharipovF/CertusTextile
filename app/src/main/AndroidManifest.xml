@@ -18,33 +18,45 @@
             android:screenOrientation="landscape">
 
         </activity>
+
         //first activity
         <activity
             android:name=".main.MainActivity"
             android:screenOrientation="landscape">
+        </activity>
+
+        //slideshow
+        <activity
+            android:name=".main.SlideshowActivity"
+            android:screenOrientation="landscape" />
+
+
+        //second
+        <activity
+            android:name=".SecondActivity"
+            android:screenOrientation="landscape"></activity>
+
+        //edit
+        <activity
+            android:name=".edit.EditActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        //slideshow
-        <activity
-            android:name=".main.SlideshowActivity"
-            android:screenOrientation="landscape" />
-        //second
-        <activity
-            android:name=".SecondActivity"
-            android:screenOrientation="landscape"></activity>
-        //edit
-        <activity
-            android:name=".edit.EditActivity"
-            android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+        </activity>>
+
+
         //stickeradd
         <activity
             android:name=".stickeradd.NakleykaActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape">
+
+        </activity>
+
+
         <activity android:name=".tpriew.Tview"></activity>
     </application>
 
