@@ -326,7 +326,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         }*/
     }
 
-
+    private int stickerDelPos;
     public void removeItem(final int position) {
         final StickerData item = loadingList.remove(position);
         //loadingList.remove(position);
@@ -338,6 +338,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
             sItem = stickerList.get(i);
             if (item.getTAG().equals(sItem.getTAG()) && item.getURI().equals(sItem.getURI())) {
                 stickerList.remove(i);
+                stickerDelPos = i;
                 break;
             }
         }
@@ -356,7 +357,6 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
             changeAlbumCover();
         }
 
-
         Snackbar snackbar = Snackbar
                 .make(coordinatorLayout, "Удалено", Snackbar.LENGTH_LONG)
                 .setAction("Отменить", new View.OnClickListener() {
@@ -364,6 +364,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
                     public void onClick(View view) {
                         loadingList.add(position, item);
                         notifyItemInserted(position);
+                        stickerList.add(stickerDelPos, item);
                         if (position == 0) {
                             changeAlbumCover();
                         }
