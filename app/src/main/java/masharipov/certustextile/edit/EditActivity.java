@@ -485,6 +485,7 @@ public class EditActivity extends AppCompatActivity {
                                     RecyclerData mItem = tmpList.get(j);
                                     mItem.setGender(gender);
                                     mItem.setID(uniqueID);
+                                    mItem.setTag(tagEdit.getText().toString());
                                     list.add(mItem);
                                 }
                             }
@@ -522,6 +523,7 @@ public class EditActivity extends AppCompatActivity {
                                     RecyclerData mItem = tmpList.get(j);
                                     mItem.setGender(gender);
                                     mItem.setID(uniqueID);
+                                    mItem.setTag(tagEdit.getText().toString());
                                     list.add(mItem);
                                 }
                             }

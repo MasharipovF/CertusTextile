@@ -188,6 +188,7 @@ public class NakleykaActivity extends AppCompatActivity {
             ///////////////////////////////////////////////////////////////////
             case "STICKER":
                 if (!stickerAdapter.isAlbum) {
+                    stickerAdapter.updateStickerList();
                     stickerAdapter.isAlbum = true;
                     stickerAdapter.setAlbumData();
                     fab.setVisibility(View.GONE);
@@ -209,10 +210,6 @@ public class NakleykaActivity extends AppCompatActivity {
                 adb.setNeutralButton("ОТМЕНА", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CertusDatabase certusDatabase = new CertusDatabase(new ArrayList<StickerData>(), getApplicationContext());
-                        certusDatabase.saveStickersToDB();
-                        Log.v("DATAA", "OTMENA PRESSED");
-                        finish();
                         dialog.dismiss();
                     }
                 });

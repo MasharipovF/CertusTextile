@@ -279,9 +279,9 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                 } else holder.sectionText.setText("");
                 break;
             case ITEM:
-                if (!TextUtils.isEmpty(current.getID()) && current.getID() != null) {
-                    holder.tagTxt.setText(current.getID() + " " + current.getGender());
-                } else holder.tagTxt.setText("NO ID");
+                if (!TextUtils.isEmpty(current.getTag()) && current.getTag() != null) {
+                    holder.tagTxt.setText(current.getTag());
+                } else holder.tagTxt.setText(Long.toString(Long.parseLong(current.getID())%10000));
 
                 if (current.getImageUri("front") != null)
                     Picasso.with(context).load(Uri.parse(current.getImageUri("front"))).centerInside().resize(512, 512).into(holder.imgBtn);

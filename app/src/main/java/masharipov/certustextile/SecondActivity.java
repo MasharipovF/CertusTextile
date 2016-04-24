@@ -1,6 +1,8 @@
 package masharipov.certustextile;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
@@ -9,19 +11,25 @@ import android.support.annotation.IntegerRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import masharipov.certustextile.edit.RecyclerData;
@@ -59,7 +67,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     List<RecyclerData> maleList = null, femaleList = null, boyList = null, girlList = null;
     List<List<RecyclerData>> wholeList;
     LinearLayoutManager tovarLayoutManager, styleLayoutManager, stickerLayoutManager;
-    List<StickerData> stickerData;
+    List<StickerData> stickerData, sortedList;
+    List<StickerData> albumList;
     boolean isGenderPicked = false;
 
     String[] genderNames = {"male", "female", "boy", "girl"};
@@ -82,6 +91,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     // recycler uchun
     int tovarBoyi, styleBoyi, stickerBoyi, strelkaBoyi;
+
+    Context context = this;
+    private Dialog dialog;
+    private AlbumPickerAdapter albumAdapter;
 
 
     @Override
@@ -344,6 +357,132 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         });
+
+
+        // album picker
+        findViewById(R.id.imageView4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog = new Dialog(context);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.sticker_album);
+                dialog.setCancelable(false);
+
+                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        if (!albumAdapter.isAlbum) {
+                            albumAdapter.isAlbum = true;
+                            albumAdapter.setAlbumData();
+                        }
+                    }
+                });
+
+                Button cancel = (Button) dialog.findViewById(R.id.albumCancelBtn);
+                Button ok = (Button) dialog.findViewById(R.id.albumOkBtn);
+                Button all = (Button) dialog.findViewById(R.id.albumAllBtn);
+                //Button clear = (Button) dialog.findViewById(R.id.albumClearBtn);
+                dialog.show();
+
+                CertusDatabase certusDatabase = new CertusDatabase(context);
+
+                // albumList = new ArrayList<>();
+                final List<StickerData> someList = certusDatabase.getStickersFromDB();
+                /*for (int i = 0; i < someList.size(); i++) {
+                    if (someList.get(i).isAlbum() == 1) albumList.add(someList.get(i));
+                }*/
+                final RecyclerView albumRecycler = (RecyclerView) dialog.findViewById(R.id.albumRecycler);
+                albumAdapter = new AlbumPickerAdapter(context, someList);
+                LinearLayoutManager layoutManager = new GridLayoutManager(context, 3);
+                albumRecycler.setLayoutManager(layoutManager);
+                albumRecycler.setAdapter(albumAdapter);
+
+                ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (albumAdapter.isAlbum) {
+                            Toast.makeText(context, "Сначала выберите альбом!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            List<StickerData> chosenList = albumAdapter.setStickerData(albumAdapter.currentAlbumTag);
+                            stickerRecyclerAdapter.setStickerlist(chosenList);
+                            setVisibilityOfStickerArrow(chosenList);
+                            dialog.dismiss();
+                        }
+                       /* List<StickerData> mData = new ArrayList<>();
+                        int counter = 0;
+                        albumList = albumAdapter.getList();
+                        for (StickerData albumItem : albumList) {
+                            if (albumItem.getIsChecked() == 1) {
+                                Log.v("DATAA", "IS CHEKED");
+                                counter++;
+                                for (int i = 0; i < someList.size(); i++) {
+                                    if (someList.get(i).isAlbum() == 0 && albumItem.getTAG().equals(someList.get(i).getTAG())) {
+                                        mData.add(someList.get(i));
+                                    }
+                                }
+                            }
+                        }
+
+                        if (counter == albumList.size() || counter == 0) {
+                            stickerrecycler.scrollToPosition(0);
+                            stickerRecyclerAdapter.setStickerlist(sortedList);
+                            setVisibilityOfStickerArrow(sortedList);
+                        } else {
+                            stickerrecycler.scrollToPosition(0);
+                            stickerRecyclerAdapter.setStickerlist(mData);
+                            setVisibilityOfStickerArrow(mData);
+                        }*/
+                    }
+                });
+
+                all.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        stickerrecycler.scrollToPosition(0);
+                        stickerRecyclerAdapter.setStickerlist(sortedList);
+                        setVisibilityOfStickerArrow(sortedList);
+                        dialog.dismiss();
+                    }
+                });
+
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (albumAdapter.isAlbum)
+                            dialog.dismiss();
+                        else {
+                            albumAdapter.isAlbum = true;
+                            albumAdapter.setAlbumData();
+                        }
+                    }
+                });
+
+                /*clear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for (StickerData mItem : albumList) {
+                            mItem.setChecked(0);
+                        }
+                        adapter.setList(albumList);
+                    }
+                });*/
+
+
+
+              /*  stickerArrow.setVisibility(View.GONE);
+                List<StickerData> list = new ArrayList<>();
+                list = cDB.getStickersFromDB();
+                stickerData = list;
+                Log.v("DATAA", "SIZE OF STICKER ITEMS == " + list.size());
+                //init adapter
+                stickerLayoutManager = new LinearLayoutManager(getApplicationContext());
+                stickerrecycler.setLayoutManager(stickerLayoutManager);
+                stickerrecycler.setAdapter(stickerRecyclerAdapter);*/
+
+            }
+        });
     }
 
     boolean keyStart = true;
@@ -568,9 +707,22 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         stickerArrow.setVisibility(View.GONE);
         List<StickerData> list = new ArrayList<>();
         list = cDB.getStickersFromDB();
+        int count = 0;
+
         stickerData = list;
+        sortedList = list;
+        while (count < list.size()) {
+            if (sortedList.get(count).isAlbum() == 1) sortedList.remove(count);
+            else count++;
+        }
+        Collections.sort(sortedList, new Comparator<StickerData>() {
+            @Override
+            public int compare(StickerData lhs, StickerData rhs) {
+                return rhs.getID().compareTo(lhs.getID());
+            }
+        });
         Log.v("DATAA", "SIZE OF STICKER ITEMS == " + list.size());
-        stickerRecyclerAdapter = new StickerRecyclerAdapter(this, list, stickerBoyi, new StickerRecyclerAdapter.clickListener() {
+        stickerRecyclerAdapter = new StickerRecyclerAdapter(this, sortedList, stickerBoyi, new StickerRecyclerAdapter.clickListener() {
             @Override
             public void onItemClick(ImageView img, int position, String str) {
 
@@ -840,6 +992,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             hideCollars(0, 0, 0, 0);
         } else
             super.onBackPressed();
+
     }
 
     public void setVisibilityOfTovarArrow(List<RecyclerData> list) {

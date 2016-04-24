@@ -47,7 +47,7 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
         SecondViewHolder holder = new SecondViewHolder(imageView, context, new SecondViewHolder.onClick() {
             @Override
             public void onClick(ImageView img, int position) {
-                listener.onItemClick(img, position,stickerlist.get(position).getURI());
+                listener.onItemClick(img, position, stickerlist.get(position).getURI());
             }
         });
         return holder;
@@ -59,12 +59,12 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
         layoutParams.height = height / 3;
 
         StickerData current = stickerlist.get(position);
-        if (current.getURI() != null){
+        if (current.getURI() != null) {
             File getBit = new File(getPath(Uri.parse(current.getURI())));
-            Bitmap bitTovar= BitmapFactory.decodeFile(getBit.getAbsolutePath());
+            Bitmap bitTovar = BitmapFactory.decodeFile(getBit.getAbsolutePath());
             holder.imageView.setImageBitmap(bitTovar);
         }
-            //Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imageView);
+        //Picasso.with(context).load(Uri.parse(current.getURI())).centerInside().resize(512, 512).into(holder.imageView);
         else
             Picasso.with(context).load(R.drawable.ic_add_green_800_24dp).into(holder.imageView);
     }
@@ -80,13 +80,19 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
     }
 
     public interface clickListener {
-        void onItemClick(ImageView img, int position,String strUri);
+        void onItemClick(ImageView img, int position, String strUri);
+    }
+
+    public void setStickerlist(List<StickerData> list) {
+        stickerlist = list;
+        notifyDataSetChanged();
     }
 
     public void setImageParams(int h) {
         height = h;
         notifyDataSetChanged();
     }
+
     public String getPath(Uri uri) {
         // just some safety built in
         if (uri == null) {
@@ -96,7 +102,7 @@ public class StickerRecyclerAdapter extends RecyclerView.Adapter<SecondViewHolde
         // try to retrieve the image from the media store first
         // this will only work for images selected from gallery
         String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = ((AppCompatActivity)context).managedQuery(uri, projection, null, null, null);
+        Cursor cursor = ((AppCompatActivity) context).managedQuery(uri, projection, null, null, null);
         if (cursor != null) {
             int column_index = cursor
                     .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);

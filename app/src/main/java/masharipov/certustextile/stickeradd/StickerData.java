@@ -6,13 +6,18 @@ package masharipov.certustextile.stickeradd;
 public class StickerData {
     private String TAG, URI, ID;
     private int placeHolder;
-    private int isAlbum;
+    private int isAlbum, isChecked;
 
     public StickerData() {
         URI = null;
         TAG = null;
         ID = null;
         isAlbum = 0;
+        isChecked = 0;
+    }
+
+    public void setChecked(int checked) {
+        isChecked = checked;
     }
 
     public void setPlaceHolder(int resID) {
@@ -33,6 +38,10 @@ public class StickerData {
 
     public void setAlbum(int f) {
         isAlbum = f;
+    }
+
+    public int getIsChecked() {
+        return isChecked;
     }
 
     public int isAlbum() {

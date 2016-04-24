@@ -51,6 +51,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
     private onFabVisibilityChange fabChanded;
     public boolean isAlbum = true;
     public String currentAlbumTag;
+    private Snackbar snackbar;
 
    /* public StickerDraggableGridAdapter(List<StickerData> list, Context ctx, CoordinatorLayout layout, int vis) {
         context = ctx;
@@ -77,6 +78,9 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
             else stickerList.add(list.get(i));
         }
         loadingList = albumList;
+
+        snackbar = Snackbar
+                .make(coordinatorLayout, "Удалено", Snackbar.LENGTH_LONG);
     }
 
     public static class GridHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
@@ -192,8 +196,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
                     //isAlbum = false; //TODO AGAR albom qowilsa unga item qowiw kere
                 } else if (isAlbum && position != loadingList.size() - 1) {
                     currentAlbumTag = loadingList.get(position).getTAG();
-                    Toast.makeText(context, loadingList.get(position).getID() + "TAG = " + currentAlbumTag, Toast.LENGTH_SHORT).show();
-                    setStickerData(stickerList, currentAlbumTag);
+                    setStickerData(currentAlbumTag);
                     isAlbum = false;
                     showItemsOfAlbum();
                 }
@@ -208,7 +211,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         // set text
         if (isAlbum && position == loadingList.size() - 1) {
             holder.delBtn.setVisibility(View.GONE);
-            Picasso.with(context).load(R.drawable.ic_action_new_picture).into(holder.imgBtn);
+            Picasso.with(context).load(R.drawable.ic_library_add_grey_800_48dp).into(holder.imgBtn);
 
         } else if (isAlbum && position != loadingList.size() - 1) {
             holder.delBtn.setVisibility(View.VISIBLE);
@@ -257,18 +260,27 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         return loadingList;
     }
 
-    public List<StickerData> getOldStickerList() {
-        return oldStickerList;
+    public void updateStickerList() {
+        stickerList.addAll(0, loadingList);
     }
 
     public boolean isAlbumShown() {
         return isAlbum;
     }
 
-    public void setStickerData(List<StickerData> list, String sortTag) {
+    public void setStickerData(String sortTag) {
+        albumList = loadingList;
+
         List<StickerData> finalData = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getTAG().equals(sortTag)) finalData.add(list.get(i));
+        int count = 0;
+        while (count < stickerList.size()) {
+            StickerData mITem = stickerList.get(count);
+            if (mITem.getTAG().equals(sortTag)) {
+                finalData.add(mITem);
+                stickerList.remove(count);
+            } else
+                count++;
+
         }
 
         loadingList = finalData;
@@ -276,6 +288,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
     }
 
     public void setAlbumData() {
+        if (snackbar.isShown()) snackbar.dismiss();
         loadingList = albumList;
         notifyDataSetChanged();
     }
@@ -303,7 +316,11 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
             item.setAlbum(0);
         else item.setAlbum(1);
         loadingList.add(0, item);
-        stickerList.add(0, item);
+
+
+        // stickerList.add(0, item);
+
+
         notifyItemInserted(0);
         databaseChangedFlag++;
 
@@ -326,51 +343,68 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         }*/
     }
 
-    private int stickerDelPos;
+    List<StickerData> removedStickers = new ArrayList<>();
+
     public void removeItem(final int position) {
         final StickerData item = loadingList.remove(position);
+
         //loadingList.remove(position);
         notifyItemRemoved(position);
         databaseChangedFlag++;
 
-        StickerData sItem;
+        /*StickerData sItem;
         for (int i = 0; i < stickerList.size(); i++) {
             sItem = stickerList.get(i);
             if (item.getTAG().equals(sItem.getTAG()) && item.getURI().equals(sItem.getURI())) {
                 stickerList.remove(i);
-                stickerDelPos = i;
                 break;
             }
-        }
+        }*/
+        if (isAlbum) {
+            int count = 0;
+            String sortTag = item.getTAG();
+            while (count < stickerList.size()) {
+                StickerData mITem = stickerList.get(count);
+                if (mITem.getTAG().equals(sortTag)) {
+                    removedStickers.add(mITem);
+                    stickerList.remove(count);
+                } else
+                    count++;
 
-        // TODO agar oxirgi sticker ochirilsa to albom cover ozgarsin
-        if (loadingList.size() == 0) {
-            for (int i = 0; i < albumList.size(); i++) {
-                if (currentAlbumTag.equals(albumList.get(i).getTAG())) {
-                    albumList.get(i).setURI(null);
-                    break;
+            }
+
+        } else {
+            if (loadingList.size() == 0) {
+                for (int i = 0; i < albumList.size(); i++) {
+                    if (currentAlbumTag.equals(albumList.get(i).getTAG())) {
+                        albumList.get(i).setURI(null);
+                        break;
+                    }
                 }
+            }
+
+            if (position == 0 && loadingList.size() != 0) {
+                changeAlbumCover();
             }
         }
 
-        if (position == 0 && loadingList.size()!=0) {
-            changeAlbumCover();
-        }
 
-        Snackbar snackbar = Snackbar
-                .make(coordinatorLayout, "Удалено", Snackbar.LENGTH_LONG)
-                .setAction("Отменить", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        loadingList.add(position, item);
-                        notifyItemInserted(position);
-                        stickerList.add(stickerDelPos, item);
-                        if (position == 0) {
-                            changeAlbumCover();
-                        }
-                        databaseChangedFlag--;
+        snackbar.setAction("Отменить", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadingList.add(position, item);
+                notifyItemInserted(position);
+                if (isAlbum) {
+                    stickerList.addAll(0, removedStickers);
+                    removedStickers.clear();
+                } else {
+                    if (position == 0) {
+                        changeAlbumCover();
                     }
-                });
+                }
+                databaseChangedFlag--;
+            }
+        });
 
         snackbar.show();
     }
@@ -448,6 +482,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         }
 
 
+        /*// TODO
         StickerData sItem = new StickerData();
         if (!isAlbum) {
             for (int i = 0; i < stickerList.size(); i++) {
@@ -458,7 +493,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
                 }
             }
             stickerList.add(0, sItem);
-        }
+        }*/
         databaseChangedFlag++;
     }
 
