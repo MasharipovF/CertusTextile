@@ -43,7 +43,7 @@ public class SlideshowActivity extends AppCompatActivity {
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            imageView.setPadding(0, 50, 0, 10);
+           // imageView.setPadding(0, 50, 0, 10);
             /*wotta sampledanmas listdan olasiz uri ni
             uridan bitmapga o`tkazvotganda getPath metodini iwlatin
 

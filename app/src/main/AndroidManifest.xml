@@ -19,7 +19,7 @@
 
         </activity>
 
-        //first activity
+
         <activity
             android:name=".main.MainActivity"
             android:screenOrientation="landscape">
@@ -30,26 +30,23 @@
             </intent-filter>
         </activity>
 
-        //slideshow
-        <activity
+         <activity
             android:name=".main.SlideshowActivity"
             android:screenOrientation="landscape" />
 
 
-        //second
-        <activity
+         <activity
             android:name=".SecondActivity"
             android:screenOrientation="landscape"></activity>
 
-        //edit
         <activity
             android:name=".edit.EditActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustResize" >
+
         </activity>>
 
 
-        //stickeradd
         <activity
             android:name=".stickeradd.NakleykaActivity"
             android:screenOrientation="landscape">
@@ -57,7 +54,8 @@
         </activity>
 
 
-        <activity android:name=".tpriew.Tview"></activity>
+        <activity android:name=".tpriew.Tview"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

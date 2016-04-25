@@ -3,55 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:id="@+id/rea"
     android:background="#fff"
     tools:context="masharipov.certustextile.tpriew.Tview">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:layout_weight="6">
-        <FrameLayout
-            android:id="@+id/f1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            />
-        <ImageView
-            android:layout_width="3dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/lineverticle"/>
-        <FrameLayout
-            android:id="@+id/f2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            />
-        <ImageView
-            android:layout_width="3dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/lineverticle"/>
-        <FrameLayout
-            android:id="@+id/f3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:layout_weight="1">
 
-    </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/sdsd"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -68,10 +26,12 @@
                 android:layout_weight="1"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
+                android:layout_marginBottom="150dp"
                 />
             <ImageView
                 android:layout_width="3dp"
                 android:layout_height="match_parent"
+                android:scaleType="fitXY"
                 android:src="@drawable/lineverticle"/>
             <coverflow.photoview.PhotoView
                 android:id="@+id/a2"
@@ -80,10 +40,12 @@
                 android:layout_weight="1"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
+                android:layout_marginBottom="150dp"
                 />
             <ImageView
                 android:layout_width="3dp"
                 android:layout_height="match_parent"
+                android:scaleType="fitXY"
                 android:src="@drawable/lineverticle"/>
             <coverflow.photoview.PhotoView
                 android:id="@+id/a3"
@@ -92,44 +54,118 @@
                 android:layout_weight="1"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
+                android:layout_marginBottom="150dp"
                 />
         </LinearLayout>
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
         <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            >
+        <TextView
+            android:id="@+id/tagtovarni"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:text="Some_tag"
+            android:gravity="bottom"
+            android:textSize="26sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="#caac2e"
+            android:paddingBottom="5dp"/>
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="ПЕРЕДНИЙ"
-                android:textSize="40dp"
-                android:paddingTop="20dp"
-                android:gravity="center_horizontal"
-                android:textColor="#292929"
-                />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="БОК"
-                android:textSize="40dp"
-                android:paddingTop="20dp"
-                android:gravity="center_horizontal"
-                android:textColor="#292929"
-                />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="ЗАДНИЙ"
-                android:textSize="40dp"
-                android:paddingTop="20dp"
-                android:gravity="center_horizontal"
-                android:textColor="#292929"/>
-
+                android:text="Футболка"
+                android:textSize="18sp"
+                android:layout_marginLeft="20dp"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/kkk"
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:orientation="horizontal"
+            android:background="@drawable/pasgaviewga">
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        <ImageView
+            android:id="@+id/galeria"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/papka"
+            android:paddingTop="30dp"
+            android:paddingBottom="20dp"
+            android:layout_centerInParent="true"/>
+        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/shareeee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/shareee"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="20dp"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/forgone"
+                android:layout_width="0dp"
+
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/ichose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/okay"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="20dp"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/idnakleyk"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="1206-6-15"
+                android:gravity="end|bottom"
+                android:textSize="26sp"
+                android:layout_marginRight="20dp"
+                android:textColor="#caac2e"
+                android:paddingBottom="5dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="ID Наклейк"
+                android:textSize="18sp"
+                android:gravity="right"
+                android:layout_marginRight="20dp"/>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

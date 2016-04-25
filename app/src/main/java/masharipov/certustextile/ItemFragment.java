@@ -71,13 +71,22 @@ public class ItemFragment extends Fragment  {
     Bitmap bitScaled;
     public int frameBalandligi;
     public int frameEni;
+    boolean keyForcah=false;
+
+    public void artcache(){
+        if(!TAG.equals("")&&keyForcah){
+            Log.d("save", TAG);
+            keyForcah=false;
+            saveScreen();
 
 
+        }
+    }
     @Override
     public void onDetach() {
         super.onDetach();
         Log.d("lifee", "onAttach");
-
+        artcache();
         if (bitTovar != null)
             bitTovar.recycle();
         if (bitSticker != null)
@@ -149,46 +158,51 @@ public class ItemFragment extends Fragment  {
         fragment_item.post(new Runnable() {
             @Override
             public void run() {
+                try {
+                    tovar.buildDrawingCache();
+                    bitScaled = tovar.getDrawingCache();
 
-                tovar.buildDrawingCache();
-                bitScaled = tovar.getDrawingCache();
-
-                leftpad = 0;
-                rightpad = 0;
-                int bitHEiG = bitScaled.getHeight();
-                int bitWidgHalf = bitScaled.getWidth() / 2;
-              //  tovar.setVisibility(View.VISIBLE);
-                for (int t = bitWidgHalf; t > 0; t--) {
-                    if (bitScaled.getPixel(t, bitHEiG - 100) == Color.TRANSPARENT) {
-                        leftpad = t;
-                        break;
+                    leftpad = 0;
+                    rightpad = 0;
+                    int bitHEiG = bitScaled.getHeight();
+                    int bitWidgHalf = bitScaled.getWidth() / 2;
+                    //  tovar.setVisibility(View.VISIBLE);
+                    for (int t = bitWidgHalf; t > 0; t--) {
+                        if (bitScaled.getPixel(t, bitHEiG - 100) == Color.TRANSPARENT) {
+                            leftpad = t;
+                            break;
+                        }
                     }
-                }
-                for (int t = bitWidgHalf; t < bitWidgHalf * 2; t++) {
-                    if (bitScaled.getPixel(t, bitHEiG - 100) == Color.TRANSPARENT) {
-                        rightpad = 2 * bitWidgHalf - t;
-                        break;
+                    for (int t = bitWidgHalf; t < bitWidgHalf * 2; t++) {
+                        if (bitScaled.getPixel(t, bitHEiG - 100) == Color.TRANSPARENT) {
+                            rightpad = 2 * bitWidgHalf - t;
+                            break;
+                        }
                     }
-                }
-                shadow.setPadding(leftpad - 40, 0, rightpad - 50, 0);
-                Log.d("paddings", Integer.toString(leftpad) + " - " + Integer.toString(rightpad));
+                    shadow.setPadding(leftpad - 40, 0, rightpad - 50, 0);
+                    Log.d("paddings", Integer.toString(leftpad) + " - " + Integer.toString(rightpad));
                 /*
                 ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(shadow.getLayoutParams());
                 marginParams.setMargins(10, 10, 0, 0);
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(marginParams);
                 shadow.setLayoutParams(layoutParams);*/
-                shadow.setImageResource(R.drawable.shadow);
+                    shadow.setImageResource(R.drawable.shadow);
 
-                // if(bitSticker!=null){
+                    // if(bitSticker!=null){
               /*  frameEni=tovar.getWidth();
                 frameBalandligi=tovar.getHeight();
             /*    tovar.b
                 bitTovar =Bitmap.createScaledBitmap(bitTovar,frameBalandligi,frameEni,false);
                 tovar.setScaleType(ImageView.ScaleType.MATRIX);
                 tovar.setImageBitmap(bitTovar);*/
-                A1 = new MyView(This);
-                frameSt.addView(A1);
-                Log.d("lifee", "Frame size  " + frameEni + "x" + frameBalandligi);
+                    A1 = new MyView(This);
+                    frameSt.addView(A1);
+                    Log.d("lifee", "Frame size  " + frameEni + "x" + frameBalandligi);
+                }
+                catch (Exception o){
+
+                }
+
             }
             // else Log.d("lifee","Null bitmap sticker");
 
@@ -265,34 +279,63 @@ public class ItemFragment extends Fragment  {
     public void setSave(){
         isSave=true;
     }
+    String TAG="";
+
+    public void setTEG(String tagg){
+        TAG=tagg;
+    }
+    private boolean cacheIs=false;
+    public boolean isCached(){
+     return    cacheIs;
+    }
     public String saveScreen(){
-        String mPath = Environment.getExternalStorageDirectory().toString() + "/" + Long.toString(System.currentTimeMillis())+".jpg";
+        final String mPath = Environment.getExternalStorageDirectory().toString() + "/Certus/cache/";
 // create bitmap screen capture
-        Bitmap bitmap;
+        final Bitmap bitmap;
 
         thatall.setDrawingCacheEnabled(true);
         bitmap = Bitmap.createBitmap(thatall.getDrawingCache());
         thatall.setDrawingCacheEnabled(false);
 
-        OutputStream fout = null;
-        File imageFile = new File(mPath);
+        Thread A1=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OutputStream fout = null;
+                File imagefolder = new File(mPath);
+                if(!imagefolder.exists()){
+                    imagefolder.mkdirs();
+                    File Nn=new File(imagefolder,".nomedia" );
+                    try {
+                        Nn.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-        try {
-            fout = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fout);
-            fout.flush();
-            fout.close();
+                }
+                File imageFile = new File(imagefolder.getAbsolutePath()+"/"+TAG+".png");
 
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        isSave=false;
+                try {
+                    fout = new FileOutputStream(imageFile);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
+                    fout.flush();
+                    fout.close();
+                    cacheIs=true;
+                    TAG="";
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                isSave=false;
+
+            }
+        });
+        A1.start();
         return mPath;
     };
+
     public String getPath(Uri uri) {
         // just some safety built in
         if (uri == null) {
@@ -319,7 +362,7 @@ public class ItemFragment extends Fragment  {
         uriS=Uri.parse(UriString);
         frameEni = frameSt.getWidth();
         frameBalandligi = frameSt.getHeight();
-
+        keyForcah=true;
         bitSticker = BitmapFactory.decodeFile(getBit.getAbsolutePath());
 
         Log.v("SECONDACTIVITY", bitSticker.toString());
@@ -346,6 +389,11 @@ public class ItemFragment extends Fragment  {
         void EVZ(int t);
 
         void EVR(int t);
+
+        void nextFrag();
+
+        void prevFrag();
+
     }
 
     public void rotationPlus() {
@@ -391,7 +439,7 @@ public class ItemFragment extends Fragment  {
             if (scaleWidht <= 2 && scaleHeight <= 2) {
                 scaleHeight += 0.05f;
                 scaleWidht += 0.05f;
-
+                keyForcah=true;
            /* side_en*=scaleWidht;
             side_ba*=scaleHeight;
             stat_eni=side_en;
@@ -406,6 +454,7 @@ public class ItemFragment extends Fragment  {
             if (scaleWidht > 0.05f && scaleHeight > 0.05f) {
                 scaleHeight -= 0.05f;
                 scaleWidht -= 0.05f;
+                keyForcah=true;
            /* side_en*=scaleWidht;
             side_ba*=scaleHeight;
             stat_eni=side_en;
@@ -420,6 +469,7 @@ public class ItemFragment extends Fragment  {
         public void rotationPlus() {
             rotatt += 10;
             rotatt %= 360;
+            keyForcah=true;
             invalidate();
             peredacha.EVR((int) rotatt);
 
@@ -428,6 +478,7 @@ public class ItemFragment extends Fragment  {
         public void rotationMinus() {
             rotatt -= 10;
             rotatt %= 360;
+            keyForcah=true;
             invalidate();
             peredacha.EVR((int) rotatt);
 
@@ -476,6 +527,7 @@ public class ItemFragment extends Fragment  {
         boolean secondNotPress = true;
         double rostayaniya = 0;
         double perviyRostayaniya = 0;
+        double scoree = 0;
         boolean topleft = true, topright = true, bottomleft = true, bottomright = true;
 
         @Override
@@ -492,15 +544,20 @@ public class ItemFragment extends Fragment  {
                     if (evX >= xi - side_en * scaleWidht * kofetsent / 2 - 100 && evX <= xi + side_en * scaleWidht * kofetsent / 2 + 100 && evY >= yi - side_ba * scaleHeight * kofetsent / 2 - 100 && evY <= yi + side_ba * scaleHeight * kofetsent / 2 + 100) {
                         // включаем режим перетаскивания
                         drag = true;
+                        keyForcah=true;
                         // разница между левым верхним углом квадрата и точкой касания
                         dragX = evX - xi;
                         dragY = evY - yi;
                     }
+                    scoree=evX;
+                    Log.d("sidechange",scoree+"");
+
                     break;
                 // тащим
                 case MotionEvent.ACTION_MOVE:
+                    Log.d("touchl",event.getPointerCount()+"");
                     if (event.getPointerCount() > 1) {
-
+                        scoree=0;
                         rostayaniya = Math.sqrt(Math.pow(event.getX(0) - event.getX(1), 2) + Math.pow(event.getY(0) - event.getY(1), 2));
                         Log.d("SecondTouch", Double.toString(perviyRostayaniya) + " " + Double.toString(rostayaniya));
                         if (perviyRostayaniya == 0) {
@@ -517,23 +574,24 @@ public class ItemFragment extends Fragment  {
                         }
 
 
-                    } else {
+                    } else if(drag) {
+
                         if ((int) (5 + evX - dragX - stat_eni * scaleWidht * kofetsent / 2f) > 0 && 0 < ((int) (5 + evY - dragY - stat_baland * scaleHeight * kofetsent / 2f)) &&
                                 (int) (5 + evX - dragX - stat_eni * scaleWidht * kofetsent / 2f) > 0 && (int) (5 + evY - dragY + stat_baland * scaleHeight * kofetsent / 2f) < frameBalandligi &&
                                 (int) (5 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f) < frameEni && (int) (5 + evY - dragY - stat_baland * scaleHeight * kofetsent / 2f) > 0 &&
                                 (int) (5 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f) < frameEni && (int) (5 + evY - dragY + stat_baland * scaleHeight * kofetsent / 2f) < frameBalandligi
                                 ) {
-                            if (bitScaled.getPixel((int) (5 + evX - dragX - stat_eni * scaleWidht * kofetsent / 2f), (int) (5 + evY - dragY - stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
+                            if (bitScaled.getPixel((int) (2 + evX - dragX - stat_eni * scaleWidht * kofetsent / 2f), (int) (2 + evY - dragY - stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
                                 topleft = false;
                             else topleft = true;
 
-                            if (bitScaled.getPixel((int) (5 + evX - dragX - stat_eni * scaleWidht * kofetsent / 2f), (int) (5 + evY - dragY + stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
+                            if (bitScaled.getPixel((int) (2 + evX - dragX - stat_eni * scaleWidht * kofetsent / 2f), (int) (2 + evY - dragY + stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
                                 bottomleft = false;
                             else bottomleft = true;
-                            if (bitScaled.getPixel((int) (5 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f), (int) (5 + evY - dragY - stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
+                            if (bitScaled.getPixel((int) (2 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f), (int) (2 + evY - dragY - stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
                                 topright = false;
                             else topright = true;
-                            if (bitScaled.getPixel((int) (5 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f), (int) (5 + evY - dragY + stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
+                            if (bitScaled.getPixel((int) (2 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f), (int) (2 + evY - dragY + stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
                                 bottomright = false;
                             else bottomright = true;
                         } else topleft = false;
@@ -551,18 +609,43 @@ public class ItemFragment extends Fragment  {
                         topleft = true;
                         topright = true;
                         bottomright = true;
-                        bottomleft = true;
+                        bottomleft = true;}
                         // если режим перетаскивания включен
-                    }
 
+                    else if(event.getPointerCount() == 1&&!drag&&scoree!=0){
+                        Log.d("sidechange",scoree+"-" +evX);
+
+                        if (scoree + 400 < evX ) {
+                            Log.d("sidechange",scoree+"NEXT GO");
+
+                            scoree = evX;
+                           // scoree += 300;
+                            //  razmerPol[current_status]++;
+                            // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
+                            //razmer.setText(Integer.toString(razmerPol[current_status]));
+
+                            peredacha.nextFrag();
+
+
+                        } else if (scoree - 400 > evX ) {
+                            Log.d("sidechange",scoree+"PREV GO");
+
+                            scoree = evX;
+                           // scoree -= 300;
+                            //   razmerPol[current_status]--;
+                            peredacha.prevFrag();
+                        }
+                    }
 
                     break;
                 case MotionEvent.ACTION_POINTER_UP: // прерывания касаний
                     drag = false;
                     perviyRostayaniya = 0;
+                    scoree=0;
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
                     Log.d("SecondTouch", Integer.toString(event.getActionIndex()));
+                    scoree=0;
                     //    Log.d("SecondTouch","DRAG OFFF");
 
 

@@ -37,7 +37,7 @@
             <TextView
                 android:id="@+id/imageView4"
                 android:layout_width="match_parent"
-                android:layout_height="37dp"
+                android:layout_height="50dp"
                 android:background="@drawable/qosh"
                 android:gravity="center"
                 android:text="@string/nakleyki"
@@ -186,8 +186,9 @@
 
         <FrameLayout
             android:id="@+id/frame"
+
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginBottom="30dp"
             android:layout_marginLeft="75dp"
             android:layout_centerHorizontal="true"
@@ -227,7 +228,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:padding="13dp"
-                android:src="@drawable/sharee" />
+                android:src="@drawable/folderr" />
 
             <ImageView
                 android:id="@+id/shot"
@@ -267,7 +268,14 @@
             android:layout_alignParentBottom="true"
             android:layout_margin="16dp"
             android:src="@drawable/knop" />
-
+        <ImageView
+            android:id="@+id/changeside"
+            android:layout_width="121dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/pasgaznak"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
     <LinearLayout
@@ -351,7 +359,7 @@
             <TextView
                 android:id="@+id/imageView2"
                 android:layout_width="match_parent"
-                android:layout_height="37dp"
+                android:layout_height="50dp"
                 android:background="@drawable/qosh"
                 android:gravity="center"
                 android:text="@string/tovari"
