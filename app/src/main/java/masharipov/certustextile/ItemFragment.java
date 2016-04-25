@@ -581,6 +581,7 @@ public class ItemFragment extends Fragment  {
                                 (int) (5 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f) < frameEni && (int) (5 + evY - dragY - stat_baland * scaleHeight * kofetsent / 2f) > 0 &&
                                 (int) (5 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f) < frameEni && (int) (5 + evY - dragY + stat_baland * scaleHeight * kofetsent / 2f) < frameBalandligi
                                 ) {
+                            try{
                             if (bitScaled.getPixel((int) (2 + evX - dragX - stat_eni * scaleWidht * kofetsent / 2f), (int) (2 + evY - dragY - stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
                                 topleft = false;
                             else topleft = true;
@@ -593,8 +594,15 @@ public class ItemFragment extends Fragment  {
                             else topright = true;
                             if (bitScaled.getPixel((int) (2 + evX - dragX + stat_eni * scaleWidht * kofetsent / 2f), (int) (2 + evY - dragY + stat_baland * scaleHeight * kofetsent / 2f)) == Color.TRANSPARENT)
                                 bottomright = false;
-                            else bottomright = true;
-                        } else topleft = false;
+                            else bottomright = true;}
+                            catch (Exception o){
+                                topleft=false;
+                                bottomleft = false;
+                                bottomright = false;
+                                bottomright = false;
+                            }}
+                         else topleft = false;
+
                         if (drag && topleft && topright && bottomleft && bottomright && evX - dragX < frameEni - stat_eni * scaleWidht * kofetsent / 2f && evX - dragX > 0 && evY - dragY > 0 && evY - dragY < frameBalandligi - stat_baland * scaleHeight * kofetsent / 2f) {
                             // определеяем новые координаты для рисования
                             xi = evX - dragX;

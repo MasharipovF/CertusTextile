@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             case R.id.infobtn:
                 AlertDialog.Builder adb = new AlertDialog.Builder(this);
                 adb.setTitle("Certus Textile");
-                adb.setMessage("Программное обеспечение разработано 'Masharipov&Islomov' Ltd.");
+                adb.setMessage("Версия сборки 1.0\nРазработано по заказу Certus Textile \nВсе права защищены, услуги лицензированы\nРазработчики:\nМашарипов Ф.Ф \n(masharipovfarrux@gmail.com)\nИсломов С.О.\n(islomov49@gmail.com)");
                 adb.setIcon(R.mipmap.ic_launcher);
                 adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -177,11 +177,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 break;
             case R.id.editbtn:
 
-                // TODO vremmenno, uberu posle zaversheniya projecta
-                intent = new Intent(MainActivity.this, EditActivity.class);
-                startActivity(intent);
-
-               /* final Dialog dialog = new Dialog(this);
+                final Dialog dialog = new Dialog(this);
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.setContentView(R.layout.password_prompt);
                 dialog.setTitle("Введите пароль:");
@@ -282,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                         }
                     }
                 });
-                dialog.show();*/
+                dialog.show();
             default:
                 break;
         }

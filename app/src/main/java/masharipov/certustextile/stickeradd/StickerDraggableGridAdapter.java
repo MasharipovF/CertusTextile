@@ -514,7 +514,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         if (!isAlbum)
             return !disableDrag;
         else {
-            return position != loadingList.size() - 1;
+            return disableDrag;
         }
     }
 

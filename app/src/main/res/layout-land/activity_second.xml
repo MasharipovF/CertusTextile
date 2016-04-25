@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/snackuchunlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SecondActivity">
@@ -189,10 +190,10 @@
 
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginBottom="30dp"
-            android:layout_marginLeft="75dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="75dp"
             android:layout_marginRight="75dp"
             android:layout_marginTop="50dp" />
 
@@ -268,53 +269,55 @@
             android:layout_alignParentBottom="true"
             android:layout_margin="16dp"
             android:src="@drawable/knop" />
+
         <ImageView
             android:id="@+id/changeside"
             android:layout_width="121dp"
             android:layout_height="30dp"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/pasgaznak"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/pasgaznak" />
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/panelanim"
         android:layout_width="90dp"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="80dp"
         android:background="@drawable/animinr"
         android:orientation="vertical"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp">
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp">
 
         <ImageView
 
             android:id="@+id/yoqa1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+
+            android:layout_marginLeft="28dp"
+            android:layout_marginRight="18dp"
             android:layout_weight="1"
-           android:layout_marginLeft="28dp"
-           android:layout_marginRight="18dp"
             android:src="@drawable/eyes" />
 
         <ImageView
             android:id="@+id/yoqa2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_marginLeft="28dp"
             android:layout_marginRight="18dp"
+            android:layout_weight="1"
             android:src="@drawable/eyes" />
 
         <ImageView
             android:id="@+id/yoqa3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_marginLeft="28dp"
             android:layout_marginRight="18dp"
+            android:layout_weight="1"
 
             android:src="@drawable/eyes" />
 
@@ -365,7 +368,6 @@
                 android:text="@string/tovari"
                 android:textColor="#1f1f1f"
                 android:textSize="20sp" />
-
 
 
             <FrameLayout

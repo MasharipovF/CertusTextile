@@ -89,14 +89,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
             public void onAddorRemove(int position) {
                 recyclerData = database.get(position);
                 if (recyclerData.isAddButton) {
-                    //  if (isChildItemFull(position)) {
-                    recyclerData.setAddID(R.drawable.ic_close_orange_100_24dp);
-                    recyclerData.setAddText("Удалить");
-                    notifyItemChanged(position);
-                    recyclerData.isAddButton = false;
-                    insertItem(new RecyclerData(), database.size());
-                    // } else
-                    //  Toast.makeText(context, "Please add images for all imageboxes!", Toast.LENGTH_SHORT).show();
+                    if (isChildItemFull(position)) {
+                        recyclerData.setAddID(R.drawable.ic_close_orange_100_24dp);
+                        recyclerData.setAddText("Удалить");
+                        notifyItemChanged(position);
+                        recyclerData.isAddButton = false;
+                        insertItem(new RecyclerData(), database.size());
+                    } else
+                        Toast.makeText(context, "Пожалуйста загрузите все данные!", Toast.LENGTH_SHORT).show();
                 } else {
                     deleteItem(position);
                     // createDeleteDialog(position);

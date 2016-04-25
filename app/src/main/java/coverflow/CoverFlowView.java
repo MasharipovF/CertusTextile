@@ -81,9 +81,9 @@ public class CoverFlowView<T extends CoverFlowAdapter> extends View {
     // 基础缩放值
     private static final float CARD_SCALE = 0.15f;
     private static float MOVE_POS_MULTIPLE = 3.0f;
-    private static final int TOUCH_MINIMUM_MOVE = 5;
+    private static final int TOUCH_MINIMUM_MOVE = 15;
     private static final float MOVE_SPEED_MULTIPLE = 1;
-    private static final float MAX_SPEED = 6.0f;
+    private static final float MAX_SPEED = .0f;
     private static final float FRICTION = 10.0f;
 
     private static final int LONG_CLICK_DELAY = ViewConfiguration

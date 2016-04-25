@@ -16,7 +16,6 @@
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="landscape">
-
         </activity>
 
 
@@ -30,19 +29,19 @@
             </intent-filter>
         </activity>
 
-         <activity
+        <activity
             android:name=".main.SlideshowActivity"
             android:screenOrientation="landscape" />
 
 
-         <activity
+        <activity
             android:name=".SecondActivity"
             android:screenOrientation="landscape"></activity>
 
         <activity
             android:name=".edit.EditActivity"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
+            android:windowSoftInputMode="stateHidden|adjustResize">
 
         </activity>>
 
@@ -54,7 +53,8 @@
         </activity>
 
 
-        <activity android:name=".tpriew.Tview"
+        <activity
+            android:name=".tpriew.Tview"
             android:screenOrientation="landscape"></activity>
     </application>
 

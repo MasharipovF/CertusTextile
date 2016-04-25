@@ -31,10 +31,11 @@ public class AlbumPickerAdapter extends RecyclerView.Adapter<AlbumPickerAdapter.
     int visibility;
     public boolean isAlbum = true;
     public String currentAlbumTag;
+    public albumListener albumListener;
 
-    public AlbumPickerAdapter(Context c, List<StickerData> list) {
+    public AlbumPickerAdapter(Context c, List<StickerData> list, albumListener listener) {
         context = c;
-
+        albumListener = listener;
         albumList = new ArrayList<>();
         stickerList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -56,6 +57,9 @@ public class AlbumPickerAdapter extends RecyclerView.Adapter<AlbumPickerAdapter.
                     currentAlbumTag = loadingList.get(position).getTAG();
                     setStickerData(currentAlbumTag);
                     isAlbum = false;
+                    albumListener.onAlbumClicked();
+                } else {
+                    albumListener.onStickerPicked(loadingList.get(position));
                 }
             }
         });
@@ -87,6 +91,11 @@ public class AlbumPickerAdapter extends RecyclerView.Adapter<AlbumPickerAdapter.
         return loadingList.size();
     }
 
+
+    public interface albumListener {
+        void onStickerPicked(StickerData sticker);
+        void onAlbumClicked();
+    }
 
     public List<StickerData> getList() {
         return loadingList;

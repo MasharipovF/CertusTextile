@@ -25,19 +25,19 @@ public class SplashScreen extends AwesomeSplash {
         //Choose LOGO OR PATH; if you don't provide String value for path it's logo by default
 
         //Customize Logo
-        //configSplash.setLogoSplash(R.mipmap.ic_launcher); //or any other drawable
+        configSplash.setLogoSplash(R.mipmap.ic_launcher); //or any other drawable
         configSplash.setAnimLogoSplashDuration(2000); //int ms
         configSplash.setAnimLogoSplashTechnique(Techniques.FadeIn); //choose one form Techniques (ref: https://github.com/daimajia/AndroidViewAnimations)
 
         //Customize Path
-        configSplash.setPathSplash(COCA_COLA); //set path String
+        /*configSplash.setPathSplash(COCA_COLA); //set path String
         configSplash.setOriginalHeight(970); //in relation to your svg (path) resource
         configSplash.setOriginalWidth(970); //in relation to your svg (path) resource
         configSplash.setAnimPathStrokeDrawingDuration(3000);
         configSplash.setPathSplashStrokeSize(1); //I advise value be <5
         configSplash.setPathSplashStrokeColor(R.color.logo); //any color you want form colors.xml
         configSplash.setAnimPathFillingDuration(2000);
-        configSplash.setPathSplashFillColor(R.color.logo); //path object filling color
+        configSplash.setPathSplashFillColor(R.color.logo); //path object filling color*/
 
 
         //Customize Title
