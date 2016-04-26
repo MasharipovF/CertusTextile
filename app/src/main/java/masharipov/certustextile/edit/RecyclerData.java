@@ -24,6 +24,7 @@ public class RecyclerData {
         collar = null;
         type = null;
         typeRus = null;
+        isSection = 0;
         genderImageResourse = -1;
     }
 

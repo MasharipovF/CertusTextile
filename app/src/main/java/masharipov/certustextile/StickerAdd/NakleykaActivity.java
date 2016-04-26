@@ -4,12 +4,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -17,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
@@ -47,7 +45,6 @@ public class NakleykaActivity extends AppCompatActivity {
     private List<List<RecyclerData>> goodsList;
     private int numOfItemsInRow = 6;
     private String extras;
-    private CardView bottomLayout;
     private FloatingActionButton fab;
     private CertusDatabase cDB;
     private ImageView backgroundImage;
@@ -65,13 +62,8 @@ public class NakleykaActivity extends AppCompatActivity {
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        bottomLayout = (CardView) findViewById(R.id.layout);
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-
-        // chtobi spryatat nijnuyu panel
-        bottomLayout.setTranslationY(800);
-        bottomLayout.setVisibility(View.GONE);
 
         //init recyclerview
         mRecyclerView = (RecyclerView) findViewById(R.id.gridLayout);
@@ -246,6 +238,12 @@ public class NakleykaActivity extends AppCompatActivity {
                 break;
             ////////////////////////////////////////////////
             case "GOODS":
+                if (!tovarAdapter.getIsHeader()) {
+                    tovarAdapter.updateChildList();
+                    tovarAdapter.setIsHeader(true);
+                    tovarAdapter.setHeaderList();
+                    return;
+                }
                 if (!tovarAdapter.isDatabaseChanged()) {
                     super.onBackPressed();
                     return;
@@ -259,7 +257,47 @@ public class NakleykaActivity extends AppCompatActivity {
                             finish();
                             return;
                         }
-                        List<RecyclerData> items = tovarAdapter.getTovarList();
+
+                        CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext());
+                        certusDatabase.clearDB();
+                        List<RecyclerData> headers, childs;
+
+                        headers = tovarAdapter.getCurrentList();
+                        childs = tovarAdapter.getChildsList();
+                        Log.v("DATAA", "HEADER ==== " + headers.size());
+
+
+                        String tableName = null, searchID;
+                        for (int i = 0; i < headers.size(); i++) {
+                            RecyclerData headItem = headers.get(i);
+                            if (headItem.getSection() == 1) {
+                                tableName = headItem.getType();
+                                continue;
+                            }
+                            Log.v("DATAA", "HEADERIDS = " + headItem.getID());
+
+                            List<RecyclerData> finalData = new ArrayList<>();
+                            searchID = headItem.getID();
+                            for (RecyclerData rItem : childs) {
+                                if (searchID.equals(rItem.getID())) {
+                                    finalData.add(rItem);
+                                }
+                            }
+
+                            if (tableName != null) {
+                                if (i != headers.size() - 1 && headers.get(i + 1).getSection() == 1) {
+                                    certusDatabase = new CertusDatabase(getApplicationContext(), finalData);
+                                    certusDatabase.saveGoodsToDB(tableName, false);
+                                } else {
+                                    certusDatabase = new CertusDatabase(getApplicationContext(), finalData);
+                                    certusDatabase.saveGoodsToDB(tableName, false);
+                                }
+                            }
+
+                        }
+
+
+                       /* List<RecyclerData> items = tovarAdapter.getTovarList();
                         List<RecyclerData> finalItems = new ArrayList<>();
                         String curTableName = null;
                         for (int i = 0; i < items.size(); i++) {
@@ -280,7 +318,7 @@ public class NakleykaActivity extends AppCompatActivity {
                         }
                         Log.v("SAVEDB", curTableName + "  savdfsdfsded");
                         CertusDatabase certusDatabase = new CertusDatabase(getApplicationContext(), finalItems);
-                        certusDatabase.saveGoodsToDB(curTableName, true);
+                        certusDatabase.saveGoodsToDB(curTableName, true);*/
                         finish();
                     }
                 });
@@ -368,13 +406,17 @@ public class NakleykaActivity extends AppCompatActivity {
         }
     }
 
+    private int stID = 0;
+
     private boolean initTovarAdapter() {
+        fab.setVisibility(View.GONE);
+
         // dobavlenie tovarov v osnovnoy recycler
         String tableNames[] = {"Futbolka", "Mayka", "Polo"};
         String tableNamesRus[] = {"Футболка", "Майка", "Поло"};
         tovarList = new ArrayList<>();
 
-        int stID = 0; // stable ID chtobi content ne dublirovalsya
+        // stable ID chtobi content ne dublirovalsya
         for (String tableName : tableNames) {
             if (cDB.isTableEmpty(tableName)) continue;
 
@@ -384,63 +426,73 @@ public class NakleykaActivity extends AppCompatActivity {
             sectionData.stableID = stID++;
             tovarList.add(sectionData);
             List<RecyclerData> data = cDB.getTovarFromDB(tableName);
-            for (int i = 0; i < data.size(); i++) {
+            tovarList.addAll(getTovarData(data));
+            /*for (int i = 0; i < data.size(); i++) {
                 RecyclerData mData = data.get(i);
                 mData.stableID = stID++;
                 tovarList.add(mData);
-            }
-
-            /*List<RecyclerData> items = cDB.getTovarFromDB(tableName);
-            List<RecyclerData> finalItems = new ArrayList<>();
-            String tmpID = null;
-            Log.v("TOVAR", tableName + " size  == " + Integer.toString(items.size()));
-            for (int j = 0; j < items.size(); j++) {
-                if (!items.get(j).getID().equals(tmpID)) {
-                    items.get(j).setType(tableName);
-                    finalItems.add(items.get(j));
-                    tmpID = items.get(j).getID();
-                }
-            }
-            tovarList.addAll(finalItems);*/
+            }*/
         }
+        stID = 0;
 
         // dlya otobrajeniya headerov
         mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if (tovarList.get(position).getSection() == 1)
+                if (tovarAdapter.getCurrentList().get(position).getSection() == 1)
                     return numOfItemsInRow;
                 else
                     return 1;
             }
         });
 
-        // childAdapter
-        // TODO bottom layout
-        bottomLayout.setVisibility(View.GONE);
-        RecyclerView drawerRecycler = (RecyclerView) findViewById(R.id.list);
-        GridLayoutManager drawerLayoutManager = new GridLayoutManager(this, numOfItemsInRow);
-        drawerRecycler.setLayoutManager(drawerLayoutManager);
-        SectionChildDraggableGridAdapter drawerGridAdapter = new SectionChildDraggableGridAdapter(this, View.VISIBLE, bottomLayout, tovarAdapter);
-        drawerRecycler.setAdapter(drawerGridAdapter);
-
 
         // glavniy adapter
-        tovarAdapter = new SectionDraggableGridAdapter(tovarList, this, View.VISIBLE, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), bottomLayout, drawerGridAdapter);
+        tovarAdapter = new SectionDraggableGridAdapter(tovarList, this, View.VISIBLE, (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(tovarAdapter);
-        fab.setVisibility(View.GONE);
-
         return tovarList.size() > 0;
+    }
+
+    public List<RecyclerData> getTovarData(List<RecyclerData> list) {
+        List<RecyclerData> finalData = new ArrayList<>();
+        String tmpID;
+        int counter, i, k;
+        for (i = 0; i < list.size(); i++) {
+            RecyclerData mItem = list.get(i);
+            tmpID = mItem.getID();
+            if (finalData.isEmpty()) {
+                finalData.add(mItem);
+            } else {
+                counter = 0;
+                for (k = 0; k < finalData.size(); k++) {
+                    RecyclerData fItem = finalData.get(k);
+                    if (!fItem.getID().equals(tmpID)) {
+                        counter++;
+                    }
+                }
+                if (counter == finalData.size()) {
+                    mItem.stableID = stID++;
+                    finalData.add(mItem);
+                    counter = 0;
+                }
+            }
+        }
+        return finalData;
     }
 
     private boolean initStickerAdapter() {
         fab.setVisibility(View.GONE);
 
         stickerList = cDB.getStickersFromDB();
+        int stID = 0;
+        for (int i = 0; i < stickerList.size(); i++) {
+            stickerList.get(i).setStableID(stID++);
+        }
         StickerData mItem = new StickerData();
         mItem.setTAG("Новый альбом");
         mItem.setID(Long.toString(System.currentTimeMillis()));
         mItem.setAlbum(1);
+        mItem.setStableID(stID++);
         stickerList.add(mItem);
         stickerAdapter = new StickerDraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.VISIBLE, new StickerDraggableGridAdapter.onFabVisibilityChange() {
             @Override
@@ -450,7 +502,6 @@ public class NakleykaActivity extends AppCompatActivity {
         });
         mAdapter = stickerAdapter;
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(stickerAdapter);
-        bottomLayout.setVisibility(View.GONE);
         return stickerList.size() > 0;
     }
 
@@ -461,8 +512,6 @@ public class NakleykaActivity extends AppCompatActivity {
         mWrappedAdapter = slideshowAdapter;
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(slideshowAdapter);
         fab.setVisibility(View.VISIBLE);
-        bottomLayout.setVisibility(View.GONE);
-
         return slideshowList.size() > 0;
     }
 

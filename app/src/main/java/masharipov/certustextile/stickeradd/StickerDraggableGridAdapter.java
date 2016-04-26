@@ -169,7 +169,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
                                 }
 
                                 tag.setText(TAG);
-                                loadingList.get(position).setTAG(tag.getText().toString());// TODO URIni tanlash kerak, hozi test uchun prosto
+                                loadingList.get(position).setTAG(tag.getText().toString());
                                 loadingList.get(position).setAlbum(1);
                                 notifyItemChanged(position);
 
@@ -193,10 +193,9 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
                         }
                     });
                     dialog.show();
-                    //isAlbum = false; //TODO AGAR albom qowilsa unga item qowiw kere
                 } else if (isAlbum && position != loadingList.size() - 1) {
                     currentAlbumTag = loadingList.get(position).getTAG();
-                    setStickerData(currentAlbumTag);
+                    setStickerData(currentAlbumTag, loadingList.get(position).getStableID());
                     isAlbum = false;
                     showItemsOfAlbum();
                 }
@@ -268,14 +267,16 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         return isAlbum;
     }
 
-    public void setStickerData(String sortTag) {
+    public void setStickerData(String sortTag, int stID) {
         albumList = loadingList;
-
         List<StickerData> finalData = new ArrayList<>();
         int count = 0;
         while (count < stickerList.size()) {
             StickerData mITem = stickerList.get(count);
             if (mITem.getTAG().equals(sortTag)) {
+                if (finalData.isEmpty()) {
+                    mITem.setStableID(stID);
+                }
                 finalData.add(mITem);
                 stickerList.remove(count);
             } else
@@ -454,7 +455,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
 
     @Override
     public long getItemId(int position) {
-        return Long.parseLong(loadingList.get(position).getID());
+        return loadingList.get(position).getStableID();
     }
 
     @Override
@@ -472,7 +473,6 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         if (fromPosition == toPosition) {
             return;
         }
-        Toast.makeText(context, "From " + Integer.toString(fromPosition) + " to " + Integer.toString(toPosition), Toast.LENGTH_SHORT).show();
         StickerData item = loadingList.remove(fromPosition);
         loadingList.add(toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
@@ -482,8 +482,8 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         }
 
 
-        /*// TODO
-        StickerData sItem = new StickerData();
+        //TODO zacem ne znayu
+       /* StickerData sItem = new StickerData();
         if (!isAlbum) {
             for (int i = 0; i < stickerList.size(); i++) {
                 sItem = stickerList.get(i);

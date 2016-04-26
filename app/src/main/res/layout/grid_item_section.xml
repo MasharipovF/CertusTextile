@@ -9,7 +9,9 @@
         style="@style/sectionHeaderItemStyle"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:gravity="center|left"
+        android:gravity="center"
+        android:textColor="#292929"
         android:textSize="40sp"
-        tools:ignore="RtlHardcoded" />
+        tools:ignore="RtlHardcoded"
+        android:text="FUTBOLKA" />
 </LinearLayout>

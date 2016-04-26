@@ -14,13 +14,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".SplashScreen"
+            android:name=".main.MainActivity"
             android:screenOrientation="landscape">
         </activity>
-
-
         <activity
-            android:name=".main.MainActivity"
+            android:name=".main.SlideshowActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".SecondActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".edit.EditActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+        >
+        <activity
+            android:name=".stickeradd.NakleykaActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".tpriew.Tview"
+            android:screenOrientation="landscape" />
+
+        <activity android:name=".SplashScreen"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,34 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".main.SlideshowActivity"
-            android:screenOrientation="landscape" />
-
-
-        <activity
-            android:name=".SecondActivity"
-            android:screenOrientation="landscape"></activity>
-
-        <activity
-            android:name=".edit.EditActivity"
-            android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-
-        </activity>>
-
-
-        <activity
-            android:name=".stickeradd.NakleykaActivity"
-            android:screenOrientation="landscape">
-
-        </activity>
-
-
-        <activity
-            android:name=".tpriew.Tview"
-            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

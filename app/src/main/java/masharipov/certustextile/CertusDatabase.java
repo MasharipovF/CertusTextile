@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +60,7 @@ public class CertusDatabase {
 
         if (clearDB) {
             sdb.delete(tableName, null, null);
+            Log.v("DATAA", "DB cleaned = " + tableName);
         }
 
         if (goods != null && goods.size() > 0) {
@@ -221,6 +221,10 @@ public class CertusDatabase {
         sdb.delete("Futbolka", null, null);
         sdb.delete("Mayka", null, null);
         sdb.delete("Polo", null, null);
+    }
+
+    public void clearTable(String tableName) {
+        sdb.delete(tableName, null, null);
     }
 
     public boolean isTableEmpty(String tableName) {

@@ -7,6 +7,7 @@ public class StickerData {
     private String TAG, URI, ID;
     private int placeHolder;
     private int isAlbum, isChecked;
+    private int stableID;
 
     public StickerData() {
         URI = null;
@@ -14,6 +15,10 @@ public class StickerData {
         ID = null;
         isAlbum = 0;
         isChecked = 0;
+    }
+
+    public void setStableID(int id) {
+        stableID = id;
     }
 
     public void setChecked(int checked) {
@@ -38,6 +43,11 @@ public class StickerData {
 
     public void setAlbum(int f) {
         isAlbum = f;
+    }
+
+
+    public int getStableID() {
+        return stableID;
     }
 
     public int getIsChecked() {
