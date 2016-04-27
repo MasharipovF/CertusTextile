@@ -39,7 +39,7 @@ public class SplashScreen extends AwesomeSplash {
         configSplash.setAnimPathStrokeDrawingDuration(3000);
         configSplash.setPathSplashStrokeSize(1); //I advise value be <5
         configSplash.setPathSplashStrokeColor(R.color.certusFill); //any color you want form colors.xml
-        configSplash.setAnimPathFillingDuration(3000);
+        configSplash.setAnimPathFillingDuration(2000);
         configSplash.setPathSplashFillColor(R.color.certusFill); //path object filling color
 
 

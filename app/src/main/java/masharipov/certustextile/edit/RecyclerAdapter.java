@@ -2,14 +2,11 @@ package masharipov.certustextile.edit;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,11 +33,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     private ArrayAdapter<String> spinAdapter;
     private Context context;
     private Intent imagePickerIntent;
-    private int SELECT_PICTURE = 1, GALLERY_INTENT_CALLED = 0, GALLERY_KITKAT_INTENT_CALLED = 2, imageAddPosition = -1;
+    private int SELECT_PICTURE = 1, imageAddPosition = -1;
     private String imageID = null;
     public int collarTag = -1;
     private RelativeLayout layout;
-
 
     public RecyclerAdapter(Context context, List<RecyclerData> list, RelativeLayout lay) {
         layout = lay;
@@ -66,17 +62,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
                 imageAddPosition = position;
                 imageID = imgID;
                 ((Activity) context).startActivityForResult(imagePickerIntent, SELECT_PICTURE);
-               /* if (Build.VERSION.SDK_INT < 19) {
-                    imagePickerIntent = new Intent();
-                    imagePickerIntent.setType("image/jpeg");
-                    imagePickerIntent.setAction(Intent.ACTION_GET_CONTENT);
-                    ((Activity) context).startActivityForResult(Intent.createChooser(imagePickerIntent, "Выберите действие"), GALLERY_INTENT_CALLED);
-                } else {
-                    imagePickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    imagePickerIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                    imagePickerIntent.setType("image/jpeg");
-                    ((Activity) context).startActivityForResult(imagePickerIntent, GALLERY_KITKAT_INTENT_CALLED);
-                }*/
             }
 
             @Override
@@ -99,7 +84,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
                         Toast.makeText(context, "Пожалуйста загрузите все данные!", Toast.LENGTH_SHORT).show();
                 } else {
                     deleteItem(position);
-                    // createDeleteDialog(position);
                 }
             }
         });
@@ -136,6 +120,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     public int getItemCount() {
         return database.size();
     }
+
 
     public boolean isChildItemFull(int position) {
         int counter = 0;
@@ -219,27 +204,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
             return cursor.getString(column_index);
         }
         return uri.getPath();
-    }
-
-    public void createDeleteDialog(final int position) {
-        AlertDialog.Builder adb = new AlertDialog.Builder(context);
-        adb.setTitle("Info");
-        adb.setMessage("Do you want to delete this item");
-        adb.setIcon(android.R.drawable.ic_dialog_info);
-        adb.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteItem(position);
-            }
-        });
-        adb.create();
-        adb.show();
     }
 
     public interface addListener {
