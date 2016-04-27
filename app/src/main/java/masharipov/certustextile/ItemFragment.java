@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -55,6 +57,7 @@ public class ItemFragment extends Fragment  {
     View thatall;
     Bitmap bitTovar;
     Bitmap bitSticker;
+    Bitmap layouFrame;
     ImageView shadow;
     //Bu voqtinchali peremenniyla Resurs bilan ishlashga
 
@@ -93,7 +96,7 @@ public class ItemFragment extends Fragment  {
             bitSticker.recycle();
         bitSticker = null;
         bitTovar = null;
-
+        ismojno=false;
         //   bitTovar = BitmapFactory.decodeResource(getResources(), voqtinchali_resurs);
 
     }
@@ -153,15 +156,18 @@ public class ItemFragment extends Fragment  {
         tovar = (ImageView) fragment_item.findViewById(R.id.tovar);
         frameSt = (FrameLayout) fragment_item.findViewById(R.id.frameStick);
         tovar.setImageBitmap(bitTovar);
+
         thatall=fragment_item;
-       // tovar.setVisibility(View.INVISIBLE);
+        if(layouFrame!=null)
+            frameSt.setBackground(new BitmapDrawable(getResources(), layouFrame));
+
+        // tovar.setVisibility(View.INVISIBLE);
         fragment_item.post(new Runnable() {
             @Override
             public void run() {
                 try {
                     tovar.buildDrawingCache();
                     bitScaled = tovar.getDrawingCache();
-
                     leftpad = 0;
                     rightpad = 0;
                     int bitHEiG = bitScaled.getHeight();
@@ -356,8 +362,23 @@ public class ItemFragment extends Fragment  {
         return uri.getPath();
     }
 
+    boolean ismojno=false;
 
+    public void addoneplyus(){
+        if(ismojno){
+            layouFrame = Bitmap.createBitmap(frameSt.getWidth(), frameSt.getHeight(), Bitmap.Config.ARGB_8888);
+            layouFrame.setDensity(frameSt.getResources().getDisplayMetrics().densityDpi);
+            Canvas canvas = new Canvas(layouFrame);
+            frameSt.draw(canvas);
+            xi = frameEni / 2;
+            yi = frameBalandligi / 2 - 100;
+            changeStickerUri(uriS.toString());
+        }
+    }
     public boolean changeStickerUri(String UriString) {
+
+
+
         File getBit = new File(getPath(Uri.parse(UriString)));
         uriS=Uri.parse(UriString);
         frameEni = frameSt.getWidth();
@@ -377,12 +398,15 @@ public class ItemFragment extends Fragment  {
         }
 
         frameSt.removeAllViews();
+        frameSt.setBackground(new BitmapDrawable(getResources(), layouFrame));
+        ismojno=true;
         A1 = new MyView(This);
         frameSt.addView(A1);
 
 
         return true;
     }
+
 
 
     public interface eventZOOM {
@@ -437,37 +461,37 @@ public class ItemFragment extends Fragment  {
 
         public float scalePlus() {
             if (scaleWidht <= 2 && scaleHeight <= 2) {
-                scaleHeight += 0.05f;
-                scaleWidht += 0.05f;
+                scaleHeight += 0.01f;
+                scaleWidht += 0.01f;
                 keyForcah=true;
            /* side_en*=scaleWidht;
             side_ba*=scaleHeight;
             stat_eni=side_en;
             stat_baland=side_ba;*/
                 invalidate();
-                peredacha.EVZ((int) (scaleHeight / 0.05f));
+                peredacha.EVZ((int) (scaleHeight / 0.02f));
                 return scaleHeight;
             } else return 0f;
         }
 
         public float scaleMinus() {
-            if (scaleWidht > 0.05f && scaleHeight > 0.05f) {
-                scaleHeight -= 0.05f;
-                scaleWidht -= 0.05f;
+            if (scaleWidht > 0.01f && scaleHeight > 0.01f) {
+                scaleHeight -= 0.01f;
+                scaleWidht -= 0.01f;
                 keyForcah=true;
            /* side_en*=scaleWidht;
             side_ba*=scaleHeight;
             stat_eni=side_en;
             stat_baland=side_ba;*/
                 invalidate();
-                peredacha.EVZ((int) (scaleHeight / 0.05f));
+                peredacha.EVZ((int) (scaleHeight / 0.02f));
 
                 return scaleHeight;
             } else return 0f;
         }
 
         public void rotationPlus() {
-            rotatt += 10;
+            rotatt += 2;
             rotatt %= 360;
             keyForcah=true;
             invalidate();
@@ -476,7 +500,7 @@ public class ItemFragment extends Fragment  {
         }
 
         public void rotationMinus() {
-            rotatt -= 10;
+            rotatt -= 2;
             rotatt %= 360;
             keyForcah=true;
             invalidate();
@@ -564,10 +588,10 @@ public class ItemFragment extends Fragment  {
                             perviyRostayaniya = rostayaniya;
                             Log.d("SecondTouch", "PERVIY");
                         } else {
-                            if (perviyRostayaniya + 100 < rostayaniya) {
+                            if (perviyRostayaniya + 10 < rostayaniya) {
                                 perviyRostayaniya = rostayaniya;
                                 plusSize();
-                            } else if (perviyRostayaniya - 100 > rostayaniya) {
+                            } else if (perviyRostayaniya - 10 > rostayaniya) {
                                 perviyRostayaniya = rostayaniya;
                                 minusSize();
                             }
@@ -632,8 +656,8 @@ public class ItemFragment extends Fragment  {
                             // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
                             //razmer.setText(Integer.toString(razmerPol[current_status]));
 
-                            peredacha.nextFrag();
 
+                            peredacha.prevFrag();
 
                         } else if (scoree - 400 > evX ) {
                             Log.d("sidechange",scoree+"PREV GO");
@@ -641,7 +665,8 @@ public class ItemFragment extends Fragment  {
                             scoree = evX;
                            // scoree -= 300;
                             //   razmerPol[current_status]--;
-                            peredacha.prevFrag();
+                            peredacha.nextFrag();
+
                         }
                     }
 

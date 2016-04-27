@@ -267,6 +267,24 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         sidechange = (ImageView) findViewById(R.id.changeside);
         povorot = (TextView) findViewById(R.id.povorot);
         timerHand = new Handler();
+        findViewById(R.id.addsti).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (keyfragmentis) {
+                    switch (current_status) {
+                        case 0:
+                            oldi.addoneplyus();
+                            break;
+                        case 1:
+                            yon.addoneplyus();
+                            break;
+                        case 2:
+                            orqa.addoneplyus();
+                            break;
+                    }
+                }
+            }
+        });
         findViewById(R.id.shot).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -698,18 +716,18 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     ItemFragment temp03 = (ItemFragment) getSupportFragmentManager().
                             findFragmentById(R.id.frame);
 
-                    if (scoree + 50 < evX) {
+                    if (scoree + 10 < evX) {
                         scoree = evX;
-                        scoree += 50;
+                        scoree += 10;
                         //  razmerPol[current_status]++;
                         // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
                         //razmer.setText(Integer.toString(razmerPol[current_status]));
 
                         temp03.rotationPlus();
 
-                    } else if (scoree - 50 > evX) {
+                    } else if (scoree - 10 > evX) {
                         scoree = evX;
-                        scoree -= 50;
+                        scoree -= 10;
                         //   razmerPol[current_status]--;
                         temp03.rotationMinus();
 
@@ -724,9 +742,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     ItemFragment temp03 = (ItemFragment) getSupportFragmentManager().
                             findFragmentById(R.id.frame);
 
-                    if (scoree + 50 < evX && razmerPol[current_status] < 50) {
+                    if (scoree + 5 < evX && razmerPol[current_status] < 101) {
                         scoree = evX;
-                        scoree += 50;
+                        scoree += 5;
                         //  razmerPol[current_status]++;
                         // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
                         //razmer.setText(Integer.toString(razmerPol[current_status]));
@@ -735,9 +753,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
 
                         Log.d("touchl", Integer.toString(razmerPol[current_status]));
-                    } else if (scoree - 50 > evX && razmerPol[current_status] > 0) {
+                    } else if (scoree - 5 > evX && razmerPol[current_status] > 5) {
                         scoree = evX;
-                        scoree -= 50;
+                        scoree -= 5;
                         //   razmerPol[current_status]--;
                         temp03.minusSize();
 
@@ -752,25 +770,25 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 if (focchan) {
                     Log.d("touchl", scoree + "---" + evX + "  move");
-                    if (scoree + 220 < evX) {
+                    if (scoree + 30 < evX) {
                         scoree = evX;
 
                         vibr.vibrate(30);//  razmerPol[current_status]++;
                         // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
                         //razmer.setText(Integer.toString(razmerPol[current_status]));
-                        nextFragment();
+
+                        prevFragment();
                         Log.d("touchl", scoree + "---" + evX + "  NEXT");
 
-                    } else if (scoree - 220 > evX) {
+                    } else if (scoree - 30 > evX) {
                         scoree = evX;
 
                         vibr.vibrate(30);
                         //   razmerPol[current_status]--;
                         Log.d("touchl", scoree + "---" + evX + "  PREV");
-
+                        nextFragment();
                         // razmer.setText(Integer.toString(razmerPol[current_status]));
 
-                        prevFragment();
 
                     }
 

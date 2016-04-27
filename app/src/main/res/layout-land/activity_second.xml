@@ -198,8 +198,8 @@
             android:layout_marginTop="50dp" />
 
         <LinearLayout
-            android:layout_width="61dp"
-            android:layout_height="240dp"
+            android:layout_width="65dp"
+            android:layout_height="330dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
@@ -236,8 +236,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:padding="13dp"
+                android:padding="12dp"
                 android:src="@drawable/discard" />
+            <ImageView
+                android:id="@+id/addsti"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="13dp"
+                android:src="@drawable/addstick" />
 
         </LinearLayout>
 
