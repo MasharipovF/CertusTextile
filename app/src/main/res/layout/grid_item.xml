@@ -27,6 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="kakoy to tag"
+            android:textColor="#292929"
             android:textSize="20sp"
             android:gravity="center"/>
     </LinearLayout>

@@ -242,6 +242,8 @@ public class NakleykaActivity extends AppCompatActivity {
                     tovarAdapter.updateChildList();
                     tovarAdapter.setIsHeader(true);
                     tovarAdapter.setHeaderList();
+                   /* if (tovarAdapter.isSnackBarShown())
+                        tovarAdapter.dismissSnackBar();*/
                     return;
                 }
                 if (!tovarAdapter.isDatabaseChanged()) {

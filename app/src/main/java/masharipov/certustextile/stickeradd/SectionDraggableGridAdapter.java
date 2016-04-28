@@ -109,6 +109,9 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
         coordinatorLayout = Clayout;
         cDB = new CertusDatabase(context);
 
+        snackbar = Snackbar
+                .make(coordinatorLayout, "Товар удален", Snackbar.LENGTH_LONG);
+
         int stID;
         if (!list.isEmpty())
             stID = list.get(list.size() - 1).stableID + 1;
@@ -261,7 +264,7 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     }
 
     public void setHeaderList() {
-        //if (snackbar.isShown()) snackbar.dismiss();
+        if (snackbar.isShown()) snackbar.dismiss();
         loadingList = headerList;
         notifyDataSetChanged();
     }
@@ -308,9 +311,6 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
     private boolean isHeaderItemDeleted = false;
 
     public void removeItem(final int position) {
-
-        snackbar = Snackbar
-                .make(coordinatorLayout, "Товар удален", Snackbar.LENGTH_LONG);
         if (isHeader) {
             // esli udalim posledniy element kotoriy ne SECTION
             if (position == loadingList.size() - 1 && loadingList.get(position).getSection() == 0) {
@@ -331,7 +331,6 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                         if (delsection != null) {
                             loadingList.add(secpos, delsection);
                             notifyItemInserted(secpos);
-                            databaseChangedFlag--;
                             delsection = null;
                             secpos = -1;
                         }
@@ -355,8 +354,6 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                         secpos = position - 1;
                         loadingList.remove(position - 1);
                         notifyItemRemoved(position - 1);
-                        databaseChangedFlag++;
-
                     }
                 }
                 snackbar.setAction("Отменить", new View.OnClickListener() {
@@ -365,7 +362,6 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
                         if (delsection != null) {
                             loadingList.add(secpos, delsection);
                             notifyItemInserted(secpos);
-                            databaseChangedFlag--;
                             delsection = null;
                             secpos = -1;
                         }
@@ -449,19 +445,6 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
             if (toPosition == 0) {
                 changeHeaderCover();
             }
-
-
-        /*RecyclerData rItem = new RecyclerData();
-        if (!isHeader) {
-            for (int i = 0; i < childList.size(); i++) {
-                rItem = childList.get(i);
-                if (item.getImageUri("front").equals(rItem.getImageUri("front")) && item.getID().equals(rItem.getID())) {
-                    childList.remove(i);
-                    break;
-                }
-            }
-            childList.add(0, rItem);
-        }*/
 
         databaseChangedFlag++;
     }
