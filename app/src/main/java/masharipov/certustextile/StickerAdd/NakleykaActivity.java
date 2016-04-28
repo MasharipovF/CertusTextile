@@ -424,6 +424,7 @@ public class NakleykaActivity extends AppCompatActivity {
             sectionData.setType(tableName);
             sectionData.setSection(1);
             sectionData.stableID = stID++;
+            Log.v("TOVSRID", Integer.toString(stID - 1));
             tovarList.add(sectionData);
             List<RecyclerData> data = cDB.getTovarFromDB(tableName);
             tovarList.addAll(getTovarData(data));
@@ -461,6 +462,8 @@ public class NakleykaActivity extends AppCompatActivity {
             RecyclerData mItem = list.get(i);
             tmpID = mItem.getID();
             if (finalData.isEmpty()) {
+                mItem.stableID = stID++;
+                Log.v("TOVSRID", Integer.toString(stID - 1));
                 finalData.add(mItem);
             } else {
                 counter = 0;
@@ -472,6 +475,7 @@ public class NakleykaActivity extends AppCompatActivity {
                 }
                 if (counter == finalData.size()) {
                     mItem.stableID = stID++;
+                    Log.v("TOVSRID", Integer.toString(stID - 1));
                     finalData.add(mItem);
                     counter = 0;
                 }
@@ -484,15 +488,11 @@ public class NakleykaActivity extends AppCompatActivity {
         fab.setVisibility(View.GONE);
 
         stickerList = cDB.getStickersFromDB();
-        int stID = 0;
-        for (int i = 0; i < stickerList.size(); i++) {
-            stickerList.get(i).setStableID(stID++);
-        }
+
         StickerData mItem = new StickerData();
         mItem.setTAG("Новый альбом");
         mItem.setID(Long.toString(System.currentTimeMillis()));
         mItem.setAlbum(1);
-        mItem.setStableID(stID++);
         stickerList.add(mItem);
         stickerAdapter = new StickerDraggableGridAdapter(stickerList, this, (CoordinatorLayout) findViewById(R.id.coordinatorLayout), View.VISIBLE, new StickerDraggableGridAdapter.onFabVisibilityChange() {
             @Override

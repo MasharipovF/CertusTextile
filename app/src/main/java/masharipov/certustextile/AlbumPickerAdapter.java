@@ -7,13 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -39,8 +37,10 @@ public class AlbumPickerAdapter extends RecyclerView.Adapter<AlbumPickerAdapter.
         albumList = new ArrayList<>();
         stickerList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).isAlbum() == 1) albumList.add(list.get(i));
-            else stickerList.add(list.get(i));
+            if (list.get(i).isAlbum() == 1) {
+                if (list.get(i).getURI() != null)
+                    albumList.add(list.get(i));
+            } else stickerList.add(list.get(i));
         }
         loadingList = albumList;
         Log.v("DATAA", "ALBUM = " + Integer.toString(albumList.size()) + "  STICKER = " + Integer.toString(stickerList.size()));
@@ -94,6 +94,7 @@ public class AlbumPickerAdapter extends RecyclerView.Adapter<AlbumPickerAdapter.
 
     public interface albumListener {
         void onStickerPicked(StickerData sticker);
+
         void onAlbumClicked();
     }
 

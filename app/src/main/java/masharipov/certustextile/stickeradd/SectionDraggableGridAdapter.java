@@ -109,9 +109,12 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
         coordinatorLayout = Clayout;
         cDB = new CertusDatabase(context);
 
+        int stID;
+        if (!list.isEmpty())
+            stID = list.get(list.size() - 1).stableID + 1;
+        else stID = 0;
         childList = new ArrayList<>();
         String tableNames[] = {"Futbolka", "Mayka", "Polo"};
-        int stID = list.get(list.size() - 1).stableID + 1; // stable ID chtobi content ne dublirovalsya
         for (String tableName : tableNames) {
             if (cDB.isTableEmpty(tableName)) continue;
             List<RecyclerData> data = cDB.getTovarFromDB(tableName);
@@ -416,18 +419,6 @@ public class SectionDraggableGridAdapter extends RecyclerView.Adapter<SectionDra
 
     public boolean isDatabaseChanged() {
         return databaseChangedFlag > 0;
-    }
-
-    public List<RecyclerData> getFutbolkaList() {
-        return futbolkaList;
-    }
-
-    public List<RecyclerData> getMaykaList() {
-        return maykaList;
-    }
-
-    public List<RecyclerData> getPoloList() {
-        return poloList;
     }
 
     @Override

@@ -22,7 +22,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemConstants;
@@ -33,9 +32,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import masharipov.certustextile.edit.RecyclerData;
-import masharipov.certustextile.stickeradd.StickerDraggableGridAdapter.GridHolder;
 import masharipov.certustextile.R;
+import masharipov.certustextile.stickeradd.StickerDraggableGridAdapter.GridHolder;
 
 
 public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder>
@@ -195,7 +193,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
                     dialog.show();
                 } else if (isAlbum && position != loadingList.size() - 1) {
                     currentAlbumTag = loadingList.get(position).getTAG();
-                    setStickerData(currentAlbumTag, loadingList.get(position).getStableID());
+                    setStickerData(currentAlbumTag, loadingList.get(position).getID());
                     isAlbum = false;
                     showItemsOfAlbum();
                 }
@@ -223,7 +221,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
             if (current.getTAG() != null) {
                 holder.tagTxt.setText(current.getTAG());
             } else {
-                holder.tagTxt.setText("lalala");
+                holder.tagTxt.setText("Без названия");
             }
         } else {
             holder.delBtn.setVisibility(View.VISIBLE);
@@ -267,7 +265,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         return isAlbum;
     }
 
-    public void setStickerData(String sortTag, int stID) {
+    public void setStickerData(String sortTag, String uniqueID) {
         albumList = loadingList;
         List<StickerData> finalData = new ArrayList<>();
         int count = 0;
@@ -275,7 +273,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
             StickerData mITem = stickerList.get(count);
             if (mITem.getTAG().equals(sortTag)) {
                 if (finalData.isEmpty()) {
-                    mITem.setStableID(stID);
+                    mITem.setID(uniqueID);
                 }
                 finalData.add(mITem);
                 stickerList.remove(count);
@@ -313,6 +311,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
         item.setID(uniqueID);
         item.setURI(path);
         item.setTAG(currentAlbumTag);
+
         if (!isAlbum)
             item.setAlbum(0);
         else item.setAlbum(1);
@@ -455,7 +454,7 @@ public class StickerDraggableGridAdapter extends RecyclerView.Adapter<GridHolder
 
     @Override
     public long getItemId(int position) {
-        return loadingList.get(position).getStableID();
+        return Long.parseLong(loadingList.get(position).getID());
     }
 
     @Override
