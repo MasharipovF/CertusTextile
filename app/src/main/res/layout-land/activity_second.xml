@@ -34,16 +34,32 @@
                 android:padding="1dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/yonichtepa" />
-
-            <TextView
+            <LinearLayout
                 android:id="@+id/imageView4"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/qosh"
-                android:gravity="center"
-                android:text="@string/nakleyki"
-                android:textColor="#1f1f1f"
-                android:textSize="20sp" />
+                android:orientation="horizontal"
+                android:background="@drawable/qosh">
+                <TextView
+
+                    android:layout_width="130dp"
+                    android:layout_height="match_parent"
+
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="10dp"
+                    android:text="@string/nakleyki"
+                    android:textColor="#1f1f1f"
+                    android:textSize="20sp" />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/arrowleftsmal"
+                    android:scaleType="centerInside"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="7dp"
+                    android:paddingLeft="-5dp"/>
+            </LinearLayout>
+
 
             <FrameLayout
                 android:id="@+id/nakleyki"
@@ -457,5 +473,80 @@
                 android:src="@drawable/pasgastrel" />
         </RelativeLayout>
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/eslicto"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/darkzaluz">
+        <ImageView
+            android:id="@+id/skipp"
+            android:layout_width="163dp"
+            android:layout_height="33dp"
+            android:src="@drawable/propustit"
+            android:layout_marginBottom="25dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:src="@drawable/touchna"
+            android:layout_above="@+id/skipp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"/>
+
+        <ImageView
+            android:id="@+id/perv"
+            android:visibility="visible"
+            android:layout_width="75dp"
+            android:layout_height="60dp"
+            android:src="@drawable/tepa"
+            android:layout_marginLeft="250dp"
+            android:layout_marginTop="55dp"/>
+        <ImageView
+            android:id="@+id/vtor"
+            android:visibility="gone"
+            android:layout_width="75dp"
+            android:layout_height="60dp"
+            android:src="@drawable/pass"
+            android:layout_marginLeft="250dp"
+            android:layout_marginBottom="100dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+        <ImageView
+            android:id="@+id/tret"
+            android:visibility="gone"
+            android:layout_width="75dp"
+            android:layout_height="60dp"
+            android:src="@drawable/tepakr"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="250dp"
+            android:layout_marginTop="45dp"/>
+        <ImageView
+            android:id="@+id/chetv"
+            android:visibility="gone"
+            android:layout_width="75dp"
+            android:layout_height="60dp"
+            android:src="@drawable/passkr"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="250dp"
+            android:layout_marginBottom="100dp"
+            />
+        <ImageView
+            android:id="@+id/pyat"
+            android:visibility="gone"
+            android:layout_width="75dp"
+            android:layout_height="60dp"
+            android:src="@drawable/passkr"
+
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="310dp"/>
+    </RelativeLayout>
+
 
 </RelativeLayout>

@@ -18,6 +18,7 @@ import android.os.ParcelUuid;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -147,7 +148,7 @@ public class ItemFragment extends Fragment  {
     }
 
     int leftpad, rightpad;
-
+    DisplayMetrics displayMetrics;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -156,6 +157,7 @@ public class ItemFragment extends Fragment  {
         tovar = (ImageView) fragment_item.findViewById(R.id.tovar);
         frameSt = (FrameLayout) fragment_item.findViewById(R.id.frameStick);
         tovar.setImageBitmap(bitTovar);
+        displayMetrics =getContext().getResources().getDisplayMetrics();
 
         thatall=fragment_item;
         if(layouFrame!=null)
@@ -300,7 +302,7 @@ public class ItemFragment extends Fragment  {
         final Bitmap bitmap;
 
         thatall.setDrawingCacheEnabled(true);
-        bitmap = Bitmap.createBitmap(thatall.getDrawingCache());
+        bitmap = Bitmap.createBitmap(thatall.getDrawingCache(),0,0,thatall.getDrawingCache().getWidth(),thatall.getDrawingCache().getHeight()-dpTopx(60));
         thatall.setDrawingCacheEnabled(false);
 
         Thread A1=new Thread(new Runnable() {
@@ -341,7 +343,11 @@ public class ItemFragment extends Fragment  {
         A1.start();
         return mPath;
     };
+    public int dpTopx(int dp){
+         int px=Math.round(dp*(displayMetrics.xdpi/DisplayMetrics.DENSITY_DEFAULT));
+        return px;
 
+    }
     public String getPath(Uri uri) {
         // just some safety built in
         if (uri == null) {
@@ -588,10 +594,10 @@ public class ItemFragment extends Fragment  {
                             perviyRostayaniya = rostayaniya;
                             Log.d("SecondTouch", "PERVIY");
                         } else {
-                            if (perviyRostayaniya + 10 < rostayaniya) {
+                            if (perviyRostayaniya + 2 < rostayaniya) {
                                 perviyRostayaniya = rostayaniya;
                                 plusSize();
-                            } else if (perviyRostayaniya - 10 > rostayaniya) {
+                            } else if (perviyRostayaniya - 2 > rostayaniya) {
                                 perviyRostayaniya = rostayaniya;
                                 minusSize();
                             }

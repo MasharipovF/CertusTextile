@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -50,7 +51,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     int rotatC[] = {0, 0};
     int changfeC[] = {0, 0};
     float povorotX = 0, povorotY = 0;
-    int razmerPol[] = {15, 15, 15};
+    int razmerPol[] = {50, 50, 50};
     int povorotMas[] = {0, 0, 0, 0};
     Vibrator vibr;
 
@@ -113,7 +114,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     private AlbumPickerAdapter albumAdapter;
     private int currentGender;
     Snackbar snackbar;
-
+    RelativeLayout tanishiw;
+    int current_tanisw=0;
+    int adressla[]={R.id.perv,R.id.vtor,R.id.tret,R.id.chetv,R.id.pyat};
     public static File lastFileModified(String dir) {
         File fl = new File(dir);
         File[] files = fl.listFiles(new FileFilter() {
@@ -151,8 +154,35 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         initialData = cDB.getTovarFromDB(tableName);
         Log.v("DATAA", "SIZE OF DATA = " + Integer.toString(initialData.size()));
         wholeList = new ArrayList<>();
+        tanishiw=(RelativeLayout) findViewById(R.id.eslicto);
+        tanishiw.setVisibility(View.VISIBLE);
+        tanishiw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(current_tanisw==4){
+                    findViewById(adressla[current_tanisw]).setVisibility(View.GONE);
+
+                    tanishiw.setVisibility(View.GONE);
+                    findViewById(R.id.skipp).setVisibility(View.GONE);
+                    tanishiw=null;
+                    return;
+                }
+                findViewById(adressla[current_tanisw]).setVisibility(View.GONE);
 
 
+                findViewById(adressla[++current_tanisw]).setVisibility(View.VISIBLE);
+            }
+        });
+        findViewById(R.id.skipp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int t=current_tanisw;t<5;t++)
+                    findViewById(adressla[t]).setVisibility(View.GONE);
+                tanishiw.setVisibility(View.GONE);
+                findViewById(R.id.skipp).setVisibility(View.GONE);
+                tanishiw=null;
+            }
+        });
         // razbirayem bazu po POLU
         for (RecyclerData mData : initialData) {
             switch (mData.getGender()) {
@@ -716,18 +746,18 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     ItemFragment temp03 = (ItemFragment) getSupportFragmentManager().
                             findFragmentById(R.id.frame);
 
-                    if (scoree + 10 < evX) {
+                    if (scoree + 4 < evX) {
                         scoree = evX;
-                        scoree += 10;
+                        scoree += 4;
                         //  razmerPol[current_status]++;
                         // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
                         //razmer.setText(Integer.toString(razmerPol[current_status]));
 
                         temp03.rotationPlus();
 
-                    } else if (scoree - 10 > evX) {
+                    } else if (scoree - 4 > evX) {
                         scoree = evX;
-                        scoree -= 10;
+                        scoree -= 4;
                         //   razmerPol[current_status]--;
                         temp03.rotationMinus();
 
@@ -742,9 +772,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     ItemFragment temp03 = (ItemFragment) getSupportFragmentManager().
                             findFragmentById(R.id.frame);
 
-                    if (scoree + 5 < evX && razmerPol[current_status] < 101) {
+                    if (scoree + 4 < evX && razmerPol[current_status] < 101) {
                         scoree = evX;
-                        scoree += 5;
+                        scoree += 4;
                         //  razmerPol[current_status]++;
                         // razmer.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).scaleY(0.9f).scaleX(0.9f).setDuration(100).start();
                         //razmer.setText(Integer.toString(razmerPol[current_status]));
@@ -753,9 +783,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
 
                         Log.d("touchl", Integer.toString(razmerPol[current_status]));
-                    } else if (scoree - 5 > evX && razmerPol[current_status] > 5) {
+                    } else if (scoree - 4 > evX && razmerPol[current_status] > 5) {
                         scoree = evX;
-                        scoree -= 5;
+                        scoree -= 4;
                         //   razmerPol[current_status]--;
                         temp03.minusSize();
 

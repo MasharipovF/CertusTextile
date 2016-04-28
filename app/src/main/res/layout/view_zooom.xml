@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="600dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fff"
+        android:orientation="vertical">
+
+
+        <coverflow.photoview.PhotoView
+            android:id="@+id/zzomtovar"
+            android:layout_width="match_parent"
+            android:layout_height="650dp"
+
+            android:scaleType="center"
+
+            />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/albumCancelBtn"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="НАЗАД/ОТМЕНА"
+                android:layout_alignParentLeft="true"
+                android:textColor="#009688"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/nextik"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="СЛЕДУЮЩИЙ"
+                android:layout_alignParentRight="true"
+                android:textColor="#009688"
+                android:textSize="15sp" />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/albumheader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:background="#f2f2f2"
+            android:text="Для увеличения нажмите 2 раза на картинку"
+            android:textColor="#464646"
+            android:textSize="14sp"
+            />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

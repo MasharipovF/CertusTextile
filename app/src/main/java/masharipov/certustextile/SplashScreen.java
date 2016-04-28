@@ -21,7 +21,7 @@ public class SplashScreen extends AwesomeSplash {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //Customize Circular Reveal
         configSplash.setBackgroundColor(R.color.cardview_light_background); //any color you want form colors.xml
-        configSplash.setAnimCircularRevealDuration(2000); //int ms
+        configSplash.setAnimCircularRevealDuration(1500); //int ms
         configSplash.setRevealFlagX(Flags.REVEAL_RIGHT);  //or Flags.REVEAL_LEFT
         configSplash.setRevealFlagY(Flags.REVEAL_BOTTOM); //or Flags.REVEAL_TOP
 
@@ -36,10 +36,10 @@ public class SplashScreen extends AwesomeSplash {
         configSplash.setPathSplash(path); //set path String
         configSplash.setOriginalHeight(1280); //in relation to your svg (path) resource
         configSplash.setOriginalWidth(1280); //in relation to your svg (path) resource
-        configSplash.setAnimPathStrokeDrawingDuration(3000);
+        configSplash.setAnimPathStrokeDrawingDuration(1500);
         configSplash.setPathSplashStrokeSize(1); //I advise value be <5
         configSplash.setPathSplashStrokeColor(R.color.certusFill); //any color you want form colors.xml
-        configSplash.setAnimPathFillingDuration(2000);
+        configSplash.setAnimPathFillingDuration(1500);
         configSplash.setPathSplashFillColor(R.color.certusFill); //path object filling color
 
 

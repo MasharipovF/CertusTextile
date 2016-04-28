@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
 
         mData = new ArrayList<>();
-        mData.add(R.drawable.mayka2);
+        mData.add(R.drawable.mayka);
         mData.add(R.drawable.futblki3);
         mData.add(R.drawable.poloone);
         mTexts = new ArrayList<>();

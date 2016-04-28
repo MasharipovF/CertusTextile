@@ -12,14 +12,18 @@
         android:id="@+id/sdsd"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:orientation="vertical"
         android:background="#fff">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="horizontal"
+            android:layout_marginRight="100dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="30dp"
             android:layout_weight="6">
-            <coverflow.photoview.PhotoView
+            <ImageView
                 android:id="@+id/a1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -28,12 +32,8 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="150dp"
                 />
+
             <ImageView
-                android:layout_width="3dp"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:src="@drawable/lineverticle"/>
-            <coverflow.photoview.PhotoView
                 android:id="@+id/a2"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -42,12 +42,8 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="150dp"
                 />
+
             <ImageView
-                android:layout_width="3dp"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:src="@drawable/lineverticle"/>
-            <coverflow.photoview.PhotoView
                 android:id="@+id/a3"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -91,56 +87,105 @@
                 android:layout_marginLeft="20dp"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/kkk"
+        <FrameLayout
 
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"
-            android:orientation="horizontal"
-            android:background="@drawable/pasgaviewga">
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-        <ImageView
-            android:id="@+id/galeria"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/papka"
-            android:paddingTop="30dp"
-            android:paddingBottom="20dp"
-            android:layout_centerInParent="true"/>
-        </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-                <ImageView
-                    android:id="@+id/shareeee"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/shareee"
-                    android:paddingTop="30dp"
-                    android:paddingBottom="20dp"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/forgone"
-                android:layout_width="0dp"
 
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
-                <ImageView
-                    android:id="@+id/ichose"
-                    android:layout_width="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Я уникален с Certus textile, а ты?"
+                    android:gravity="center|bottom"
+                    android:textSize="30sp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="#caac2e"
+                    android:paddingBottom="5dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Попробуй инновацию"
+                    android:textSize="18sp"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="20dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/kkk"
+
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@drawable/pasgaviewga">
+                <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/okay"
-                    android:paddingTop="30dp"
-                    android:paddingBottom="20dp"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
-        </LinearLayout>
+                    android:layout_weight="1">
+                    <ImageView
+                        android:id="@+id/galeria"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/papka"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="20dp"
+                        android:layout_centerInParent="true"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:id="@+id/shareeee"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/shareee"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="20dp"
+                        android:layout_centerInParent="true"/>
+                </RelativeLayout>
+                <RelativeLayout
+
+                    android:layout_width="0dp"
+
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:id="@+id/zoom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/zoom"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="20dp"
+                        android:layout_centerInParent="true"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/forgone"
+                    android:layout_width="0dp"
+
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:id="@+id/ichose"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/okay"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="20dp"
+                        android:layout_centerInParent="true"/>
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"

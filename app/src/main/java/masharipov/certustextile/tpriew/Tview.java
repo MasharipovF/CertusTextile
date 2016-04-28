@@ -1,5 +1,7 @@
 package masharipov.certustextile.tpriew;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,7 +19,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -43,9 +47,14 @@ import masharipov.certustextile.R;
 
 public class Tview extends AppCompatActivity {
     ImageView A1,A2,A3;
-    private PhotoViewAttacher mAttacher1,mAttacher2,mAttacher3;
+    private PhotoViewAttacher mAttacher1;
     String filepath="";
+    Dialog dialog;
     TextView TagN,Sticke;
+    Bitmap oldi,yon,orqa;
+    boolean diologshow=false;
+    int currentbit=0;
+    ImageView zom;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,10 +121,12 @@ public class Tview extends AppCompatActivity {
             {
                 Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath() +
                         "/Certus/cache/oldi.png");
+                oldi=bitmap;
                 A1.setImageBitmap(bitmap);
             }
             else {
                 Bitmap bitmap = BitmapFactory.decodeFile(getPath(Uri.parse(getIntent().getStringExtra("oldiUri"))));
+                oldi=bitmap;
                 A1.setImageBitmap(bitmap);
             }
 
@@ -123,10 +134,12 @@ public class Tview extends AppCompatActivity {
             {
                 Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath() +
                         "/Certus/cache/yon.png");
+                yon=bitmap;
                 A2.setImageBitmap(bitmap);
             }
             else {
                 Bitmap bitmap = BitmapFactory.decodeFile(getPath(Uri.parse(getIntent().getStringExtra("yonUri"))));
+                yon=bitmap;
                 A2.setImageBitmap(bitmap);
             }
 
@@ -135,11 +148,12 @@ public class Tview extends AppCompatActivity {
             {
                 Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath() +
                         "/Certus/cache/orqa.png");
+                orqa=bitmap;
                 A3.setImageBitmap(bitmap);
             }
             else {
                 Bitmap bitmap = BitmapFactory.decodeFile(getPath(Uri.parse(getIntent().getStringExtra("orqaUri"))));
-
+                orqa=bitmap;
                 A3.setImageBitmap(bitmap);
             }
 
@@ -148,6 +162,11 @@ public class Tview extends AppCompatActivity {
         catch (Exception o){
 
         }
+
+        dialog = new Dialog(Tview.this);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.view_zooom);
 
         findViewById(R.id.galeria).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,17 +197,44 @@ public class Tview extends AppCompatActivity {
                 findViewById(R.id.forgone).setVisibility(View.GONE);
             }
         });
+        findViewById(R.id.zoom).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            showDialogZoom();
+
+            }
+        });
         //   f1= (new Gson()).fromJson((JsonElement) getIntent().getSerializableExtra("oldi"),ItemFragment.class);
        // f2=(ItemFragment) getIntent().getSerializableExtra("yon");
 
         //f3=(ItemFragment) getIntent().getSerializableExtra("orqa");
 
         //File getBit = new File(getPath(Uri.parse(current.getURI())));
-
+/*
         mAttacher1 = new PhotoViewAttacher(A1);
         mAttacher2 = new PhotoViewAttacher(A2);
-        mAttacher3 = new PhotoViewAttacher(A3);
-
+        mAttacher3 = new PhotoViewAttacher(A3);*/
+        A1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentbit=0;
+                showDialogZoom();
+            }
+        });
+        A2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentbit=1;
+                showDialogZoom();
+            }
+        });
+        A3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentbit=2;
+                showDialogZoom();
+            }
+        });
     }
     @Override
     public void onStart(){
@@ -210,7 +256,7 @@ public class Tview extends AppCompatActivity {
         Uri uri = Uri.fromFile(imageFileToShare);
         share.putExtra(Intent.EXTRA_STREAM, uri);
 
-        startActivity(Intent.createChooser(share, "Юбориш :"));
+        startActivity(Intent.createChooser(share, "Поделиться :"));
     }
     public String getFileName(Uri uri) {
         String result = null;
@@ -302,6 +348,52 @@ public class Tview extends AppCompatActivity {
         }
         return choice;
     }
+    public void showDialogZoom(){
+        Button cancel = (Button) dialog.findViewById(R.id.albumCancelBtn);
+        Button nextik = (Button) dialog.findViewById(R.id.nextik);
+        zom= (ImageView) dialog.findViewById(R.id.zzomtovar);
+        switch (currentbit){
+            case 0:
+                zom.setImageBitmap(oldi);
+                break;
+            case 1:
+                zom.setImageBitmap(yon);
+                break;
+            case 2:
+                zom.setImageBitmap(orqa);
+                break;
+
+        }
+        mAttacher1 = new PhotoViewAttacher(zom);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                diologshow=false;
+            }
+        });
+        nextik.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentbit++;
+                currentbit%=3;
+                switch (currentbit){
+                    case 0:
+                        zom.setImageBitmap(oldi);
+                        break;
+                    case 1:
+                        zom.setImageBitmap(yon);
+                        break;
+                    case 2:
+                        zom.setImageBitmap(orqa);
+                        break;
+
+                }
+            }
+        });
+        dialog.show();
+        diologshow=true;
+    }
     public String getPath(Uri uri) {
         // just some safety built in
         if (uri == null) {
@@ -322,5 +414,9 @@ public class Tview extends AppCompatActivity {
         return uri.getPath();
     }
 
+    @Override
+    public void onBackPressed(){
 
+        super.onBackPressed();
+    }
 }
