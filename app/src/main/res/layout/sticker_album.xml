@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="600dp"
             android:padding="5dp"
-            tools:listitem="@layout/album_row" />
+            tools:listitem="@layout/grid_item" />
 
         <RelativeLayout
             android:layout_width="match_parent"
