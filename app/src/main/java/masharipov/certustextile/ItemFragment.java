@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.ParcelUuid;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -26,8 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -35,12 +32,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
 
 /**
  * Created by developer on 01.04.2016.
@@ -54,7 +46,7 @@ public class ItemFragment extends Fragment  {
 
     Uri uriT;
     Uri uriS;
-
+    boolean havestick=false;
     View thatall;
     Bitmap bitTovar;
     Bitmap bitSticker;
@@ -133,15 +125,10 @@ public class ItemFragment extends Fragment  {
 
     }
 
-    public ItemFragment(int res, eventZOOM eve) {
-        voqtinchali_resurs = res;
-        This = getActivity();
-        peredacha = eve;
-
-    }
 
 
-    public ItemFragment(Uri pathFile, eventZOOM eve) {
+
+    public void shareItemFragment(Uri pathFile, eventZOOM eve) {
         uriT = pathFile;
         This = getActivity();
         peredacha = eve;
@@ -391,7 +378,7 @@ public class ItemFragment extends Fragment  {
         frameBalandligi = frameSt.getHeight();
         keyForcah=true;
         bitSticker = BitmapFactory.decodeFile(getBit.getAbsolutePath());
-
+        havestick=true;
         Log.v("SECONDACTIVITY", bitSticker.toString());
         stat_eni = bitSticker.getWidth();
         stat_baland = bitSticker.getHeight();
@@ -466,7 +453,7 @@ public class ItemFragment extends Fragment  {
         long rotation = 0;
 
         public float scalePlus() {
-            if (scaleWidht <= 2 && scaleHeight <= 2) {
+            if (scaleWidht <= 2 && scaleHeight <= 2&&havestick) {
                 scaleHeight += 0.01f;
                 scaleWidht += 0.01f;
                 keyForcah=true;
@@ -481,7 +468,7 @@ public class ItemFragment extends Fragment  {
         }
 
         public float scaleMinus() {
-            if (scaleWidht > 0.01f && scaleHeight > 0.01f) {
+            if (scaleWidht > 0.1f && scaleHeight > 0.1f&&havestick) {
                 scaleHeight -= 0.01f;
                 scaleWidht -= 0.01f;
                 keyForcah=true;
@@ -497,20 +484,24 @@ public class ItemFragment extends Fragment  {
         }
 
         public void rotationPlus() {
-            rotatt += 2;
-            rotatt %= 360;
-            keyForcah=true;
-            invalidate();
-            peredacha.EVR((int) rotatt);
+            if (havestick){
+                rotatt += 2;
+                rotatt %= 360;
+                keyForcah=true;
+                invalidate();
+                peredacha.EVR((int) rotatt);
+            }
+
 
         }
 
         public void rotationMinus() {
+            if (havestick){
             rotatt -= 2;
             rotatt %= 360;
             keyForcah=true;
             invalidate();
-            peredacha.EVR((int) rotatt);
+            peredacha.EVR((int) rotatt);}
 
         }
 

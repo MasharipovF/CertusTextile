@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     String passkey = "passkey";
     String zapasParol = "159263";
     String passButtonState = "normal";
-
+    boolean rukon=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,6 +170,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                rukon=sPref.getBoolean("rukavod",false);
+                adb.setNegativeButton(rukon ? "Включить руководство" : "Отключить руководство", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    if(rukon){
+                        ed.putBoolean("rukavod",false);
+                        ed.commit();
+                    }
+                        else {
+                        ed.putBoolean("rukavod",true);
+                        ed.commit();
+                    }
                     }
                 });
                 adb.create();

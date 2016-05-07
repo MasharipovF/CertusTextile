@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import masharipov.certustextile.edit.RecyclerData;
 import masharipov.certustextile.stickeradd.StickerData;
@@ -90,6 +92,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     // yoqa panel
     Integer[] collarChooser = {R.id.yoqa1, R.id.yoqa2, R.id.yoqa3, R.id.yoqa4};
     String[] collarName = {"collar1", "collar2", "collar3", "collar4"};
+    SharedPreferences sPref;
+    SharedPreferences.Editor ed;
     int count;
 
     // recycler uchun
@@ -108,6 +112,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     String oldiUri;
     String orqaUri;
     String yonUri;
+    ImageView znachok;
     boolean somekey = false;
     String TAG = "";
     private Dialog dialog;
@@ -117,6 +122,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     RelativeLayout tanishiw;
     int current_tanisw=0;
     int adressla[]={R.id.perv,R.id.vtor,R.id.tret,R.id.chetv,R.id.pyat};
+    int framelar[]={R.drawable.frame1,R.drawable.frame2,R.drawable.frame3,R.drawable.frame4,R.drawable.darkzaluz};
+    int textlar[]={R.id.textik1,R.id.textik2,R.id.textik3,R.id.textik4,R.id.textik5};
     public static File lastFileModified(String dir) {
         File fl = new File(dir);
         File[] files = fl.listFiles(new FileFilter() {
@@ -141,6 +148,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_second);
+        sPref = getSharedPreferences("password", MODE_PRIVATE);
+        ed = sPref.edit();
 
         snackbar = Snackbar
                 .make(findViewById(R.id.snackuchunlayout), "Сначала выберите товар", Snackbar.LENGTH_SHORT);
@@ -148,41 +157,60 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         //vibrannaya kategoriya
         Intent intent = getIntent();
         tableName = intent.getStringExtra("TABLENAME");
+        znachok=(ImageView) findViewById(R.id.znachok);
 
         // izvlekaem data s vibrannoy kategorii
         cDB = new CertusDatabase(this);
         initialData = cDB.getTovarFromDB(tableName);
         Log.v("DATAA", "SIZE OF DATA = " + Integer.toString(initialData.size()));
         wholeList = new ArrayList<>();
-        tanishiw=(RelativeLayout) findViewById(R.id.eslicto);
-        tanishiw.setVisibility(View.VISIBLE);
-        tanishiw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(current_tanisw==4){
-                    findViewById(adressla[current_tanisw]).setVisibility(View.GONE);
+        if(!sPref.getBoolean("rukavod",false)){
+            tanishiw=(RelativeLayout) findViewById(R.id.eslicto);
 
+            tanishiw.setVisibility(View.VISIBLE);
+            tanishiw.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        if(current_tanisw==4){
+                            findViewById(adressla[current_tanisw]).setVisibility(View.GONE);
+                            findViewById(textlar[current_tanisw]).setVisibility(View.GONE);
+                            tanishiw.setVisibility(View.GONE);
+                            findViewById(R.id.skipp).setVisibility(View.GONE);
+                            tanishiw=null;
+                            return;
+                        }
+                        findViewById(adressla[current_tanisw]).setVisibility(View.GONE);
+                        findViewById(textlar[current_tanisw]).setVisibility(View.GONE);
+
+
+
+
+                        findViewById(adressla[++current_tanisw]).setVisibility(View.VISIBLE);
+                        findViewById(textlar[current_tanisw]).setVisibility(View.VISIBLE);
+                        tanishiw.setBackgroundResource(framelar[current_tanisw]);
+
+                    }
+                    catch (Exception o){
+
+                    }
+                }
+            });
+            findViewById(R.id.skipp).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    for(int t=current_tanisw;t<5;t++)
+                        findViewById(adressla[t]).setVisibility(View.GONE);
                     tanishiw.setVisibility(View.GONE);
                     findViewById(R.id.skipp).setVisibility(View.GONE);
                     tanishiw=null;
-                    return;
                 }
-                findViewById(adressla[current_tanisw]).setVisibility(View.GONE);
+            });
+        }
+        else {
 
+        }
 
-                findViewById(adressla[++current_tanisw]).setVisibility(View.VISIBLE);
-            }
-        });
-        findViewById(R.id.skipp).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for(int t=current_tanisw;t<5;t++)
-                    findViewById(adressla[t]).setVisibility(View.GONE);
-                tanishiw.setVisibility(View.GONE);
-                findViewById(R.id.skipp).setVisibility(View.GONE);
-                tanishiw=null;
-            }
-        });
         // razbirayem bazu po POLU
         for (RecyclerData mData : initialData) {
             switch (mData.getGender()) {
@@ -322,7 +350,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     switch (current_status) {
                         case 0:
                             oldi = null;
-                            oldi = new ItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
+                            oldi= new ItemFragment();
+
+                            oldi.shareItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
                                 @Override
                                 public void EVZ(int t) {
                                     vibr.vibrate(30);
@@ -361,7 +391,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         case 1:
 
                             yon = null;
-                            yon = new ItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
+                            yon= new ItemFragment();
+
+                            yon.shareItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
                                 @Override
                                 public void EVZ(int t) {
                                     vibr.vibrate(30);
@@ -399,8 +431,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                             break;
 
                         case 2:
-                            orqa = null;
-                            orqa = new ItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
+                            orqa=null;
+                            orqa= new ItemFragment();
+
+                            orqa.shareItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
                                 @Override
                                 public void EVZ(int t) {
                                     vibr.vibrate(30);
@@ -584,12 +618,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         if (keyfragmentis) {
                             switch (current_status) {
                                 case 0:
-                                    oldi.changeStickerUri(sticker.getURI());
+                                   oldi.changeStickerUri(sticker.getURI());
                                     break;
                                 case 1:
                                     yon.changeStickerUri(sticker.getURI());
                                     break;
                                 case 2:
+
                                     orqa.changeStickerUri(sticker.getURI());
                                     break;
                             }
@@ -1235,7 +1270,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onBackPressed() {
         if (isGenderPicked) {
-
+            znachok.setVisibility(View.VISIBLE);
             if (somekey) {
                 panelyoqa.animate().translationX(-140).withEndAction(new Runnable() {
                     @Override
@@ -1305,14 +1340,16 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void setItemtoFragment(RecyclerData data) {
+        znachok.setVisibility(View.GONE);
         oldiUri = data.getImageUri("front");
         TAG = data.getTag();
         Log.d("taga", TAG + "s");
         orqaUri = data.getImageUri("back");
         yonUri = data.getImageUri("side");
         keyfragmentis = true;
-        oldi = null;
-        oldi = new ItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
+        oldi= new ItemFragment();
+
+        oldi.shareItemFragment(Uri.parse(oldiUri), new ItemFragment.eventZOOM() {
             @Override
             public void EVZ(int t) {
                 vibr.vibrate(30);
@@ -1341,8 +1378,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
-        yon = null;
-        yon = new ItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
+        yon=null;
+        yon= new ItemFragment();
+
+        yon.shareItemFragment(Uri.parse(yonUri), new ItemFragment.eventZOOM() {
             @Override
             public void EVZ(int t) {
                 vibr.vibrate(30);
@@ -1371,8 +1410,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
-        orqa = null;
-        orqa = new ItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
+        orqa=null;
+        orqa= new ItemFragment();
+
+        orqa.shareItemFragment(Uri.parse(orqaUri), new ItemFragment.eventZOOM() {
             @Override
             public void EVZ(int t) {
                 vibr.vibrate(30);

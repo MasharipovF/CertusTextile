@@ -145,7 +145,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/joystik"
                         android:gravity="center"
-                        android:text="15"
+                        android:text="50"
                         android:textColor="#454545"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -200,7 +200,12 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:src="@drawable/orta" />
-
+        <ImageView
+            android:id="@+id/znachok"
+            android:layout_width="250dp"
+            android:layout_height="77dp"
+            android:src="@drawable/certusfon"
+            android:layout_centerInParent="true"/>
         <FrameLayout
             android:id="@+id/frame"
 
@@ -476,10 +481,50 @@
 
     <RelativeLayout
         android:id="@+id/eslicto"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/darkzaluz">
+        android:background="@drawable/frame1">
+        <ImageView
+            android:id="@+id/textik1"
+            android:visibility="visible"
+            android:layout_width="525dp"
+            android:layout_height="77dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/text1"
+            />
+        <ImageView
+            android:id="@+id/textik2"
+            android:visibility="gone"
+            android:layout_width="525dp"
+            android:layout_height="77dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/text2"
+            />
+        <ImageView
+            android:id="@+id/textik3"
+            android:visibility="gone"
+            android:layout_width="550dp"
+            android:layout_height="120dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/text3"
+            />
+        <ImageView
+            android:id="@+id/textik4"
+            android:visibility="gone"
+            android:layout_width="525dp"
+            android:layout_height="77dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/text4"
+            />
+        <ImageView
+            android:id="@+id/textik5"
+            android:visibility="gone"
+            android:layout_width="550dp"
+            android:layout_height="320dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/text5"
+            />
         <ImageView
             android:id="@+id/skipp"
             android:layout_width="163dp"
@@ -537,10 +582,10 @@
             />
         <ImageView
             android:id="@+id/pyat"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="75dp"
             android:layout_height="60dp"
-            android:src="@drawable/passkr"
+
 
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
